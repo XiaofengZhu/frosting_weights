@@ -70,7 +70,7 @@ def lenet(X, params=None):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     #         Y = tf.nn.softmax(Ylogits)
     # return Y, params.training_keep_prob
-    return Ylogits, pool2_1_drop#fc1_drop
+    return Ylogits, pool2_flat#fc1_drop
 
 def build_residual_model1(is_training, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
@@ -128,16 +128,16 @@ def build_residual_model(is_training, inputs, params, weak_learner_id):
     # MLP netowork for residuals
     features = inputs['features']
     if params.loss_fn == 'boost':
-        predicted_scores, pool2_1_drop = lenet(features, params)
+        predicted_scores, pool2_flat = lenet(features, params)
     else:
         logging.error('Loss function not supported for boosting')
         sys.exit(1)
     if weak_learner_id >= 1:
         for trained_learner_id in range(1, weak_learner_id):
-            predicted_scores += _get_residual_mlp_logits(pool2_1_drop, params, \
+            predicted_scores += _get_residual_mlp_logits(pool2_flat, params, \
             weak_learner_id=trained_learner_id)
         predicted_scores = tf.stop_gradient(predicted_scores)
-        residual_predicted_scores = _get_residual_mlp_logits(pool2_1_drop, params, \
+        residual_predicted_scores = _get_residual_mlp_logits(pool2_flat, params, \
             weak_learner_id=weak_learner_id)
         # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
         boosted_scores = predicted_scores + residual_predicted_scores

@@ -16,3 +16,4 @@ src/experiments/base_model/metrics_*last_weights.json
 *.png
 result
 src/experiments_*
+temp/

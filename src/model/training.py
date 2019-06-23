@@ -134,7 +134,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             num_steps = (params.vali_size + params.batch_size - 1) // params.batch_size
             metrics = evaluate_sess(sess, eval_model_spec, num_steps, eval_writer, params)
             # If best_eval, best_save_path
-            eval_metric = metrics['loss']
+            eval_metric = round(metrics['loss'], 6)
             eval_metrics = [eval_metric]
             best_eval_metrics = [best_eval_metric]
             if isSavingWeights(eval_metrics, best_eval_metrics):

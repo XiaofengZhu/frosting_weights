@@ -9,6 +9,7 @@ import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
 from model.utils import save_dict_to_json
+from aug_mnist import augment_data
 
 def _data_path(data_directory:str, name:str) -> str:
     """Construct a full path to a TFRecord file to be stored in the 
@@ -48,7 +49,7 @@ def _bytes_feature(value:str) -> tf.train.Features.FeatureEntry:
     """
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
-def convert_to(data_set, name:str, data_directory:str, num_shards:int=1):
+def convert_to(data_set, name:str, data_directory:str, num_shards:int=1, aug:bool=False):
     """Convert the dataset into TFRecords on disk
     
     Args:
@@ -61,9 +62,10 @@ def convert_to(data_set, name:str, data_directory:str, num_shards:int=1):
 
     images = data_set.images
     labels = data_set.labels
-    
+    if aug:
+        images, labels = augment_data(images, labels)
     num_examples, rows, cols, depth = data_set.images.shape
-
+    print(num_examples, rows, cols, depth)
     def _process_examples(start_idx:int, end_index:int, filename:str):
         with tf.python_io.TFRecordWriter(filename) as writer:
             for index in range(start_idx, end_index):
@@ -108,6 +110,7 @@ def convert_to_tf_record(data_directory:str):
     num_validation_examples, rows, cols, depth = convert_to(mnist.validation, 'validation', data_directory)
     num_train_examples, rows, cols, depth = convert_to(mnist.train, 'train', data_directory, num_shards=10)
     num_test_examples, rows, cols, depth = convert_to(mnist.test, 'test', data_directory)
+    num_test_aug_examples, rows, cols, depth = convert_to(mnist.test, 'test_aug', data_directory, aug=True)
     # Save datasets properties in json file
     sizes = {
         'height': rows,
@@ -115,7 +118,8 @@ def convert_to_tf_record(data_directory:str):
         'depth': depth,
         'vali_size': num_validation_examples,
         'train_size': num_train_examples,
-        'test_size': num_test_examples
+        'test_size': num_test_examples,
+        'test_aug_size': num_test_aug_examples
     }
     save_dict_to_json(sizes, os.path.join(data_directory, 'dataset_params.json'))   
 

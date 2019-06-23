@@ -8,7 +8,7 @@ import numpy as np
 import tensorflow as tf
 
 from model.utils import Params
-from model.utils import set_logger, load_best_metric
+from model.utils import set_logger, load_best_metric, load_learner_id
 from model.evaluation import evaluate
 from model.reader import input_fn
 from model.reader import load_dataset_from_tfrecords
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     logging.info("- done.")
     # Define the model
     logging.info("Creating the model...")
-    weak_learner_id = load_best_metric(os.path.join(args.model_dir, args.restore_from, 'learner.json'))[0]
+    weak_learner_id = load_learner_id(os.path.join(args.model_dir, args.restore_from, 'learner.json'))[0]
     eval_model_spec = model_fn('test', eval_inputs, params, reuse=False, \
         weak_learner_id=int(weak_learner_id))
     # node_names = [n.name for n in tf.get_default_graph().as_graph_def().node]

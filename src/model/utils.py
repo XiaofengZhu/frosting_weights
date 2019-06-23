@@ -100,6 +100,18 @@ def load_best_metric(json_path):
         data = json.load(f)
         return data
 
+def load_learner_id(json_path):
+    """Saves dict of floats in json file
+
+    Args:
+        d: (dict) of float-castable values (np.float, int, float, etc.)
+        json_path: (string) path to json file
+    """
+    with open(json_path, 'r') as f:
+        # We need to convert the values to float for json (it doesn't accept np.array, np.float, )
+        data = json.load(f)
+        return list(data.values())
+
 def get_expaned_metrics(metrics_val):
     expanded_metrics_val = {}
     for tag, val in metrics_val.items():

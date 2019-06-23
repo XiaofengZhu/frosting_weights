@@ -8,7 +8,7 @@
     "early_stoping_epochs": 200,
     "gradient_clip_value": 5,
     "mlp_sizes": [100, 50],
-    "residual_mlp_sizes": [512],
+    "residual_mlp_sizes": [1024],
     "num_learners": 0,
     "save_predictions": false,
     "use_residual": false,

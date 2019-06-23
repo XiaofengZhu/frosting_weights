@@ -33,8 +33,15 @@ parser.add_argument('--tfrecords_filename', default='.tfrecords',
 # usage: python main.py --restore_dir experiments/base_model/best_weights
 parser.add_argument('--restore_dir', default=None, # experimens/base_model/best_weights
                     help="Optional, directory containing weights to reload")
+parser.add_argument('--retrain', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
+    help="try on augmented test dataset")
+parser.add_argument('--combine', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
+    help="try on augmented test dataset")
 
 if __name__ == '__main__':
+    # Train the model
+    # log time
+    start_time = time.time()
     tf.reset_default_graph()
     # Set the random seed for the whole graph for reproductible experiments
     tf.set_random_seed(230)
@@ -52,43 +59,52 @@ if __name__ == '__main__':
     params.update(json_path)
     # Set the logger
     set_logger(os.path.join(args.model_dir, 'train.log'))
-    path_train_tfrecords = os.path.join(args.data_dir, 'train-*' + args.tfrecords_filename)
-    path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)
-    # Create the input data pipeline
-    logging.info("Creating the datasets...")
-    train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
-    eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
-    # Specify other parameters for the dataset and the model
-    # Create the two iterators over the two datasets
-    train_inputs = input_fn('train', train_dataset, params)
-    eval_inputs = input_fn('vali', eval_dataset, params)
-    logging.info("- done.")
-    # Define the models (2 different set of nodes that share weights for train and validation)
-    logging.info("Creating the model...")
-    train_model_spec = model_fn('train', train_inputs, params)
-    eval_model_spec = model_fn('vali', eval_inputs, params, reuse=True)
-    logging.info("- done.")
-    # Train the model
-    # log time
-    start_time = time.time()
-    logging.info("Starting training for at most {} epoch(s) for the initial learner".format(params.num_epochs))
-    global_epoch = train_and_evaluate(train_model_spec, eval_model_spec, args.model_dir, params, \
-        learner_id=0, restore_from=args.restore_dir)
-    logging.info("global_epoch: {} epoch(s) at learner 0".format(global_epoch))
-    print("--- %s seconds ---" % (time.time() - start_time))
-    # start gradient boosting
-    last_global_epoch = global_epoch
-    if (params.num_learners > 1):
-        #########################################################
-        for learner_id in range(1, params.num_learners):
-            # tf.reset_default_graph()
-            # tf.set_random_seed(230)
-            ###TO DO
-            ###Avoid reading data every time
+    last_global_epoch, global_epoch = 0, 0
+    if not args.retrain or args.combine:
+        if args.combine:
+            path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
+            path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
+            # Create the input data pipeline
+            logging.info("Creating the datasets...")
+            train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
+            eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))
+        else:
+            path_train_tfrecords = os.path.join(args.data_dir, 'train-*' + args.tfrecords_filename)
+            path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)        
             # Create the input data pipeline
             logging.info("Creating the datasets...")
             train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
             eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
+        # Specify other parameters for the dataset and the model
+        # Create the two iterators over the two datasets
+        train_inputs = input_fn('train', train_dataset, params)
+        eval_inputs = input_fn('vali', eval_dataset, params)
+        logging.info("- done.")
+        # Define the models (2 different set of nodes that share weights for train and validation)
+        logging.info("Creating the model...")
+        train_model_spec = model_fn('train', train_inputs, params)
+        eval_model_spec = model_fn('vali', eval_inputs, params, reuse=True)
+        logging.info("- done.")
+
+        logging.info("Starting training for at most {} epoch(s) for the initial learner".format(params.num_epochs))
+        global_epoch = train_and_evaluate(train_model_spec, eval_model_spec, args.model_dir, params, \
+            learner_id=0, restore_from=args.restore_dir)
+        logging.info("global_epoch: {} epoch(s) at learner 0".format(global_epoch))
+        print("--- %s seconds ---" % (time.time() - start_time))
+        # start gradient boosting
+        last_global_epoch = global_epoch
+    if (params.num_learners > 1):
+        #########################################################
+        logging.info("RETRAINING ~~")
+        for learner_id in range(1, params.num_learners):
+            # tf.reset_default_graph()
+            # tf.set_random_seed(230)
+            path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
+            path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
+            # Create the input data pipeline
+            logging.info("Creating the datasets...")
+            train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
+            eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))
             # Specify other parameters for the dataset and the model
             # Create the two iterators over the two datasets
             train_inputs = input_fn('train', train_dataset, params)

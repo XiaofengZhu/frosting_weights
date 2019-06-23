@@ -32,6 +32,8 @@ parser.add_argument('--tfrecords_filename', default='.tfrecords',
                     help="Dataset-filename for the tfrecords")
 parser.add_argument('--restore_from', default='best_weights',
                     help="Subdirectory of the best weights")
+parser.add_argument('--aug', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
+    help="try on augmented test dataset")
 
 if __name__ == '__main__':
     # Set the random seed for the whole graph
@@ -54,7 +56,11 @@ if __name__ == '__main__':
     # Set the logger
     set_logger(os.path.join(args.model_dir, 'evaluate.log'))
     # # Get paths for tfrecords
-    path_eval_tfrecords = os.path.join(args.data_dir, 'test' + args.tfrecords_filename)
+    dataset = 'test'
+    if args.aug:
+        print('USING augmented TEST')
+        dataset += '_aug'
+    path_eval_tfrecords = os.path.join(args.data_dir, dataset + args.tfrecords_filename)
     # Create the input data pipeline
     logging.info("Creating the dataset...")
     eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)

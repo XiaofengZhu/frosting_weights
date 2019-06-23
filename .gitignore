@@ -1,0 +1,16 @@
+.DS_Store
+__pycache__/
+CNN + Recursive Merging + pool
+data/
+src/experiments/base_model/best_weights/*
+src/experiments/base_model/last_weights/*
+src/experiments/base_model/train_summaries/*
+src/experiments/base_model/vali_summaries/*
+src/experiments/base_model/*log
+src/experiments/base_model/metrics_*best_weights.json
+src/experiments/base_model/metrics_*last_weights.json
+*.txt
+*.pdf
+*.out
+*.xlsx
+*.png

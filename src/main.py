@@ -33,8 +33,10 @@ parser.add_argument('--tfrecords_filename', default='.tfrecords',
 # usage: python main.py --restore_dir experiments/base_model/best_weights
 parser.add_argument('--restore_dir', default=None, # experimens/base_model/best_weights
                     help="Optional, directory containing weights to reload")
+# using pretrained weights and gradient boosting on datasets A and B
 parser.add_argument('--retrain', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
     help="try on augmented test dataset")
+# train on datasets A and B
 parser.add_argument('--combine', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
     help="try on augmented test dataset")
 

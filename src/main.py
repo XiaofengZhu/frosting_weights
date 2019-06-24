@@ -141,4 +141,4 @@ if __name__ == '__main__':
                 logging.info("boosting has stopped early at learner {}".format(learner_id))
                 break
             last_global_epoch = global_epoch
-    print("--- %s seconds using boosting ---" % (time.time() - start_time))
+        print("--- %s seconds using boosting ---" % (time.time() - start_time))

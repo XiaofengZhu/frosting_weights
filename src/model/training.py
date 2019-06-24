@@ -99,7 +99,8 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             save_path = os.path.join(model_dir, restore_from)
             if os.path.isdir(save_path):
                 save_path = tf.train.latest_checkpoint(save_path)
-                # begin_at_epoch = int(restore_from.split('-')[-1])           
+                begin_at_epoch = int(save_path.split('-')[-1])
+                global_epoch = begin_at_epoch       
             logging.info("Restoring parameters from {}".format(save_path))
             # last_saver = tf.train.import_meta_graph(save_path+".meta")
             pretrained_include = ['model/cnn']
@@ -111,7 +112,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             pretrained_vars = tf.contrib.framework.get_variables_to_restore(include=pretrained_include)
             pretrained_saver = tf.train.Saver(pretrained_vars, name="pretrained_saver")
             pretrained_saver.restore(sess, save_path)
-            if not params.finetune or params.num_learners <= 1:
+            if not params.finetune and params.num_learners <= 1:
                 best_eval_metrics = load_best_metric(best_json_path)
                 best_eval_metric = best_eval_metrics['loss']
         # for each learner
@@ -124,6 +125,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             # Run one epoch
             logging.info("Learner {}, Epoch {}/{}".format(learner_id, epoch + 1, \
                 begin_at_epoch + params.num_epochs))
+            # logging.info(global_epoch)
             # Compute number of batches in one epoch (one full pass over the training set)
             num_steps = (params.train_size + params.batch_size - 1) // params.batch_size
             train_sess(sess, train_model_spec, num_steps, train_writer, params)
@@ -138,6 +140,9 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             eval_metric = round(metrics['loss'], 6)
             eval_metrics = [eval_metric]
             best_eval_metrics = [best_eval_metric]
+
+            # logging.info('global_epoch: {}, best_eval_metrics: {}, \
+            #     eval_metric: {}', global_epoch, best_eval_metrics, eval_metric)
             if isSavingWeights(eval_metrics, best_eval_metrics):
                 # rest early_stopping_count
                 early_stopping_count = 0

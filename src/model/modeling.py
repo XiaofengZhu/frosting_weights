@@ -70,9 +70,9 @@ def lenet(X, params=None):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     #         Y = tf.nn.softmax(Ylogits)
     # return Y, params.training_keep_prob
-    return Ylogits, pool2_flat#fc1_drop
+    return Ylogits, fc1_drop
 
-def build_residual_model1(is_training, inputs, params, weak_learner_id):
+def build_residual_model(is_training, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
         mode: (string) 'train', 'eval', etc.
@@ -112,7 +112,7 @@ def build_residual_model1(is_training, inputs, params, weak_learner_id):
         mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
     return boosted_scores, mse_loss
 
-def build_residual_model(is_training, inputs, params, weak_learner_id):
+def build_residual_model2(is_training, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
         mode: (string) 'train', 'eval', etc.
@@ -152,16 +152,22 @@ def build_residual_model(is_training, inputs, params, weak_learner_id):
     return boosted_scores, mse_loss
 
 def _get_residual_mlp_logits(features, params, weak_learner_id=1):
-    # features = tf.reshape(features, [-1, params.feature_dim])
     with tf.variable_scope('residual_mlp_{}'.format(weak_learner_id), reuse=tf.AUTO_REUSE):
-        out = tf.layers.dense(features, params.residual_mlp_sizes[0],
-            name='residual_{}_dense_0'.format(weak_learner_id), activation=tf.nn.relu)
-        for i in range(1, len(params.residual_mlp_sizes)):
-            out = tf.layers.dense(out, params.residual_mlp_sizes[i], \
-                name='residual_{}_dense_{}'.format(weak_learner_id, i), activation=tf.nn.relu)
-        logits = tf.layers.dense(out, params.num_classes,
+        logits = tf.layers.dense(features, params.num_classes,
             name='residual_{}_dense_{}'.format(weak_learner_id, len(params.residual_mlp_sizes)))
     return logits
+
+# def _get_residual_mlp_logits(features, params, weak_learner_id=1):
+#     # features = tf.reshape(features, [-1, params.feature_dim])
+#     with tf.variable_scope('residual_mlp_{}'.format(weak_learner_id), reuse=tf.AUTO_REUSE):
+#         out = tf.layers.dense(features, params.residual_mlp_sizes[0],
+#             name='residual_{}_dense_0'.format(weak_learner_id), activation=tf.nn.relu)
+#         for i in range(1, len(params.residual_mlp_sizes)):
+#             out = tf.layers.dense(out, params.residual_mlp_sizes[i], \
+#                 name='residual_{}_dense_{}'.format(weak_learner_id, i), activation=tf.nn.relu)
+#         logits = tf.layers.dense(out, params.num_classes,
+#             name='residual_{}_dense_{}'.format(weak_learner_id, len(params.residual_mlp_sizes)))
+#     return logits
 
 def _get_mlp_logits(features, params):
     with tf.variable_scope('mlp', reuse=tf.AUTO_REUSE):

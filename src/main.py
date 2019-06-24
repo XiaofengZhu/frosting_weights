@@ -40,7 +40,7 @@ parser.add_argument('--restore_dir', default=None, # experimens/base_model/best_
 # train on datasets A and B
 parser.add_argument('--combine', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
     help="try on augmented test dataset")
-parser.add_argument('--fintune', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
+parser.add_argument('--finetune', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
     help="try on augmented test dataset")
 
 if __name__ == '__main__':

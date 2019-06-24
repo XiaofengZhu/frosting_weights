@@ -34,10 +34,13 @@ parser.add_argument('--tfrecords_filename', default='.tfrecords',
 parser.add_argument('--restore_dir', default=None, # experimens/base_model/best_weights
                     help="Optional, directory containing weights to reload")
 # using pretrained weights and gradient boosting on datasets A and B
-parser.add_argument('--retrain', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
-    help="try on augmented test dataset")
+# params.num_learners > 1
+# parser.add_argument('--retrain', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
+#     help="try on augmented test dataset")
 # train on datasets A and B
 parser.add_argument('--combine', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
+    help="try on augmented test dataset")
+parser.add_argument('--fintune', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
     help="try on augmented test dataset")
 
 if __name__ == '__main__':
@@ -62,7 +65,7 @@ if __name__ == '__main__':
     # Set the logger
     set_logger(os.path.join(args.model_dir, 'train.log'))
     last_global_epoch, global_epoch = 0, 0
-    if not args.retrain or args.combine:
+    if params.num_learners <= 1:# not args.retrain or args.combine:
         if args.combine:
             path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
@@ -70,13 +73,20 @@ if __name__ == '__main__':
             logging.info("Creating the datasets...")
             train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
             eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))
-        else:
-            path_train_tfrecords = os.path.join(args.data_dir, 'train-*' + args.tfrecords_filename)
-            path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)        
+        elif args.fintune:
+            args.restore_dir = 'best_weights'
+            path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*' + args.tfrecords_filename)
+            path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)        
             # Create the input data pipeline
             logging.info("Creating the datasets...")
             train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
             eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
+        path_train_tfrecords = os.path.join(args.data_dir, 'train-*' + args.tfrecords_filename)
+        path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)        
+        # Create the input data pipeline
+        logging.info("Creating the datasets...")
+        train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
+        eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)            
         # Specify other parameters for the dataset and the model
         # Create the two iterators over the two datasets
         train_inputs = input_fn('train', train_dataset, params)

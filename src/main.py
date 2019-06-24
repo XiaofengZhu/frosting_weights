@@ -58,6 +58,7 @@ if __name__ == '__main__':
     if params.mlp_sizes is None or len(params.mlp_sizes) == 0:
         logging.error('mlp_sizes are not set correctly, at least one MLP layer is required')
     params.dict['loss_fn'] = args.loss_fn
+    params.dict['finetune'] = args.finetune
     # Load the parameters from the dataset, that gives the size etc. into params
     json_path = os.path.join(args.data_dir, 'dataset_params.json')
     assert os.path.isfile(json_path), "No json file found at {}, please run prepare_data.py".format(json_path)

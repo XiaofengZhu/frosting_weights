@@ -98,6 +98,7 @@ if __name__ == '__main__':
     if (params.num_learners > 1):
         #########################################################
         logging.info("RETRAINING ~~")
+        params.dict['training_keep_prob'] = 1.0
         for learner_id in range(1, params.num_learners):
             # tf.reset_default_graph()
             # tf.set_random_seed(230)

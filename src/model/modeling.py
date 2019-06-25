@@ -71,7 +71,42 @@ def lenet(X, params=None):
     #         Y = tf.nn.softmax(Ylogits)
     # return Y, params.training_keep_prob
     return Ylogits, pool2_flat
-
+def build_residual_model(is_training, inputs, params, weak_learner_id):
+    """Compute logits of the model (output distribution)
+    Args:
+        mode: (string) 'train', 'eval', etc.
+        inputs: (dict) contains the inputs of the graph (features, residuals...)
+                this can be `tf.placeholder` or outputs of `tf.data`
+        params: (Params) contains hyperparameters of the model (ex: `params.learning_rate`)
+    Returns:
+        output: (tf.Tensor) output of the model
+    Notice:
+        !!! boosting is only supported for cnn and urrank
+    """
+    mse_loss = tf.constant(0.0, dtype=tf.float32)
+    # MLP netowork for residuals
+    features = inputs['features']
+    if params.loss_fn == 'boost':
+        predicted_scores, fc1_drop = lenet(features, params)
+        fc1_drop = tf.stop_gradient(fc1_drop)
+    else:
+        logging.error('Loss function not supported for boosting')
+        sys.exit(1)
+    if weak_learner_id >= 1:
+        with tf.variable_scope('residual_mlp_{}'.format(weak_learner_id), reuse=tf.AUTO_REUSE):
+            residual_predicted_scores, _ = lenet(features, params)
+        # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
+        boosted_scores = predicted_scores + residual_predicted_scores
+    else:
+        boosted_scores = predicted_scores
+    if not is_training:
+        return boosted_scores, mse_loss
+    if weak_learner_id >= 1:
+        labels = inputs['labels']
+        residuals = get_residual(labels, predicted_scores)
+        mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
+    return boosted_scores, mse_loss
+'''
 def build_residual_model(is_training, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
@@ -111,7 +146,7 @@ def build_residual_model(is_training, inputs, params, weak_learner_id):
         residuals = get_residual(labels, predicted_scores)
         mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
     return boosted_scores, mse_loss
-
+'''
 def build_residual_model2(is_training, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:

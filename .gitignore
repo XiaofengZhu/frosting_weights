@@ -18,3 +18,4 @@ src/experiments/base_model/metrics_*last_weights.json
 result
 src/experiments_*
 temp/
+temp.py

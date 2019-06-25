@@ -73,20 +73,3 @@ def augment_data(dataset, dataset_labels, augementation_factor=1, use_random_rot
 				augmented_image_labels.append(dataset_labels[num])
 
 	return np.array(augmented_image), np.array(augmented_image_labels)
-
-def shift(images, dataset_labels, SHIFT_BY=2):
-  new_list = []
-  for np_img in images:
-    img = np_img.reshape((28, 28))
-    HEIGHT, WIDTH = img.shape[1], img.shape[0]
-    #print(HEIGHT, WIDTH)
-    # Shifting Left
-    for i in range(HEIGHT, 1, -1):
-      for j in range(WIDTH):
-        if i < HEIGHT - SHIFT_BY:
-          img[j][i] = img[j][i - SHIFT_BY]
-        elif i < HEIGHT - 1:
-          img[j][i] = 0
-    img = img.reshape((784,))
-    new_list.append(img)
-  return np.array(new_list), dataset_labels

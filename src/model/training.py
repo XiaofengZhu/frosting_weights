@@ -91,7 +91,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
         eval_writer = tf.summary.FileWriter(os.path.join(model_dir, 'vali_summaries'), sess.graph)
         best_json_path = os.path.join(model_dir, "metrics_eval_best_weights.json")
 
-        best_accuracy_metric, best_loss_metric = 0.0, -float('inf')
+        best_eval_metrics = [0.0, -float('inf')]
         # global_epoch = 0
         # Reload weights from directory if specified
         # restor from the previous learner
@@ -114,7 +114,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             pretrained_saver.restore(sess, save_path)
             # if not params.finetune and params.num_learners <= 1:
             #     best_eval_metrics = load_best_metric(best_json_path)
-            #     best_accuracy_metric, best_loss_metric = best_eval_metrics['accuracy'], -best_eval_metrics['loss']
+            #     best_eval_metrics = [best_eval_metrics['accuracy'], -best_eval_metrics['loss']]
         # for each learner
         early_stopping_count = 0
         for epoch in range(begin_at_epoch, begin_at_epoch + params.num_epochs):
@@ -127,21 +127,19 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 begin_at_epoch + params.num_epochs))
             # logging.info(global_epoch)
             # Compute number of batches in one epoch (one full pass over the training set)
-            num_steps = (params.train_size + params.batch_size - 1) // params.batch_size
+            num_steps = 3#(params.train_size + params.batch_size - 1) // params.batch_size
             train_sess(sess, train_model_spec, num_steps, train_writer, params)
             # Save weights
             last_save_path = os.path.join(model_dir, 'last_weights', 'after-epoch')
             # global_epoch = int(params.num_learners) * int(params.num_epochs) + epoch + 1
             last_saver.save(sess, last_save_path, global_step=global_epoch)
             # Evaluate for one epoch on validation set
-            num_steps = (params.vali_size + params.batch_size - 1) // params.batch_size
+            num_steps = 3#(params.vali_size + params.batch_size - 1) // params.batch_size
             metrics = evaluate_sess(sess, eval_model_spec, num_steps, eval_writer, params)
             # If best_eval, best_save_path
             accuracy_metric = round(metrics['accuracy'], 6)
             loss_metric = -round(metrics['loss'], 6)
             eval_metrics = [accuracy_metric, loss_metric]
-            best_eval_metrics = [best_accuracy_metric, best_loss_metric]
-
             # logging.info('global_epoch: {}, best_eval_metrics: {}, \
             #     eval_metric: {}', global_epoch, best_eval_metrics, eval_metric)
             if isSavingWeights(eval_metrics, best_eval_metrics):

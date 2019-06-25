@@ -148,7 +148,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 # rest early_stopping_count
                 early_stopping_count = 0
                 # and isSavingWeights
-                best_eval_metrics = [best_accuracy_metric, best_loss_metric]
+                best_eval_metrics = eval_metrics
                 # Save weights
                 best_save_path = os.path.join(model_dir, 'best_weights', 'after-epoch')
                 # global_epoch = int(params.num_learners) * int(params.num_epochs) + epoch + 1

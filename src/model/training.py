@@ -127,14 +127,14 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 begin_at_epoch + params.num_epochs))
             # logging.info(global_epoch)
             # Compute number of batches in one epoch (one full pass over the training set)
-            num_steps = 3#(params.train_size + params.batch_size - 1) // params.batch_size
+            num_steps = (params.train_size + params.batch_size - 1) // params.batch_size
             train_sess(sess, train_model_spec, num_steps, train_writer, params)
             # Save weights
             last_save_path = os.path.join(model_dir, 'last_weights', 'after-epoch')
             # global_epoch = int(params.num_learners) * int(params.num_epochs) + epoch + 1
             last_saver.save(sess, last_save_path, global_step=global_epoch)
             # Evaluate for one epoch on validation set
-            num_steps = 3#(params.vali_size + params.batch_size - 1) // params.batch_size
+            num_steps = (params.vali_size + params.batch_size - 1) // params.batch_size
             metrics = evaluate_sess(sess, eval_model_spec, num_steps, eval_writer, params)
             # If best_eval, best_save_path
             accuracy_metric = round(metrics['accuracy'], 6)

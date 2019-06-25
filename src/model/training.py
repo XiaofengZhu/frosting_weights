@@ -114,7 +114,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             pretrained_saver.restore(sess, save_path)
             # if not params.finetune and params.num_learners <= 1:
             #     best_eval_metrics = load_best_metric(best_json_path)
-            #     best_accuracy_metric, best_loss_metric = best_eval_metrics['accuracy'], best_eval_metrics['loss']
+            #     best_accuracy_metric, best_loss_metric = best_eval_metrics['accuracy'], -best_eval_metrics['loss']
         # for each learner
         early_stopping_count = 0
         for epoch in range(begin_at_epoch, begin_at_epoch + params.num_epochs):

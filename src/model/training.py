@@ -59,9 +59,9 @@ def train_sess(sess, model_spec, num_steps, writer, params):
 
 def isSavingWeights(eval_metrics, best_eval_metrics):
     for i in range(len(eval_metrics)):
-        if eval_metrics[i] < best_eval_metrics[i]:
+        if eval_metrics[i] > best_eval_metrics[i]:
             return True
-        elif eval_metrics[i] > best_eval_metrics[i]:
+        elif eval_metrics[i] < best_eval_metrics[i]:
             return False
         else:
             continue
@@ -91,7 +91,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
         eval_writer = tf.summary.FileWriter(os.path.join(model_dir, 'vali_summaries'), sess.graph)
         best_json_path = os.path.join(model_dir, "metrics_eval_best_weights.json")
 
-        best_eval_metric = float('inf')
+        best_accuracy_metric, best_loss_metric = 0.0, -float('inf')
         # global_epoch = 0
         # Reload weights from directory if specified
         # restor from the previous learner
@@ -114,7 +114,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             pretrained_saver.restore(sess, save_path)
             # if not params.finetune and params.num_learners <= 1:
             #     best_eval_metrics = load_best_metric(best_json_path)
-            #     best_eval_metric = best_eval_metrics['loss']
+            #     best_accuracy_metric, best_loss_metric = best_eval_metrics['accuracy'], best_eval_metrics['loss']
         # for each learner
         early_stopping_count = 0
         for epoch in range(begin_at_epoch, begin_at_epoch + params.num_epochs):
@@ -137,9 +137,10 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             num_steps = (params.vali_size + params.batch_size - 1) // params.batch_size
             metrics = evaluate_sess(sess, eval_model_spec, num_steps, eval_writer, params)
             # If best_eval, best_save_path
-            eval_metric = round(metrics['loss'], 6)
-            eval_metrics = [eval_metric]
-            best_eval_metrics = [best_eval_metric]
+            accuracy_metric = round(metrics['accuracy'], 6)
+            loss_metric = -round(metrics['loss'], 6)
+            eval_metrics = [accuracy_metric, loss_metric]
+            best_eval_metrics = [best_accuracy_metric, best_loss_metric]
 
             # logging.info('global_epoch: {}, best_eval_metrics: {}, \
             #     eval_metric: {}', global_epoch, best_eval_metrics, eval_metric)
@@ -147,7 +148,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 # rest early_stopping_count
                 early_stopping_count = 0
                 # and isSavingWeights
-                best_eval_metric = eval_metric
+                best_eval_metrics = [best_accuracy_metric, best_loss_metric]
                 # Save weights
                 best_save_path = os.path.join(model_dir, 'best_weights', 'after-epoch')
                 # global_epoch = int(params.num_learners) * int(params.num_epochs) + epoch + 1

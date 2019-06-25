@@ -18,7 +18,6 @@ If you find this script useful, please upvote. Thanks
 import tensorflow as tf
 import numpy as np
 
-
 '''
     This function peforms various data augmentation techniques to the dataset
     
@@ -54,7 +53,7 @@ def augment_data(dataset, dataset_labels, augementation_factor=1, use_random_rot
 			augmented_image_labels.append(dataset_labels[num])
 
 			if use_random_rotation:
-				augmented_image.append(tf.contrib.keras.preprocessing.image.random_rotation(dataset[num], 20, \
+				augmented_image.append(tf.contrib.keras.preprocessing.image.random_rotation(dataset[num], 45, \
 					row_axis=0, col_axis=1, channel_axis=2))
 				augmented_image_labels.append(dataset_labels[num])
 
@@ -75,7 +74,7 @@ def augment_data(dataset, dataset_labels, augementation_factor=1, use_random_rot
 
 	return np.array(augmented_image), np.array(augmented_image_labels)
 
-def shift(images, SHIFT_BY=2):
+def shift(images, dataset_labels, SHIFT_BY=2):
   new_list = []
   for np_img in images:
     img = np_img.reshape((28, 28))
@@ -90,4 +89,4 @@ def shift(images, SHIFT_BY=2):
           img[j][i] = 0
     img = img.reshape((784,))
     new_list.append(img)
-  return np.array(new_list)
+  return np.array(new_list), dataset_labels

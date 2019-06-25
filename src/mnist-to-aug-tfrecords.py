@@ -107,24 +107,24 @@ def convert_to_tf_record(data_directory:str):
         reshape=False
     )
     
-    num_validation_examples, rows, cols, depth = convert_to(mnist.validation, 'validation', data_directory)
+    # num_validation_examples, rows, cols, depth = convert_to(mnist.validation, 'validation', data_directory)
     num_validation_aug_examples, rows, cols, depth = convert_to(mnist.validation, 'validation_aug', \
         data_directory, aug=True)
-    num_train_examples, rows, cols, depth = convert_to(mnist.train, 'train', data_directory, num_shards=10)
+    # num_train_examples, rows, cols, depth = convert_to(mnist.train, 'train', data_directory, num_shards=10)
     num_train_aug_examples, rows, cols, depth = convert_to(mnist.train, 'train_aug', data_directory, \
         num_shards=10, aug=True)
-    num_test_examples, rows, cols, depth = convert_to(mnist.test, 'test', data_directory)
+    # num_test_examples, rows, cols, depth = convert_to(mnist.test, 'test', data_directory)
     num_test_aug_examples, rows, cols, depth = convert_to(mnist.test, 'test_aug', data_directory, aug=True)
     # Save datasets properties in json file
     sizes = {
         'height': rows,
         'width': cols,
         'depth': depth,
-        'vali_size': num_validation_examples,
+        'vali_size': num_validation_aug_examples,
         # 'vali_aug_size': num_validation_aug_examples,
-        'train_size': num_train_examples,
+        'train_size': num_train_aug_examples,
         # 'train_aug_size': num_train_aug_examples,
-        'test_size': num_test_examples,
+        'test_size': num_test_aug_examples,
         # 'test_aug_size': num_test_aug_examples
     }
     save_dict_to_json(sizes, os.path.join(data_directory, 'dataset_params.json'))   

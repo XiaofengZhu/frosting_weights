@@ -15,6 +15,7 @@ src/experiments/base_model/metrics_*last_weights.json
 *.out
 *.xlsx
 *.png
+result_0
 result
 src/experiments_*
 temp/

@@ -143,6 +143,46 @@ def retrain_regu_lenet(X, params=None, var_scope='n_cnn'):
             neurons.append(Ylogits)
     return Ylogits, (neurons, weights)
 
+def build_residual_model(is_training, inputs, params, weak_learner_id):
+    """Compute logits of the model (output distribution)
+    Args:
+        mode: (string) 'train', 'eval', etc.
+        inputs: (dict) contains the inputs of the graph (features, residuals...)
+                this can be `tf.placeholder` or outputs of `tf.data`
+        params: (Params) contains hyperparameters of the model (ex: `params.learning_rate`)
+    Returns:
+        output: (tf.Tensor) output of the model
+    Notice:
+        !!! boosting is only supported for cnn and urrank
+    """
+    mse_loss = tf.constant(0.0, dtype=tf.float32)
+    # MLP netowork for residuals
+    features = inputs['features']
+    if params.loss_fn == 'boost':
+        predicted_scores, fc1_drop = lenet(features, params)
+        fc1_drop = tf.stop_gradient(fc1_drop)
+    else:
+        logging.error('Loss function not supported for boosting')
+        sys.exit(1)
+    if weak_learner_id >= 1:
+        for trained_learner_id in range(1, weak_learner_id):
+            n_predicted_scores, _ = lenet(features, params, var_scope='cnn'+str(trained_learner_id))
+            predicted_scores += n_predicted_scores
+        predicted_scores = tf.stop_gradient(predicted_scores)
+        residual_predicted_scores, _ = lenet(features, params, var_scope='n_cnn')
+        # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
+        boosted_scores = predicted_scores + residual_predicted_scores
+    else:
+        boosted_scores = predicted_scores
+    if not is_training:
+        return boosted_scores, mse_loss
+    if weak_learner_id >= 1:
+        labels = inputs['labels']
+        residuals = get_residual(labels, predicted_scores)
+        mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
+    return boosted_scores, mse_loss
+
+# new weights for fc1_drop
 # def build_residual_model(is_training, inputs, params, weak_learner_id):
 #     """Compute logits of the model (output distribution)
 #     Args:
@@ -183,63 +223,67 @@ def retrain_regu_lenet(X, params=None, var_scope='n_cnn'):
 #         mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
 #     return boosted_scores, mse_loss
 
-def build_residual_model(mode, inputs, params, weak_learner_id):
-    """Compute logits of the model (output distribution)
-    Args:
-        mode: (string) 'train', 'eval', etc.
-        inputs: (dict) contains the inputs of the graph (features, residuals...)
-                this can be `tf.placeholder` or outputs of `tf.data`
-        params: (Params) contains hyperparameters of the model (ex: `params.learning_rate`)
-    Returns:
-        output: (tf.Tensor) output of the model
-    Notice:
-        !!! boosting is only supported for cnn and urrank
-    """
-    is_training = (mode == 'train')
-    is_test = (mode == 'test')
-    mse_loss = tf.constant(0.0, dtype=tf.float32)
-    # MLP netowork for residuals
-    features = inputs['features']
-    if params.loss_fn == 'boost':
-        predicted_scores, pool2_flat = lenet(features, params)
-    else:
-        logging.error('Loss function not supported for boosting')
-        sys.exit(1)
-    if weak_learner_id >= 1:
-        for trained_learner_id in range(1, weak_learner_id):
-            predicted_scores += _get_residual_mlp_logits(pool2_flat, params, \
-            weak_learner_id=trained_learner_id)
-        predicted_scores = tf.stop_gradient(predicted_scores)
-        residual_predicted_scores = _get_residual_mlp_logits(pool2_flat, params, \
-            weak_learner_id=weak_learner_id)
-        # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
-        boosted_scores = predicted_scores + residual_predicted_scores
-    else:
-        boosted_scores = predicted_scores
-    if is_test:
-        return boosted_scores, None
-    if weak_learner_id >= 1:
-        labels = inputs['labels']
-        residuals = get_residual(labels, predicted_scores)
-        mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
-    return boosted_scores, mse_loss
 
+# new weights for fc1_drop
 # def _get_residual_mlp_logits(features, params, weak_learner_id=1):
 #     with tf.variable_scope('residual_mlp_{}'.format(weak_learner_id), reuse=tf.AUTO_REUSE):
 #         logits = tf.layers.dense(features, params.num_classes,
 #             name='residual_{}_dense_{}'.format(weak_learner_id, len(params.residual_mlp_sizes)))
 #     return logits
 
-def _get_residual_mlp_logits(features, params, weak_learner_id=1):
-    with tf.variable_scope('residual_mlp_{}'.format(weak_learner_id), reuse=tf.AUTO_REUSE):
-        out = tf.layers.dense(features, params.residual_mlp_sizes[0],
-            name='residual_{}_dense_0'.format(weak_learner_id), activation=tf.nn.relu)
-        for i in range(1, len(params.residual_mlp_sizes)):
-            out = tf.layers.dense(out, params.residual_mlp_sizes[i], \
-                name='residual_{}_dense_{}'.format(weak_learner_id, i), activation=tf.nn.relu)
-        logits = tf.layers.dense(out, params.num_classes,
-            name='residual_{}_dense_{}'.format(weak_learner_id, len(params.residual_mlp_sizes)))
-    return logits
+# new weights for pool2_flat
+# def build_residual_model(mode, inputs, params, weak_learner_id):
+#     """Compute logits of the model (output distribution)
+#     Args:
+#         mode: (string) 'train', 'eval', etc.
+#         inputs: (dict) contains the inputs of the graph (features, residuals...)
+#                 this can be `tf.placeholder` or outputs of `tf.data`
+#         params: (Params) contains hyperparameters of the model (ex: `params.learning_rate`)
+#     Returns:
+#         output: (tf.Tensor) output of the model
+#     Notice:
+#         !!! boosting is only supported for cnn and urrank
+#     """
+#     is_training = (mode == 'train')
+#     is_test = (mode == 'test')
+#     mse_loss = tf.constant(0.0, dtype=tf.float32)
+#     # MLP netowork for residuals
+#     features = inputs['features']
+#     if params.loss_fn == 'boost':
+#         predicted_scores, pool2_flat = lenet(features, params)
+#     else:
+#         logging.error('Loss function not supported for boosting')
+#         sys.exit(1)
+#     if weak_learner_id >= 1:
+#         for trained_learner_id in range(1, weak_learner_id):
+#             predicted_scores += _get_residual_mlp_logits(pool2_flat, params, \
+#             weak_learner_id=trained_learner_id)
+#         predicted_scores = tf.stop_gradient(predicted_scores)
+#         residual_predicted_scores = _get_residual_mlp_logits(pool2_flat, params, \
+#             weak_learner_id=weak_learner_id)
+#         # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
+#         boosted_scores = predicted_scores + residual_predicted_scores
+#     else:
+#         boosted_scores = predicted_scores
+#     if is_test:
+#         return boosted_scores, None
+#     if weak_learner_id >= 1:
+#         labels = inputs['labels']
+#         residuals = get_residual(labels, predicted_scores)
+#         mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
+#     return boosted_scores, mse_loss
+
+# new weights for pool2_flat
+# def _get_residual_mlp_logits(features, params, weak_learner_id=1):
+#     with tf.variable_scope('residual_mlp_{}'.format(weak_learner_id), reuse=tf.AUTO_REUSE):
+#         out = tf.layers.dense(features, params.residual_mlp_sizes[0],
+#             name='residual_{}_dense_0'.format(weak_learner_id), activation=tf.nn.relu)
+#         for i in range(1, len(params.residual_mlp_sizes)):
+#             out = tf.layers.dense(out, params.residual_mlp_sizes[i], \
+#                 name='residual_{}_dense_{}'.format(weak_learner_id, i), activation=tf.nn.relu)
+#         logits = tf.layers.dense(out, params.num_classes,
+#             name='residual_{}_dense_{}'.format(weak_learner_id, len(params.residual_mlp_sizes)))
+#     return logits
 
 def _get_mlp_logits(features, params):
     with tf.variable_scope('mlp', reuse=tf.AUTO_REUSE):

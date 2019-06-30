@@ -21,8 +21,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--model_dir', default='experiments/base_model',
                     help="Directory containing params.json")
 # loss functions
-# cnn, boost
-parser.add_argument('--loss_fn', default='boost', help="model loss function")
+# cnn, boost, retrain_regu
+parser.add_argument('--loss_fn', default='retrain_regu', help="model loss function")
 # tf data folder for
 # mnist
 parser.add_argument('--data_dir', default='../data/mnist',
@@ -128,7 +128,8 @@ if __name__ == '__main__':
             # logging.info("- done.")
             #########################################################
             logging.info("Creating residual learner ".format(learner_id))
-            params.dict['use_residual'] = True
+            if params.loss_fn != 'retrain_regu':
+                params.dict['use_residual'] = True
             ###END TO DO
             residual_train_model_spec = model_fn('train', train_inputs, params, reuse=tf.AUTO_REUSE, \
                 weak_learner_id=learner_id)

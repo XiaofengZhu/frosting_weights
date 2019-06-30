@@ -148,6 +148,13 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 # and isSavingWeights
                 best_eval_metrics = eval_metrics
                 # Save weights
+                # trainalbe_vars = {v.name: v for v in tf.trainable_variables() if 'model' in v.name}
+                # print(trainalbe_vars.keys())
+                if params.loss_fn != 'retrain_regu':
+                    cnn_vars=[v for v in tf.trainable_variables() if 'model/cnn' in v.name]
+                    n_cnn_vars=[v for v in tf.trainable_variables() if 'model/n_cnn' in v.name]
+                    update_weights = [tf.assign(new, old) for (new, old) in \
+                    zip(cnn_vars, n_cnn_vars)]                
                 best_save_path = os.path.join(model_dir, 'best_weights', 'after-epoch')
                 # global_epoch = int(params.num_learners) * int(params.num_epochs) + epoch + 1
                 best_save_path = best_saver.save(sess, best_save_path, global_step=global_epoch)

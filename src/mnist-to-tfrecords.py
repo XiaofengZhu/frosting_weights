@@ -5,6 +5,7 @@
 import argparse
 import os
 import sys
+import logging
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
@@ -61,7 +62,7 @@ def convert_to(data_set, name:str, data_directory:str, num_shards:int=1):
 
     images = data_set.images
     labels = data_set.labels
-    
+    # logging.warning('*********************', images.shape)
     num_examples, rows, cols, depth = data_set.images.shape
 
     def _process_examples(start_idx:int, end_index:int, filename:str):

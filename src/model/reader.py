@@ -26,6 +26,8 @@ def _parse_function(record):
     parsed_record = tf.parse_single_example(record, features)
     image = tf.decode_raw(parsed_record['image_raw'], tf.float32)
     label = tf.cast(parsed_record['label'], tf.int32)
+    # image= tf.Print(image, [tf.shape(image)], message='image info: \n')
+    # label= tf.Print(label, [tf.shape(label)], message='label info: \n')
     # height = tf.cast(parsed_record['height'], tf.int32)
     # width = tf.cast(parsed_record['width'], tf.int32)
     # depth = tf.cast(parsed_record['depth'], tf.int32)            
@@ -62,7 +64,7 @@ def input_fn(mode, dataset, params):
     width = int(params.height)
     height = int(params.width)
     depth = int(params.depth)
-    features = tf.reshape(features, [batch_size, \
+    features = tf.reshape(features, [-1, \
         height, width, depth])
     # labels = tf.reshape(labels, [-1, 1])
     labels = tf.one_hot(labels, params.num_classes) 
@@ -77,7 +79,7 @@ def input_fn(mode, dataset, params):
 if __name__ == "__main__":
     tf.set_random_seed(230)
     args = parser.parse_args()
-    dataset_files = os.path.join(args.data_dir, 'train-*.tfrecords')
+    dataset_files = os.path.join(args.data_dir, 'test.tfrecords')#train-*
     dataset = load_dataset_from_tfrecords(glob.glob(dataset_files))
     json_path = os.path.join(args.model_dir, 'params.json')
     assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
@@ -95,7 +97,7 @@ if __name__ == "__main__":
         init_op = tf.global_variables_initializer()
         sess.run(init_op)
         # sess.run(iterator_init_op)
-        for i in range(4):
+        for i in range(20):
             try:
                 print(sess.run([tf.shape(features), tf.shape(labels)]))
             except tf.errors.OutOfRangeError:

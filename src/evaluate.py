@@ -21,8 +21,8 @@ parser.add_argument('--model_dir', default='experiments/base_model',
 parser.add_argument('--residual_model_dir', default='experiments/residual_model',
                     help="Directory containing params.json")
 # loss functions
-# cnn, boost
-parser.add_argument('--loss_fn', default='boost', help="model loss function")
+# cnn, boost, retrain_regu
+parser.add_argument('--loss_fn', default='retrain_regu', help="model loss function")
 # tf data folder for
 # mnist
 parser.add_argument('--data_dir', default='../data/mnist',
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         logging.error('mlp_sizes are not set correctly, at least one MLP layer is required')
     params.dict['loss_fn'] = args.loss_fn
     params.dict['training_keep_prob'] = 1.0
-    if params.num_learners > 1:
+    if params.num_learners > 1 and params.loss_fn != 'retrain_regu':
         params.dict['use_residual'] = True
     # Load the parameters from the dataset, that gives the size etc. into params
     json_path = os.path.join(args.data_dir, 'dataset_params.json')

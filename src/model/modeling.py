@@ -8,15 +8,17 @@ from tensorflow.python.ops import array_ops
 from keras.preprocessing.image import ImageDataGenerator
 from matplotlib import pyplot
 import os
+import functools
 # from keras import backend as K
 # K.set_image_dim_ordering('th')
 import time
+
 #################
-def lenet(X, params=None):
-    with tf.variable_scope('cnn', reuse=tf.AUTO_REUSE):
+def lenet(X, params=None, var_scope='cnn'):
+    with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
         # CONVOLUTION 1 - 1
         with tf.name_scope('conv1_1'):
-            filter1_1 = tf.get_variable('weights1_1', shape=[5, 5, 1, 32], \
+            filter1_1 = tf.get_variable('weights1_1', shape=[5, 5, int(params.depth), 32], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
             stride = [1,1,1,1]
             conv = tf.nn.conv2d(X, filter1_1, stride, padding='SAME')
@@ -51,18 +53,19 @@ def lenet(X, params=None):
             pool2_1_drop = tf.nn.dropout(pool2_1, params.training_keep_prob)
         #FULLY CONNECTED 1
         with tf.name_scope('fc1') as scope:
-            # shape = int(np.prod(pool1_1_drop.get_shape()[1:]))
-            fc1w = tf.get_variable('weights3_1', shape=[7*7*64, 1024], \
+            pool2_flat = tf.layers.Flatten()(pool2_1_drop)
+            dim = pool2_flat.get_shape()[1].value
+            fc1w = tf.get_variable('weights3_1', shape=[dim, 1024], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
             fc1b = tf.get_variable('biases3_1', shape=[1024], \
                 initializer=tf.constant_initializer(1.0))
-            pool2_flat = tf.reshape(pool2_1_drop, [-1, 7*7*64])
+            # pool2_flat = tf.reshape(pool2_1_drop, [-1, 7*7*64])
             # pool2_flat = tf.Print(pool2_flat, [tf.shape(pool2_flat)], 'pool2_flat \n')
             out = tf.nn.bias_add(tf.matmul(pool2_flat, fc1w), fc1b)
             fc1 = tf.nn.relu(out)
             fc1_drop = tf.nn.dropout(fc1, params.training_keep_prob)
-        #FULLY CONNECTED 2 & SOFTMAX OUTPUT
-        with tf.name_scope('softmax') as scope:
+        #FULLY CONNECTED 2
+        with tf.name_scope('fc2') as scope:
             fc2w = tf.get_variable('weights3_2', shape=[1024, params.num_classes], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
             fc2b = tf.get_variable('biases3_2', shape=[params.num_classes], \
@@ -71,41 +74,74 @@ def lenet(X, params=None):
     #         Y = tf.nn.softmax(Ylogits)
     # return Y, params.training_keep_prob
     return Ylogits, pool2_flat
-# def build_residual_model(is_training, inputs, params, weak_learner_id):
-#     """Compute logits of the model (output distribution)
-#     Args:
-#         mode: (string) 'train', 'eval', etc.
-#         inputs: (dict) contains the inputs of the graph (features, residuals...)
-#                 this can be `tf.placeholder` or outputs of `tf.data`
-#         params: (Params) contains hyperparameters of the model (ex: `params.learning_rate`)
-#     Returns:
-#         output: (tf.Tensor) output of the model
-#     Notice:
-#         !!! boosting is only supported for cnn and urrank
-#     """
-#     mse_loss = tf.constant(0.0, dtype=tf.float32)
-#     # MLP netowork for residuals
-#     features = inputs['features']
-#     if params.loss_fn == 'boost':
-#         predicted_scores, fc1_drop = lenet(features, params)
-#         fc1_drop = tf.stop_gradient(fc1_drop)
-#     else:
-#         logging.error('Loss function not supported for boosting')
-#         sys.exit(1)
-#     if weak_learner_id >= 1:
-#         with tf.variable_scope('residual_mlp_{}'.format(weak_learner_id), reuse=tf.AUTO_REUSE):
-#             residual_predicted_scores, _ = lenet(features, params)
-#         # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
-#         boosted_scores = predicted_scores + residual_predicted_scores
-#     else:
-#         boosted_scores = predicted_scores
-#     if not is_training:
-#         return boosted_scores, mse_loss
-#     if weak_learner_id >= 1:
-#         labels = inputs['labels']
-#         residuals = get_residual(labels, predicted_scores)
-#         mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
-#     return boosted_scores, mse_loss
+
+def retrain_regu_lenet(X, params=None, var_scope='n_cnn'):
+    trainable = var_scope=='n_cnn' 
+    neurons = []
+    weights = []
+    with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
+        # CONVOLUTION 1 - 1
+        with tf.name_scope('conv1_1'):
+            filter1_1 = tf.get_variable('weights1_1', shape=[5, 5, int(params.depth), 32], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1), trainable=trainable)
+            stride = [1,1,1,1]
+            conv = tf.nn.conv2d(X, filter1_1, stride, padding='SAME')
+            biases = tf.get_variable('biases1_1', shape=[32], \
+                initializer=tf.constant_initializer(0.0), trainable=trainable)
+            out = tf.nn.bias_add(conv, biases)
+            conv1_1 = tf.nn.relu(out)
+            weights.extend([filter1_1, biases])
+            neurons.append(conv1_1)
+        # POOL 1
+        with tf.name_scope('pool1'):
+            pool1_1 = tf.nn.max_pool(conv1_1,
+                                     ksize=[1, 2, 2, 1],
+                                     strides=[1, 2, 2, 1],
+                                     padding='SAME',
+                                     name='pool1_1')
+            pool1_1_drop = tf.nn.dropout(pool1_1, params.training_keep_prob)
+        # CONVOLUTION 1 - 2
+        with tf.name_scope('conv1_2'):
+            filter1_2 = tf.get_variable('weights1_2', shape=[5, 5, 32, 64], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1), trainable=trainable)
+            conv = tf.nn.conv2d(pool1_1_drop, filter1_2, [1,1,1,1], padding='SAME')
+            biases = tf.get_variable('biases1_2', shape=[64], \
+                initializer=tf.constant_initializer(0.0), trainable=trainable)
+            out = tf.nn.bias_add(conv, biases)
+            conv1_2 = tf.nn.relu(out)
+            weights.extend([filter1_2, biases])
+            neurons.append(conv1_2)
+        # POOL 2
+        with tf.name_scope('pool2'):
+            pool2_1 = tf.nn.max_pool(conv1_2,
+                                     ksize=[1, 2, 2, 1],
+                                     strides=[1, 2, 2, 1],
+                                     padding='SAME',
+                                     name='pool2_1')
+            pool2_1_drop = tf.nn.dropout(pool2_1, params.training_keep_prob)
+        #FULLY CONNECTED 1
+        with tf.name_scope('fc1') as scope:
+            pool2_flat = tf.layers.Flatten()(pool2_1_drop)
+            dim = pool2_flat.get_shape()[1].value
+            fc1w = tf.get_variable('weights3_1', shape=[dim, 1024], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1), trainable=trainable)
+            fc1b = tf.get_variable('biases3_1', shape=[1024], \
+                initializer=tf.constant_initializer(1.0), trainable=trainable)
+            out = tf.nn.bias_add(tf.matmul(pool2_flat, fc1w), fc1b)
+            fc1 = tf.nn.relu(out)
+            fc1_drop = tf.nn.dropout(fc1, params.training_keep_prob)
+            weights.extend([fc1w, fc1b])
+            neurons.append(fc1_drop)
+        #FULLY CONNECTED 2
+        with tf.name_scope('fc2') as scope:
+            fc2w = tf.get_variable('weights3_2', shape=[1024, params.num_classes], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1), trainable=trainable)
+            fc2b = tf.get_variable('biases3_2', shape=[params.num_classes], \
+                initializer=tf.constant_initializer(1.0), trainable=trainable)
+            Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
+            weights.extend([fc2w, fc2b])
+            neurons.append(Ylogits)
+    return Ylogits, (neurons, weights)
 
 def build_residual_model(is_training, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
@@ -218,7 +254,7 @@ def get_residual(labels, Ylogits):
     Ysoftmax = tf.nn.softmax(Ylogits)
     return Ysoftmax - labels
 
-def build_model(is_training, inputs, params, weak_learner_id):
+def build_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model
     Args:
         mode: (string) 'train', 'eval', etc.
@@ -230,14 +266,30 @@ def build_model(is_training, inputs, params, weak_learner_id):
     Notice:
         !!! when using the build_model mdprank needs a learning_rate around 1e-5 - 1e-7
     """
+    is_training = (mode == 'train')
+    is_test = (mode == 'test')    
+    features = inputs['features']
+    if params.loss_fn=='retrain_regu':
+        if not is_test:
+            _, (old_neurons, old_weights) = retrain_regu_lenet(features, params, var_scope='cnn')
+            y_conv, (neurons, weights) = retrain_regu_lenet(features, params, var_scope='n_cnn')
+            neuron_mse_list = [tf.losses.mean_squared_error(old_neuron, neuron) for (old_neuron, neuron) \
+            in zip(old_neurons, neurons)]
+            neuron_mses = functools.reduce(lambda x,y:x+y, neuron_mse_list)
+            # weight regulization
+            var_mse_list = [tf.losses.mean_squared_error(old_var, var) for (old_var, var) \
+            in zip(old_weights, weights)]
+            var_mses = functools.reduce(lambda x,y:x+y, var_mse_list)
+            regulization_loss = 0.001 * neuron_mses + 0.001 * var_mses               
+            return y_conv, regulization_loss
+        return retrain_regu_lenet(features, params, var_scope='n_cnn')
     if params.use_residual:
         return build_residual_model(is_training, inputs, \
             params, weak_learner_id)
     # default cnn
-    features = inputs['features']
-    permutation_loss = tf.constant(0, dtype=tf.float32)
-    y_conv, keep_prob = lenet(features, params)
-    return y_conv, permutation_loss
+    y_conv, _ = lenet(features, params, var_scope='cnn')
+    _, _ = lenet(features, params, var_scope='n_cnn')
+    return y_conv, None
 
 def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
     """Model function defining the graph operations.
@@ -260,11 +312,11 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
     # MODEL: define the layers of the model
     with tf.variable_scope('model', reuse=tf.AUTO_REUSE):
         # Compute the output distribution of the model and the predictions
-        predictions, permutation_loss = build_model(is_training, inputs, params, \
+        predictions, calcualted_loss = build_model(mode, inputs, params, \
                 weak_learner_id=weak_learner_id)
         if not is_test:
             with tf.name_scope('loss'):
-                loss = get_loss(predictions, labels, params, permutation_loss)
+                loss = get_loss(predictions, labels, params, calcualted_loss)
                 if params.use_regularization:
                     reg_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
                     loss += tf.reduce_sum(reg_losses)            
@@ -284,7 +336,6 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
             accuracy = tf.reduce_mean(correct_prediction)
             # accuracy_per_class = tf.metrics.mean_per_class_accuracy(labels, predictions, \
             #     params.num_classes)
-
     # -----------------------------------------------------------
     # METRICS AND SUMMARIES
     # Metrics for evaluation using tf.metrics (average over whole dataset)
@@ -323,7 +374,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
     return model_spec
 
 def get_loss(predicted_scores, labels,
-             params, permutation_loss=None):
+             params, calcualted_loss=None):
     """ 
     Return loss based on loss_function_str
     Note: this is for models that have real loss functions
@@ -331,13 +382,17 @@ def get_loss(predicted_scores, labels,
     def _cnn():
         cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=labels,
                                                         logits=predicted_scores)
-        loss = tf.reduce_mean(cross_entropy)        
+        loss = tf.reduce_mean(cross_entropy)   
         return loss
+    def _boost():
+        return calcualted_loss
+    def _retrain_regu():
+        return _cnn() + calcualted_loss
 
     options = {
             'cnn': _cnn,
-            'boost': _cnn,
+            'boost': _boost,
+            'retrain_regu': _retrain_regu
     }
     loss_function_str = params.loss_fn
-
     return options[loss_function_str]()

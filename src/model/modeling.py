@@ -183,7 +183,7 @@ def retrain_regu_lenet(X, params=None, var_scope='n_cnn'):
 #         mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
 #     return boosted_scores, mse_loss
 
-def build_residual_model(is_training, inputs, params, weak_learner_id):
+def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
         mode: (string) 'train', 'eval', etc.
@@ -195,6 +195,8 @@ def build_residual_model(is_training, inputs, params, weak_learner_id):
     Notice:
         !!! boosting is only supported for cnn and urrank
     """
+    is_training = (mode == 'train')
+    is_test = (mode == 'test')
     mse_loss = tf.constant(0.0, dtype=tf.float32)
     # MLP netowork for residuals
     features = inputs['features']
@@ -214,8 +216,8 @@ def build_residual_model(is_training, inputs, params, weak_learner_id):
         boosted_scores = predicted_scores + residual_predicted_scores
     else:
         boosted_scores = predicted_scores
-    if not is_training:
-        return boosted_scores, mse_loss
+    if is_test:
+        return boosted_scores, None
     if weak_learner_id >= 1:
         labels = inputs['labels']
         residuals = get_residual(labels, predicted_scores)
@@ -284,7 +286,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             return y_conv, regulization_loss
         return retrain_regu_lenet(features, params, var_scope='n_cnn')
     if params.use_residual:
-        return build_residual_model(is_training, inputs, \
+        return build_residual_model(mode, inputs, \
             params, weak_learner_id)
     # default cnn
     y_conv, _ = lenet(features, params, var_scope='cnn')

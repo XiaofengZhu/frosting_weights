@@ -22,10 +22,10 @@ parser.add_argument('--residual_model_dir', default='experiments/residual_model'
                     help="Directory containing params.json")
 # loss functions
 # cnn, boost, retrain_regu
-parser.add_argument('--loss_fn', default='retrain_regu', help="model loss function")
+parser.add_argument('--loss_fn', default='boost', help="model loss function")
 # tf data folder for
 # mnist
-parser.add_argument('--data_dir', default='../data/mnist',
+parser.add_argument('--data_dir', default='../data/mnist2',
                     help="Directory containing the dataset")
 # test.tfrecords
 parser.add_argument('--tfrecords_filename', default='.tfrecords',

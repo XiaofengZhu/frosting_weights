@@ -316,6 +316,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                 weak_learner_id=weak_learner_id)
         if not is_test:
             with tf.name_scope('loss'):
+                # calcualted_loss = tf.Print(calcualted_loss, [calcualted_loss], message='calcualted_loss is \n')
                 loss = get_loss(predictions, labels, params, calcualted_loss)
                 if params.use_regularization:
                     reg_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)

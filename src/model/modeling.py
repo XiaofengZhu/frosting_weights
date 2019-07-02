@@ -162,10 +162,10 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         # inputs['residuals'] = tf.stop_gradient(inputs['residuals'])
 
     residual_predicted_scores, _ = retrain_regu_lenet(features, params, var_scope='cnn')
-    if is_test:
-        return boosted_scores, None
     # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
     #     message='residual_predicted_scores\n')
+    if is_test:
+        return boosted_scores, None
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
 

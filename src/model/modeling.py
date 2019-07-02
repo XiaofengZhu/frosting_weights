@@ -164,7 +164,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         #     n_predicted_scores, _ = lenet(features, params, var_scope='c_cnn'+str(trained_learner_id))
         #     predicted_scores += n_predicted_scores
         predicted_scores = tf.stop_gradient(predicted_scores)
-        residual_predicted_scores, _ = lenet(features, params, var_scope='n_cnn')
+        residual_predicted_scores, _ = lenet(features, params, var_scope='cnn')
         # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
         boosted_scores = predicted_scores + residual_predicted_scores
     else:

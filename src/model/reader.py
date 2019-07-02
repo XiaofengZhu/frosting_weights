@@ -73,7 +73,6 @@ def input_fn(mode, dataset, params):
         # 'iterator_init_op': iterator_init_op,
         'features': features,
         'labels': labels,
-        'width': width,
         }      
     return inputs
 

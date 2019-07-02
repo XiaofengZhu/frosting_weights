@@ -167,8 +167,8 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     if is_test:
         return boosted_scores, None
-    mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
-
+    square_loss = tf.math.square(inputs['residuals'] - residual_predicted_scores)
+    square_loss = tf.reduce_sum(square_loss)
     # is_test = (mode == 'test')
     # boosted_scores = tf.constant(0.0, dtype=tf.float32)
     # # MLP netowork for residuals
@@ -194,7 +194,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     # # residuals = tf.Print(residuals, [residuals], message='residuals\n')
     # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], message='residual_predicted_scores\n')
     # mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
-    return inputs['old_predicted_scores']+inputs['residuals'], mse_loss
+    return boosted_scores, mse_loss
 
 # new weights for fc1_drop
 # def build_residual_model(is_training, inputs, params, weak_learner_id):

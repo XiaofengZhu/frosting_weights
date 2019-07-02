@@ -54,7 +54,7 @@ def train_sess(sess, model_spec, num_steps, writer, params):
     metrics_values = {k: v[0] for k, v in metrics.items()}
     metrics_val = sess.run(metrics_values)
     expanded_metrics_val = get_expaned_metrics(metrics_val)
-    metrics_string = " ; ".join("{}: {:05.3f}".format(k, v) for k, v in expanded_metrics_val.items())
+    metrics_string = " ; ".join("{}: {:05.4f}".format(k, v) for k, v in expanded_metrics_val.items())
     logging.info("- Train metrics: " + metrics_string)
 
 def model_summary():

@@ -158,23 +158,23 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     else:
         logging.error('Loss function not supported for boosting')
         sys.exit(1)
-    if weak_learner_id >= 1:
-        # only one weak learner for now, weak_learner_id==1
-        # for trained_learner_id in range(1, weak_learner_id):
-        #     n_predicted_scores, _ = lenet(features, params, var_scope='c_cnn'+str(trained_learner_id))
-        #     predicted_scores += n_predicted_scores
-        predicted_scores = tf.stop_gradient(predicted_scores)
-        residual_predicted_scores, _ = lenet(features, params, var_scope='cnn')
-        # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
-        boosted_scores = predicted_scores + residual_predicted_scores
-    else:
-        boosted_scores = predicted_scores
+    # only one weak learner for now, weak_learner_id==1
+    # for trained_learner_id in range(1, weak_learner_id):
+    #     n_predicted_scores, _ = lenet(features, params, var_scope='c_cnn'+str(trained_learner_id))
+    #     predicted_scores += n_predicted_scores
+    predicted_scores = tf.stop_gradient(predicted_scores)
+    # predicted_scores = tf.Print(predicted_scores, [predicted_scores], message='predicted_scores\n')
+    residual_predicted_scores, _ = lenet(features, params, var_scope='cnn')
+    # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
+    boosted_scores = predicted_scores + residual_predicted_scores
     if is_test:
         return boosted_scores, None
     labels = inputs['labels']
     residuals = get_residual(labels, predicted_scores)
+    # residuals = tf.Print(residuals, [residuals], message='residuals\n')
+    # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], message='residual_predicted_scores\n')
     mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
-    return predicted_scores, mse_loss
+    return boosted_scores, mse_loss
 
 # new weights for fc1_drop
 # def build_residual_model(is_training, inputs, params, weak_learner_id):

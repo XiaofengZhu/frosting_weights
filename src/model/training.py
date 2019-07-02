@@ -94,7 +94,6 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
         train_writer = tf.summary.FileWriter(os.path.join(model_dir, 'train_summaries'), sess.graph)
         eval_writer = tf.summary.FileWriter(os.path.join(model_dir, 'vali_summaries'), sess.graph)
         best_json_path = os.path.join(model_dir, "metrics_eval_best_weights.json")
-
         best_eval_metrics = [0.0, -float('inf')]
         # global_epoch = 0
         # Reload weights from directory if specified
@@ -113,7 +112,6 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             #     pretrained_include = ['model/boost']
             # for i in range(1, learner_id):
             #     pretrained_include.append('residual_mlp_{}'.format(learner_id))
-
             pretrained_vars = tf.contrib.framework.get_variables_to_restore(include=pretrained_include)
             pretrained_saver = tf.train.Saver(pretrained_vars, name="pretrained_saver")
             pretrained_saver.restore(sess, save_path)
@@ -159,11 +157,12 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 # Save weights
                 # trainalbe_vars = {v.name: v for v in tf.trainable_variables() if 'model' in v.name}
                 # print(trainalbe_vars.keys())
-                if params.loss_fn != 'retrain_regu':
+                if params.loss_fn == 'cnn':
                     cnn_vars=[v for v in tf.trainable_variables() if 'model/cnn' in v.name]
-                    n_cnn_vars=[v for v in tf.trainable_variables() if 'model/c_cnn' in v.name]
-                    update_weights = [tf.assign(new, old) for (new, old) in \
-                    zip(cnn_vars, n_cnn_vars)]                
+                    c_cnn_vars=[v for v in tf.trainable_variables() if 'model/c_cnn' in v.name]
+                    update_weights = [tf.assign(c, old) for (c, old) in \
+                    zip(c_cnn_vars, cnn_vars)]
+                    sess.run(update_weights)
                 best_save_path = os.path.join(model_dir, 'best_weights', 'after-epoch')
                 # global_epoch = int(params.num_learners) * int(params.num_epochs) + epoch + 1
                 best_save_path = best_saver.save(sess, best_save_path, global_step=global_epoch)

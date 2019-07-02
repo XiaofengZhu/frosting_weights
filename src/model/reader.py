@@ -37,7 +37,7 @@ def _parse_function(record):
 def load_dataset_from_tfrecords(path_tfrecords_filename):
     # tfrecords_filename
     # file_type + "_" + tfrecords_filename
-    dataset = tf.data.TFRecordDataset(path_tfrecords_filename)   
+    dataset = tf.data.TFRecordDataset(path_tfrecords_filename)
     # Parse the record into tensors.
     dataset = dataset.map(_parse_function)
     return dataset 

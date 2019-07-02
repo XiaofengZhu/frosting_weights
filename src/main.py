@@ -58,6 +58,8 @@ if __name__ == '__main__':
     if params.mlp_sizes is None or len(params.mlp_sizes) == 0:
         logging.error('mlp_sizes are not set correctly, at least one MLP layer is required')
     params.dict['loss_fn'] = args.loss_fn
+    if params.loss_fn == 'boost' and params.num_learners <= 1:
+        params.dict['num_learners'] = 2
     params.dict['finetune'] = args.finetune
     # Load the parameters from the dataset, that gives the size etc. into params
     json_path = os.path.join(args.data_dir, 'dataset_params.json')

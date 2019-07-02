@@ -150,30 +150,48 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         !!! boosting is only supported for cnn and urrank
     """
     is_test = (mode == 'test')
-    boosted_scores = tf.constant(0.0, dtype=tf.float32)
-    # MLP netowork for residuals
     features = inputs['features']
-    if params.loss_fn == 'boost':
-        predicted_scores, _ = lenet(features, params, var_scope='c_cnn')
-    else:
-        logging.error('Loss function not supported for boosting')
-        sys.exit(1)
-    # only one weak learner for now, weak_learner_id==1
-    # for trained_learner_id in range(1, weak_learner_id):
-    #     n_predicted_scores, _ = lenet(features, params, var_scope='c_cnn'+str(trained_learner_id))
-    #     predicted_scores += n_predicted_scores
-    predicted_scores = tf.stop_gradient(predicted_scores)
-    # predicted_scores = tf.Print(predicted_scores, [predicted_scores], message='predicted_scores\n')
+    if 'residuals' not in inputs:
+        logging.error('residuals not in inputs')
+        labels = inputs['labels']
+        predicted_scores, _ = retrain_regu_lenet(features, params, var_scope='c_cnn')
+        residuals = get_residual(labels, predicted_scores)
+        inputs['old_predicted_scores'] = predicted_scores
+        # inputs['old_predicted_scores'] = tf.stop_gradient(inputs['old_predicted_scores'])
+        inputs['residuals'] = residuals
+        # inputs['residuals'] = tf.stop_gradient(inputs['residuals'])
+
     residual_predicted_scores, _ = lenet(features, params, var_scope='cnn')
-    # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
-    boosted_scores = predicted_scores + residual_predicted_scores
     if is_test:
         return boosted_scores, None
-    labels = inputs['labels']
-    residuals = get_residual(labels, predicted_scores)
-    # residuals = tf.Print(residuals, [residuals], message='residuals\n')
-    # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], message='residual_predicted_scores\n')
-    mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
+    boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
+    mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
+
+    # is_test = (mode == 'test')
+    # boosted_scores = tf.constant(0.0, dtype=tf.float32)
+    # # MLP netowork for residuals
+    # features = inputs['features']
+    # if params.loss_fn == 'boost':
+    #     predicted_scores, _ = lenet(features, params, var_scope='c_cnn')
+    # else:
+    #     logging.error('Loss function not supported for boosting')
+    #     sys.exit(1)
+    # # only one weak learner for now, weak_learner_id==1
+    # # for trained_learner_id in range(1, weak_learner_id):
+    # #     n_predicted_scores, _ = lenet(features, params, var_scope='c_cnn'+str(trained_learner_id))
+    # #     predicted_scores += n_predicted_scores
+    # predicted_scores = tf.stop_gradient(predicted_scores)
+    # # predicted_scores = tf.Print(predicted_scores, [predicted_scores], message='predicted_scores\n')
+    # residual_predicted_scores, _ = lenet(features, params, var_scope='cnn')
+    # # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
+    # boosted_scores = predicted_scores + residual_predicted_scores
+    # if is_test:
+    #     return boosted_scores, None
+    # labels = inputs['labels']
+    # residuals = get_residual(labels, predicted_scores)
+    # # residuals = tf.Print(residuals, [residuals], message='residuals\n')
+    # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], message='residual_predicted_scores\n')
+    # mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
     return boosted_scores, mse_loss
 
 # new weights for fc1_drop

@@ -170,7 +170,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     else:
         boosted_scores = predicted_scores
     if is_test:
-        return boosted_scores, None
+        return predicted_scores, None
     labels = inputs['labels']
     residuals = get_residual(labels, predicted_scores)
     mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)

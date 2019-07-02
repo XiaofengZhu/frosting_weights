@@ -150,7 +150,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         !!! boosting is only supported for cnn and urrank
     """
     is_test = (mode == 'test')
-    mse_loss = tf.constant(0.0, dtype=tf.float32)
+    boosted_scores = tf.constant(0.0, dtype=tf.float32)
     # MLP netowork for residuals
     features = inputs['features']
     if params.loss_fn == 'boost':
@@ -170,11 +170,11 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     else:
         boosted_scores = predicted_scores
     if is_test:
-        return predicted_scores, None
+        return boosted_scores, None
     labels = inputs['labels']
     residuals = get_residual(labels, predicted_scores)
     mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
-    return boosted_scores, mse_loss
+    return predicted_scores, mse_loss
 
 # new weights for fc1_drop
 # def build_residual_model(is_training, inputs, params, weak_learner_id):

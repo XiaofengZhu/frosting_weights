@@ -12,7 +12,7 @@ from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoi
 
 from model.utils import save_dict_to_json, load_best_metric, get_expaned_metrics
 from model.evaluation import evaluate_sess
-
+import tensorflow.contrib.slim as slim
 
 def train_sess(sess, model_spec, num_steps, writer, params):
     """Train the model on `num_steps` batches
@@ -56,6 +56,10 @@ def train_sess(sess, model_spec, num_steps, writer, params):
     expanded_metrics_val = get_expaned_metrics(metrics_val)
     metrics_string = " ; ".join("{}: {:05.3f}".format(k, v) for k, v in expanded_metrics_val.items())
     logging.info("- Train metrics: " + metrics_string)
+
+def model_summary():
+    model_vars = tf.trainable_variables()
+    slim.model_analyzer.analyze_vars(model_vars, print_info=True)
 
 def isSavingWeights(eval_metrics, best_eval_metrics):
     for i in range(len(eval_metrics)):
@@ -104,20 +108,22 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             logging.info("Restoring parameters from {}".format(save_path))
             # last_saver = tf.train.import_meta_graph(save_path+".meta")
             pretrained_include = ['model/cnn']
+            pretrained_include.append('model/c_cnn')
             # if params.loss_fn=='boost':
             #     pretrained_include = ['model/boost']
-            for i in range(1, learner_id):
-                pretrained_include.append('residual_mlp_{}'.format(learner_id))
+            # for i in range(1, learner_id):
+            #     pretrained_include.append('residual_mlp_{}'.format(learner_id))
 
             pretrained_vars = tf.contrib.framework.get_variables_to_restore(include=pretrained_include)
             pretrained_saver = tf.train.Saver(pretrained_vars, name="pretrained_saver")
             pretrained_saver.restore(sess, save_path)
-            if params.finetune and params.num_learners > 1:
+            if params.num_learners > 1:
                 best_eval_metrics = load_best_metric(best_json_path)
                 best_eval_metrics = [best_eval_metrics['accuracy'], -best_eval_metrics['loss']]   
             # if not params.finetune and params.num_learners <= 1:
             #     best_eval_metrics = load_best_metric(best_json_path)
             #     best_eval_metrics = [best_eval_metrics['accuracy'], -best_eval_metrics['loss']]
+        model_summary()
         # for each learner
         early_stopping_count = 0
         for epoch in range(begin_at_epoch, begin_at_epoch + params.num_epochs):
@@ -155,7 +161,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 # print(trainalbe_vars.keys())
                 if params.loss_fn != 'retrain_regu':
                     cnn_vars=[v for v in tf.trainable_variables() if 'model/cnn' in v.name]
-                    n_cnn_vars=[v for v in tf.trainable_variables() if 'model/n_cnn' in v.name]
+                    n_cnn_vars=[v for v in tf.trainable_variables() if 'model/c_cnn' in v.name]
                     update_weights = [tf.assign(new, old) for (new, old) in \
                     zip(cnn_vars, n_cnn_vars)]                
                 best_save_path = os.path.join(model_dir, 'best_weights', 'after-epoch')

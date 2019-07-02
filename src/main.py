@@ -68,7 +68,7 @@ if __name__ == '__main__':
     last_global_epoch, global_epoch = 0, 0
     if params.num_learners <= 1:# not args.retrain or args.combine:
         if args.combine:
-            # args.restore_dir = 'best_weights'
+            # train from scratch
             path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
             # Create the input data pipeline

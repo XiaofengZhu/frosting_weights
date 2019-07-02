@@ -9,8 +9,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from matplotlib import pyplot
 import os
 import functools
-# from keras import backend as K
-# K.set_image_dim_ordering('th')
 import time
 
 #################
@@ -59,8 +57,6 @@ def lenet(X, params=None, var_scope='cnn'):
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
             fc1b = tf.get_variable('biases3_1', shape=[1024], \
                 initializer=tf.constant_initializer(1.0))
-            # pool2_flat = tf.reshape(pool2_1_drop, [-1, 7*7*64])
-            # pool2_flat = tf.Print(pool2_flat, [tf.shape(pool2_flat)], 'pool2_flat \n')
             out = tf.nn.bias_add(tf.matmul(pool2_flat, fc1w), fc1b)
             fc1 = tf.nn.relu(out)
             fc1_drop = tf.nn.dropout(fc1, params.training_keep_prob)
@@ -71,12 +67,10 @@ def lenet(X, params=None, var_scope='cnn'):
             fc2b = tf.get_variable('biases3_2', shape=[params.num_classes], \
                 initializer=tf.constant_initializer(1.0))
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
-    #         Y = tf.nn.softmax(Ylogits)
-    # return Y, params.training_keep_prob
     return Ylogits, pool2_flat
 
-def retrain_regu_lenet(X, params=None, var_scope='n_cnn'):
-    trainable = var_scope=='n_cnn' 
+def retrain_regu_lenet(X, params=None, var_scope='cnn'):
+    trainable = var_scope=='cnn'
     neurons = []
     weights = []
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
@@ -143,7 +137,7 @@ def retrain_regu_lenet(X, params=None, var_scope='n_cnn'):
             neurons.append(Ylogits)
     return Ylogits, (neurons, weights)
 
-def build_residual_model(is_training, inputs, params, weak_learner_id):
+def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
         mode: (string) 'train', 'eval', etc.
@@ -155,31 +149,31 @@ def build_residual_model(is_training, inputs, params, weak_learner_id):
     Notice:
         !!! boosting is only supported for cnn and urrank
     """
+    is_test = (mode == 'test')
     mse_loss = tf.constant(0.0, dtype=tf.float32)
     # MLP netowork for residuals
     features = inputs['features']
     if params.loss_fn == 'boost':
-        predicted_scores, fc1_drop = lenet(features, params)
-        fc1_drop = tf.stop_gradient(fc1_drop)
+        predicted_scores, _ = lenet(features, params, var_scope='c_cnn')
     else:
         logging.error('Loss function not supported for boosting')
         sys.exit(1)
     if weak_learner_id >= 1:
-        for trained_learner_id in range(1, weak_learner_id):
-            n_predicted_scores, _ = lenet(features, params, var_scope='cnn'+str(trained_learner_id))
-            predicted_scores += n_predicted_scores
+        # only one weak learner for now, weak_learner_id==1
+        # for trained_learner_id in range(1, weak_learner_id):
+        #     n_predicted_scores, _ = lenet(features, params, var_scope='c_cnn'+str(trained_learner_id))
+        #     predicted_scores += n_predicted_scores
         predicted_scores = tf.stop_gradient(predicted_scores)
         residual_predicted_scores, _ = lenet(features, params, var_scope='n_cnn')
         # boosted_scores = predicted_scores + 1/math.sqrt(weak_learner_id) * residual_predicted_scores
         boosted_scores = predicted_scores + residual_predicted_scores
     else:
         boosted_scores = predicted_scores
-    if not is_training:
-        return boosted_scores, mse_loss
-    if weak_learner_id >= 1:
-        labels = inputs['labels']
-        residuals = get_residual(labels, predicted_scores)
-        mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
+    if is_test:
+        return boosted_scores, None
+    labels = inputs['labels']
+    residuals = get_residual(labels, predicted_scores)
+    mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
     return boosted_scores, mse_loss
 
 # new weights for fc1_drop
@@ -298,7 +292,7 @@ def _get_mlp_logits(features, params):
 
 def get_residual(labels, Ylogits):
     Ysoftmax = tf.nn.softmax(Ylogits)
-    return Ysoftmax - labels
+    return labels - Ysoftmax
 
 def build_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model
@@ -317,8 +311,8 @@ def build_model(mode, inputs, params, weak_learner_id):
     features = inputs['features']
     if params.loss_fn=='retrain_regu':
         if not is_test:
-            _, (old_neurons, old_weights) = retrain_regu_lenet(features, params, var_scope='cnn')
-            y_conv, (neurons, weights) = retrain_regu_lenet(features, params, var_scope='n_cnn')
+            _, (old_neurons, old_weights) = retrain_regu_lenet(features, params, var_scope='c_cnn')
+            y_conv, (neurons, weights) = retrain_regu_lenet(features, params, var_scope='cnn')
             neuron_mse_list = [tf.losses.mean_squared_error(old_neuron, neuron) for (old_neuron, neuron) \
             in zip(old_neurons, neurons)]
             neuron_mses = functools.reduce(lambda x,y:x+y, neuron_mse_list)
@@ -328,13 +322,13 @@ def build_model(mode, inputs, params, weak_learner_id):
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list)
             regulization_loss = 0.001 * neuron_mses + 0.001 * var_mses               
             return y_conv, regulization_loss
-        return retrain_regu_lenet(features, params, var_scope='n_cnn')
+        return retrain_regu_lenet(features, params, var_scope='cnn')
     if params.use_residual:
         return build_residual_model(mode, inputs, \
             params, weak_learner_id)
     # default cnn
     y_conv, _ = lenet(features, params, var_scope='cnn')
-    _, _ = lenet(features, params, var_scope='n_cnn')
+    _, _ = lenet(features, params, var_scope='c_cnn')
     return y_conv, None
 
 def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):

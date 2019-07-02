@@ -158,7 +158,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         residuals = get_residual(labels, predicted_scores)
         inputs['old_predicted_scores'] = predicted_scores
         # inputs['old_predicted_scores'] = tf.stop_gradient(inputs['old_predicted_scores'])
-        inputs['residuals'] = 3*residuals
+        inputs['residuals'] = residuals
         # inputs['residuals'] = tf.stop_gradient(inputs['residuals'])
 
     residual_predicted_scores, _ = retrain_regu_lenet(features, params, var_scope='cnn')

@@ -12,6 +12,7 @@ from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoi
 
 from model.utils import save_dict_to_json, load_best_metric, get_expaned_metrics
 from model.evaluation import evaluate_sess
+from model.modeling import retrain_regu_lenet, get_residual
 import tensorflow.contrib.slim as slim
 
 def train_sess(sess, model_spec, num_steps, writer, params):
@@ -157,12 +158,33 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 # Save weights
                 # trainalbe_vars = {v.name: v for v in tf.trainable_variables() if 'model' in v.name}
                 # print(trainalbe_vars.keys())
-                if params.loss_fn == 'cnn':
+                if params.loss_fn != 'retrain_regu':
                     cnn_vars=[v for v in tf.trainable_variables() if 'model/cnn' in v.name]
                     c_cnn_vars=[v for v in tf.trainable_variables() if 'model/c_cnn' in v.name]
                     update_weights = [tf.assign(c, old) for (c, old) in \
                     zip(c_cnn_vars, cnn_vars)]
                     sess.run(update_weights)
+                if params.loss_fn == 'boost':
+                    features = train_model_spec['features']
+                    labels = train_model_spec['labels']
+                    predicted_scores, _ = retrain_regu_lenet(features, params, var_scope='model/c_cnn')
+                    residuals = get_residual(labels, predicted_scores)
+                    train_model_spec['old_predicted_scores'] = predicted_scores
+                    train_model_spec['residuals'] = residuals
+
+                    features = eval_model_spec['features']
+                    labels = eval_model_spec['labels']
+                    predicted_scores, _ = retrain_regu_lenet(features, params, var_scope='model/c_cnn')
+                    residuals = get_residual(labels, predicted_scores)
+                    eval_model_spec['old_predicted_scores'] = predicted_scores
+                    eval_model_spec['residuals'] = residuals
+                    
+                    sess.run(train_model_spec['old_predicted_scores'])
+                    sess.run(train_model_spec['residuals'])
+
+                    sess.run(eval_model_spec['old_predicted_scores'])
+                    sess.run(eval_model_spec['residuals'])
+
                 best_save_path = os.path.join(model_dir, 'best_weights', 'after-epoch')
                 # global_epoch = int(params.num_learners) * int(params.num_epochs) + epoch + 1
                 best_save_path = best_saver.save(sess, best_save_path, global_step=global_epoch)

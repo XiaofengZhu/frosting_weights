@@ -174,14 +174,14 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
 
                     features = train_model_spec['features']
                     labels = train_model_spec['labels']
-                    predicted_scores, _ = retrain_regu_lenet(features, params, var_scope='model/c_cnn')
+                    predicted_scores, _ = retrain_lenet(features, params, var_scope='model/c_cnn')
                     residuals = get_residual(labels, predicted_scores)
                     train_model_spec['old_predicted_scores'] = predicted_scores
                     train_model_spec['residuals'] = residuals
 
                     features = eval_model_spec['features']
                     labels = eval_model_spec['labels']
-                    predicted_scores, _ = retrain_regu_lenet(features, params, var_scope='model/c_cnn')
+                    predicted_scores, _ = retrain_lenet(features, params, var_scope='model/c_cnn')
                     residuals = get_residual(labels, predicted_scores)
                     eval_model_spec['old_predicted_scores'] = predicted_scores
                     eval_model_spec['residuals'] = residuals

@@ -328,7 +328,7 @@ def build_model(mode, inputs, params, weak_learner_id):
         !!! when using the build_model mdprank needs a learning_rate around 1e-5 - 1e-7
     """
     is_training = (mode == 'train')
-    is_test = (mode == 'test')    
+    is_test = (mode == 'test') 
     features = inputs['features']
     if params.loss_fn=='retrain_regu':
         if not is_test:
@@ -341,12 +341,14 @@ def build_model(mode, inputs, params, weak_learner_id):
             var_mse_list = [tf.losses.mean_squared_error(old_var, var) for (old_var, var) \
             in zip(old_weights, weights)]
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list)
-            regulization_loss = 0.001 * neuron_mses + 0.001 * var_mses               
+            regulization_loss = 0.001 * neuron_mses + 0.001 * var_mses            
             return y_conv, regulization_loss
         return retrain_lenet(features, params, var_scope='cnn')
     if params.use_residual:
-        return build_residual_model(mode, inputs, \
-            params, weak_learner_id)
+        y_conv, (neurons, weights) = retrain_lenet(features, params, var_scope='cnn')
+        return y_conv, None
+        # return build_residual_model(mode, inputs, \
+        #     params, weak_learner_id)
     # default cnn
     y_conv, _ = lenet(features, params, var_scope='cnn')
     _, _ = lenet(features, params, var_scope='c_cnn')

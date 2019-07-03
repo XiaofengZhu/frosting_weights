@@ -345,10 +345,10 @@ def build_model(mode, inputs, params, weak_learner_id):
             return y_conv, regulization_loss
         return retrain_lenet(features, params, var_scope='cnn')
     if params.use_residual:
-        y_conv, (neurons, weights) = retrain_lenet(features, params, var_scope='cnn')
-        return y_conv, None
-        # return build_residual_model(mode, inputs, \
-        #     params, weak_learner_id)
+        # y_conv, (neurons, weights) = retrain_lenet(features, params, var_scope='cnn')
+        # return y_conv, None
+        return build_residual_model(mode, inputs, \
+            params, weak_learner_id)
     # default cnn
     y_conv, _ = lenet(features, params, var_scope='cnn')
     _, _ = lenet(features, params, var_scope='c_cnn')
@@ -446,7 +446,7 @@ def get_loss(predicted_scores, labels,
     def _cnn():
         cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=labels,
                                                         logits=predicted_scores)
-        loss = tf.reduce_mean(cross_entropy)   
+        loss = tf.reduce_mean(cross_entropy)
         return loss
     def _boost():
         return calcualted_loss

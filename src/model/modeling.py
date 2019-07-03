@@ -195,7 +195,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     # # residuals = tf.Print(residuals, [residuals], message='residuals\n')
     # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], message='residual_predicted_scores\n')
     # mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
-    return residual_predicted_scores, mse_loss
+    return boosted_scores, mse_loss
 
 # new weights for fc1_drop
 # def build_residual_model(is_training, inputs, params, weak_learner_id):
@@ -455,7 +455,7 @@ def get_loss(predicted_scores, labels,
 
     options = {
             'cnn': _cnn,
-            'boost': _cnn,
+            'boost': _boost,
             'retrain_regu': _retrain_regu
     }
     loss_function_str = params.loss_fn

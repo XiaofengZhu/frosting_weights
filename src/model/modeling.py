@@ -160,8 +160,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
     #     message='residual_predicted_scores\n')
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
-    if is_test:
-        return boosted_scores, None
+    return boosted_scores, None
 '''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
@@ -481,7 +480,7 @@ def get_loss(predicted_scores, labels,
 
     options = {
             'cnn': _cnn,
-            'boost': _boost,
+            'boost': _cnn,
             'retrain_regu': _retrain_regu
     }
     loss_function_str = params.loss_fn

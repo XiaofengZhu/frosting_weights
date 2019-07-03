@@ -164,6 +164,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                     update_weights = [tf.assign(c, old) for (c, old) in \
                     zip(c_cnn_vars, cnn_vars)]
                     sess.run(update_weights)
+                '''
                 if params.loss_fn == 'boost':
 
                     cnn_vars=[v for v in tf.trainable_variables() if 'model/cnn' in v.name]
@@ -191,7 +192,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
 
                     sess.run(eval_model_spec['old_predicted_scores'])
                     sess.run(eval_model_spec['residuals'])
-
+                '''
                 best_save_path = os.path.join(model_dir, 'best_weights', 'after-epoch')
                 # global_epoch = int(params.num_learners) * int(params.num_epochs) + epoch + 1
                 best_save_path = best_saver.save(sess, best_save_path, global_step=global_epoch)

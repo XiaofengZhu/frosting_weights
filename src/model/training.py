@@ -12,7 +12,7 @@ from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoi
 
 from model.utils import save_dict_to_json, load_best_metric, get_expaned_metrics
 from model.evaluation import evaluate_sess
-from model.modeling import retrain_regu_lenet, get_residual
+from model.modeling import retrain_lenet, get_residual
 import tensorflow.contrib.slim as slim
 
 def train_sess(sess, model_spec, num_steps, writer, params):

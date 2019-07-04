@@ -151,16 +151,21 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     """
     is_test = (mode == 'test')
     features = inputs['features']
-    if 'residuals' not in inputs:
+    if 'old_predicted_scores' not in inputs:
         logging.error('residuals not in inputs')
         labels = inputs['labels']
         predicted_scores, _ = retrain_lenet(features, params, var_scope='c_cnn')
         inputs['old_predicted_scores'] = predicted_scores
+        residuals = get_residual(labels, predicted_scores)
+        inputs['residuals'] = residuals        
     residual_predicted_scores, _ = retrain_lenet(features, params, var_scope='cnn')
     # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
     #     message='residual_predicted_scores\n')
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
-    return boosted_scores, None
+    cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=labels,
+                                                    logits=inputs['old_predicted_scores']+inputs['residuals'])
+    calculated_loss = tf.reduce_mean(cross_entropy)    
+    return boosted_scores, calculated_loss
 '''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
@@ -480,7 +485,7 @@ def get_loss(predicted_scores, labels,
 
     options = {
             'cnn': _cnn,
-            'boost': _cnn,
+            'boost': _boost,
             'retrain_regu': _retrain_regu
     }
     loss_function_str = params.loss_fn

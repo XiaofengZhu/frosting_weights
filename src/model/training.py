@@ -108,7 +108,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             logging.info("Restoring parameters from {}".format(save_path))
             # last_saver = tf.train.import_meta_graph(save_path+".meta")
             pretrained_include = ['model/c_cnn']
-            # pretrained_include.append('model/cnn')
+            pretrained_include.append('model/cnn')
             # if params.loss_fn=='boost':
             #     pretrained_include = ['model/boost']
             # for i in range(1, learner_id):

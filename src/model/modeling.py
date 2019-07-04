@@ -156,6 +156,31 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         labels = inputs['labels']
         predicted_scores, _ = retrain_lenet(features, params, var_scope='c_cnn')
         inputs['old_predicted_scores'] = predicted_scores
+    residual_predicted_scores, _ = retrain_lenet(features, params, var_scope='cnn')
+    # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
+    #     message='residual_predicted_scores\n')
+    boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
+    return boosted_scores, mse_loss
+'''
+def build_residual_model(mode, inputs, params, weak_learner_id):
+    """Compute logits of the model (output distribution)
+    Args:
+        mode: (string) 'train', 'eval', etc.
+        inputs: (dict) contains the inputs of the graph (features, residuals...)
+                this can be `tf.placeholder` or outputs of `tf.data`
+        params: (Params) contains hyperparameters of the model (ex: `params.learning_rate`)
+    Returns:
+        output: (tf.Tensor) output of the model
+    Notice:
+        !!! boosting is only supported for cnn and urrank
+    """
+    is_test = (mode == 'test')
+    features = inputs['features']
+    if 'old_predicted_scores' not in inputs:
+        logging.error('residuals not in inputs')
+        labels = inputs['labels']
+        predicted_scores, _ = retrain_lenet(features, params, var_scope='c_cnn')
+        inputs['old_predicted_scores'] = predicted_scores
         residuals = 100 * get_residual(labels, predicted_scores)
         inputs['residuals'] = residuals
     residual_predicted_scores, _ = retrain_lenet(features, params, var_scope='cnn')
@@ -169,7 +194,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
     # inputs['old_predicted_scores']+inputs['residuals']
     return boosted_scores, mse_loss
-'''
+
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:

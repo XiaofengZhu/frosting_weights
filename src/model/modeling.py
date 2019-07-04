@@ -164,8 +164,10 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=labels,
                                                     logits=inputs['old_predicted_scores']+inputs['residuals'])
-    calculated_loss = tf.reduce_mean(cross_entropy)    
-    return boosted_scores, calculated_loss
+    calculated_loss = tf.reduce_mean(cross_entropy)
+    inputs['calculated_loss'] = calculated_loss
+    mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
+    return inputs['old_predicted_scores']+inputs['residuals'], mse_loss
 '''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
@@ -428,6 +430,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
             correct_prediction = tf.equal(argmax_predictions, argmax_labels)
             correct_prediction = tf.cast(correct_prediction, tf.float32)
             accuracy = tf.reduce_mean(correct_prediction)
+
             # accuracy_per_class = tf.metrics.mean_per_class_accuracy(labels, predictions, \
             #     params.num_classes)
     # -----------------------------------------------------------
@@ -438,11 +441,12 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
             'accuracy': tf.metrics.mean(accuracy),
             # 'accuracy_pc': accuracy_per_class
         }
-        tf.summary.scalar('accuracy', accuracy)  
+        tf.summary.scalar('accuracy', accuracy)
         if not is_test:
             # Summaries for training and validation
             metrics['loss'] = tf.metrics.mean(loss)
-            tf.summary.scalar('loss', loss)      
+            # metrics['calculated_loss'] = tf.reduce_mean(inputs['calculated_loss'])
+            tf.summary.scalar('loss', loss)
          
     # Group the update ops for the tf.metrics
     update_metrics_op = tf.group(*[op for _, op in metrics.values()])

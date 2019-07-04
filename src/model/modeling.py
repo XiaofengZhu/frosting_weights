@@ -167,7 +167,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     calculated_loss = tf.reduce_mean(cross_entropy)
     inputs['calculated_loss'] = calculated_loss
     mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
-    return inputs['old_predicted_scores']+inputs['residuals'], mse_loss
+    return inputs['old_predicted_scores']+10*inputs['residuals'], mse_loss
 '''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)

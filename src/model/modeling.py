@@ -323,7 +323,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     # MLP netowork for residuals
     features = inputs['features']
     if params.loss_fn == 'boost':
-        predicted_scores, pool2_flat = lenet(features, params)
+        predicted_scores, pool2_flat = lenet(features, params, var_scope='c_cnn')
     else:
         logging.error('Loss function not supported for boosting')
         sys.exit(1)

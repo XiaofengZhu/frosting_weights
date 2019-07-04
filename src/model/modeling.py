@@ -156,7 +156,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         labels = inputs['labels']
         predicted_scores, _ = retrain_lenet(features, params, var_scope='c_cnn')
         inputs['old_predicted_scores'] = predicted_scores
-        residuals = get_residual(labels, predicted_scores)
+        residuals = 10 * get_residual(labels, predicted_scores)
         inputs['residuals'] = residuals        
     residual_predicted_scores, _ = retrain_lenet(features, params, var_scope='cnn')
     # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
@@ -167,7 +167,8 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     calculated_loss = tf.reduce_mean(cross_entropy)
     inputs['calculated_loss'] = calculated_loss
     mse_loss = tf.losses.mean_squared_error(residuals, residual_predicted_scores)
-    return inputs['old_predicted_scores']+10*inputs['residuals'], mse_loss
+    # inputs['old_predicted_scores']+10*inputs['residuals']
+    return boosted_scores, mse_loss
 '''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)

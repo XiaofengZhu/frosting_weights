@@ -81,7 +81,7 @@ if __name__ == '__main__':
             eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))
         elif args.finetune:
             args.restore_dir = 'best_weights'
-            path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range))
+            path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range)+ args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)
             # path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*' + args.tfrecords_filename)
             # path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)

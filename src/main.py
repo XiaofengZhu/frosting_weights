@@ -48,7 +48,7 @@ parser.add_argument('--finetune', default=False, type=lambda x: (str(x).lower() 
 if __name__ == '__main__':
     # Train the model
     # log time
-    start_time = time.time()
+    
     tf.reset_default_graph()
     # Set the random seed for the whole graph for reproductible experiments
     tf.set_random_seed(230)
@@ -110,6 +110,7 @@ if __name__ == '__main__':
         logging.info("- done.")
 
         logging.info("Starting training for at most {} epoch(s) for the initial learner".format(params.num_epochs))
+        start_time = time.time()
         global_epoch = train_and_evaluate(train_model_spec, eval_model_spec, args.model_dir, params, \
             learner_id=0, restore_from=args.restore_dir)
         logging.info("global_epoch: {} epoch(s) at learner 0".format(global_epoch))

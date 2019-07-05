@@ -21,3 +21,5 @@ result
 src/experiments_*
 temp/
 temp.py
+modeling_*.py
+*.ipynb

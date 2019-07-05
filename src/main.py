@@ -22,10 +22,10 @@ parser.add_argument('--model_dir', default='experiments/base_model',
                     help="Directory containing params.json")
 # loss functions
 # cnn, boost, retrain_regu
-parser.add_argument('--loss_fn', default='boost', help="model loss function")
+parser.add_argument('--loss_fn', default='cnn', help="model loss function")
 # tf data folder for
 # mnist
-parser.add_argument('--data_dir', default='../data/mnist2',
+parser.add_argument('--data_dir', default='../data/mnist',
                     help="Directory containing the dataset")
 # test.tfrecords
 parser.add_argument('--tfrecords_filename', default='.tfrecords',
@@ -79,10 +79,10 @@ if __name__ == '__main__':
             eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))
         elif args.finetune:
             args.restore_dir = 'best_weights'
-            path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
-            path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)            
-            # path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*' + args.tfrecords_filename)
-            # path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)
+            # path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
+            # path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)
+            path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*' + args.tfrecords_filename)
+            path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)
             # Create the input data pipeline
             logging.info("Creating the datasets...")
             train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))

@@ -2,7 +2,7 @@
     "num_classes": 10,
     "learning_rate": 1e-4,
     "batch_size": 128,
-    "num_epochs": 10,
+    "num_epochs": 1000,
     "buffer_size": 128,
     "save_summary_steps": 100,
     "early_stoping_epochs": 100,

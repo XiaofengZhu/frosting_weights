@@ -160,7 +160,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
     #     message='residual_predicted_scores\n')
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
-    return inputs['old_predicted_scores'], None
+    return boosted_scores, None
 
 def get_residual(labels, Ylogits):
     Ysoftmax = tf.nn.softmax(Ylogits)
@@ -242,7 +242,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                 train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)
         
         with tf.name_scope('accuracy'):
-            argmax_predictions = tf.argmax(predictions, 1)
+            argmax_predictions = tf.argmax(inputs['old_predicted_scores'], 1)
             argmax_labels = tf.argmax(labels, 1)
             correct_prediction = tf.equal(argmax_predictions, argmax_labels)
             correct_prediction = tf.cast(correct_prediction, tf.float32)

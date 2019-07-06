@@ -121,6 +121,7 @@ if __name__ == '__main__':
         #########################################################
         logging.info("RETRAINING ~~")
         params.dict['training_keep_prob'] = 1.0
+        start_time = time.time()
         for learner_id in range(1, params.num_learners):
             # tf.reset_default_graph()
             # tf.set_random_seed(230)

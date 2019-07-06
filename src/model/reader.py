@@ -71,7 +71,7 @@ def input_fn(mode, dataset, params):
     labels = tf.one_hot(labels, params.num_classes)
     if params.loss_fn == 'boost':
         predicted_scores, _ = retrain_lenet(features, params, var_scope='c_cnn')
-        predicted_scores = tf.stop_gradients(predicted_scores)
+        predicted_scores = tf.stop_gradient(predicted_scores)
         # iterator_init_op = iterator.initializer
         inputs = {
             # 'iterator_init_op': iterator_init_op,

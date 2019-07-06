@@ -129,7 +129,7 @@ if __name__ == '__main__':
             # Create the input data pipeline
             logging.info("Creating the datasets...")
             train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
-            eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))
+            eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
             # Specify other parameters for the dataset and the model
             # Create the two iterators over the two datasets
             train_inputs = input_fn('train', train_dataset, params)

@@ -73,7 +73,7 @@ if __name__ == '__main__':
     if params.num_learners <= 1:# not args.retrain or args.combine:
         if args.combine:
             # train from scratch
-            path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range))
+            path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range) + args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)
             # Create the input data pipeline
             logging.info("Creating the datasets...")
@@ -124,7 +124,7 @@ if __name__ == '__main__':
         for learner_id in range(1, params.num_learners):
             # tf.reset_default_graph()
             # tf.set_random_seed(230)
-            path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range))
+            path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range) + args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)
             # Create the input data pipeline
             logging.info("Creating the datasets...")

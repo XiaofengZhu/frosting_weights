@@ -454,7 +454,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                 with tf.name_scope('kfac_optimizer'):
                     # Register loss.
                     layer_collection = kfac.LayerCollection()
-                    layer_collection.register_softmax_cross_entropy_loss(predictions)
+                    layer_collection.register_softmax_cross_entropy_loss(predictions, reuse=False)
                     # Register layers.
                     layer_collection.auto_register_layers()
                     # Construct training ops.

@@ -10,6 +10,7 @@ from matplotlib import pyplot
 import os
 import functools
 import time
+import kfac
 
 #################
 def lenet2(X, params=None, var_scope='cnn2'):
@@ -449,6 +450,16 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     reg_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
                     loss += tf.reduce_sum(reg_losses)            
         if is_training:
+            if params.use_kfac:
+                with tf.name_scope('kfac_optimizer'):
+                    # Register loss.
+                    layer_collection = kfac.LayerCollection()
+                    layer_collection.register_softmax_cross_entropy_loss(loss)
+                    # Register layers.
+                    layer_collection.auto_register_layers()
+                    # Construct training ops.
+                    optimizer = kfac.PeriodicInvCovUpdateOptimizer(params.learning_rate, layer_collection=layer_collection)
+                    train_op = optimizer.minimize(loss)         
             with tf.name_scope('adam_optimizer'):
                 global_step = tf.train.get_or_create_global_step()
                 optimizer = tf.train.AdamOptimizer(params.learning_rate)

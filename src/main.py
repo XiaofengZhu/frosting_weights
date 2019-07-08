@@ -44,6 +44,8 @@ parser.add_argument('--combine', default=False, type=lambda x: (str(x).lower() i
     help="try on augmented test dataset")
 parser.add_argument('--finetune', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
     help="try on augmented test dataset")
+parser.add_argument('--use_kfac', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
+    help="usek fac true gradient")
 
 if __name__ == '__main__':
     # Train the model

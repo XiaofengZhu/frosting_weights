@@ -345,7 +345,7 @@ def build_model(mode, inputs, params, weak_learner_id):
     if params.loss_fn=='retrain_regu_fisher':
         if not is_test:
             _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_fisher(features, params, var_scope='c_cnn')
-            y_conv, (neurons, weights) = retrain_lenet_fisher(features, params, var_scope='cnn')
+            y_conv, (neurons, weights), _ = retrain_lenet_fisher(features, params, var_scope='cnn')
             neuron_mse_list = [tf.losses.mean_squared_error(old_neuron, neuron) for (old_neuron, neuron) \
             in zip(old_neurons, neurons)]
             neuron_mse_list = [g*g*n for (g, n) in zip(gradients_o_n, neuron_mse_list)]

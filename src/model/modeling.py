@@ -285,10 +285,11 @@ def retrain_lenet_fisher(X, params=None, var_scope='cnn'):
             for n in neurons:
                 gradients_n.append(tf.gradients(loss, n))
         else:
+            l2_Ylogits = tf.nn.l2_loss(Ylogits)
             for w in weights:
-                gradients_w.append(tf.gradients(Ylogits, w))
+                gradients_w.append(tf.gradients(l2_Ylogits, w))
             for n in neurons:
-                gradients_n.append(tf.gradients(Ylogits, n))          
+                gradients_n.append(tf.gradients(l2_Ylogits, n))          
     return Ylogits, (neurons, weights), (gradients_n, gradients_w)
 
 def build_residual_model(mode, inputs, params, weak_learner_id):

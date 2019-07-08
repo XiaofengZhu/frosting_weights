@@ -72,7 +72,7 @@ def lenet2(X, params=None, var_scope='cnn2'):
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
             b_conv3 = tf.get_variable('biases3', shape=[params.num_classes], \
                 initializer=tf.constant_initializer(1.0))
-            h_conv3 = tf.nn.relu(conv2d(pool2_1_drop, W_conv3) + b_conv3)      
+            h_conv3 = tf.nn.relu(tf.nn.conv2d(pool2_1_drop, W_conv3) + b_conv3)      
         with tf.name_scope('sum'):
             batch_size, pool_output_h, pool_output_w, filter_n = [d.value for d in h_conv3.get_shape()]
             h_conv3_flat = tf.reshape(h_conv3, [-1, pool_output_h * pool_output_w, filter_n])

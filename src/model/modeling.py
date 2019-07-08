@@ -151,7 +151,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     """
     is_test = (mode == 'test')
     features = inputs['features']
-    if 'old_predicted_scores' not in inputs:
+    if 'old_predicted_scores' not in inputs or 'residuals' not in inputs:
         logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']
         predicted_scores, _ = lenet(features, params, var_scope='c_cnn')
@@ -314,7 +314,7 @@ def get_loss(predicted_scores, labels,
 
     options = {
             'cnn': _cnn,
-            'boost': calcualted_loss,
+            'boost': _cnn,
             'retrain_regu': _retrain_regu
     }
     loss_function_str = params.loss_fn

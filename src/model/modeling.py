@@ -206,7 +206,7 @@ def retrain_lenet(X, params=None, var_scope='cnn'):
             neurons.append(Ylogits)
     return Ylogits, (neurons, weights)
 
-def retrain_lenet_fisher(X, params=None, var_scope='cnn'):
+def retrain_lenet_fisher(inputs, params=None, var_scope='cnn'):
     X = inputs['features']
     labels = inputs['labels']
     trainable = var_scope=='cnn'

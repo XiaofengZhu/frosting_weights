@@ -158,12 +158,13 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         predicted_scores = tf.stop_gradient(predicted_scores)
         inputs['old_predicted_scores'] = predicted_scores
         residuals = get_residual(labels, predicted_scores)
-        inputs['residuals'] = residuals        
+        inputs['residuals'] = residuals
     residual_predicted_scores, _ = lenet(features, params, var_scope='cnn')
+    mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
     # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
     #     message='residual_predicted_scores\n')
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
-    return boosted_scores, None
+    return boosted_scores, mse_loss
 
 def get_residual(labels, Ylogits):
     Ysoftmax = tf.nn.softmax(Ylogits)
@@ -314,7 +315,7 @@ def get_loss(predicted_scores, labels,
 
     options = {
             'cnn': _cnn,
-            'boost': _cnn,
+            'boost': calcualted_loss,
             'retrain_regu': _retrain_regu
     }
     loss_function_str = params.loss_fn

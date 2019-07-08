@@ -34,10 +34,10 @@ def lenet2(X, params=None, var_scope='cnn2'):
             pool1_1_drop = tf.nn.dropout(pool1_1, params.training_keep_prob)
         # CONVOLUTION 1 - 2
         with tf.name_scope('conv1_2'):
-            filter1_2 = tf.get_variable('weights1_2', shape=[5, 5, 2, 1], \
+            filter1_2 = tf.get_variable('weights1_2', shape=[5, 5, 2, 2], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
             conv = tf.nn.conv2d(pool1_1_drop, filter1_2, [1,1,1,1], padding='SAME')
-            biases = tf.get_variable('biases1_2', shape=[1], \
+            biases = tf.get_variable('biases1_2', shape=[2], \
                 initializer=tf.constant_initializer(0.0))
             out = tf.nn.bias_add(conv, biases)
             conv1_2 = tf.nn.relu(out)

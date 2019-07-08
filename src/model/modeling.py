@@ -155,7 +155,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']
         predicted_scores, _ = lenet(features, params, var_scope='c_cnn')
-        # predicted_scores = tf.stop_gradient(predicted_scores)
+        predicted_scores = tf.stop_gradient(predicted_scores)
         inputs['old_predicted_scores'] = predicted_scores
     residual_predicted_scores, _ = retrain_lenet(features, params, var_scope='cnn')
     # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \

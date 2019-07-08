@@ -210,7 +210,8 @@ def retrain_lenet_fisher(X, params=None, var_scope='cnn'):
     trainable = var_scope=='cnn'
     neurons = []
     weights = []
-    gradients = []
+    gradients_w = []
+    gradients_n = []
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
         # CONVOLUTION 1 - 1
         with tf.name_scope('conv1_1'):
@@ -274,8 +275,10 @@ def retrain_lenet_fisher(X, params=None, var_scope='cnn'):
             weights.extend([fc2w, fc2b])
             neurons.append(Ylogits)
             for w in weights:
-                gradients.append(tf.gradients(Ylogits, w))
-    return Ylogits, (neurons, weights)
+                gradients_w.append(tf.gradients(Ylogits, w))
+            for n in neurons:
+                gradients_n.append(tf.gradients(Ylogits, n))           
+    return Ylogits, (neurons, weights), gradients_w
 
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)

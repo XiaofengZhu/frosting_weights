@@ -68,11 +68,13 @@ def lenet2(X, params=None, var_scope='cnn2'):
         #         initializer=tf.constant_initializer(1.0))
         #     Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
         with tf.name_scope('conv3'):
-            W_conv3 = tf.get_variable('weights3', shape=[1, 1, 2, params.num_classes], \
+            filter1_3 = tf.get_variable('weights3', shape=[1, 1, 2, params.num_classes], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
-            b_conv3 = tf.get_variable('biases3', shape=[params.num_classes], \
+            biases3 = tf.get_variable('biases3', shape=[params.num_classes], \
                 initializer=tf.constant_initializer(1.0))
-            h_conv3 = tf.nn.relu(tf.nn.conv2d(pool2_1_drop, W_conv3) + b_conv3)      
+            conv = tf.nn.conv2d(pool2_1_drop, filter1_3, [1,1,1,1], padding='SAME')
+            out = tf.nn.bias_add(conv, biases3)
+            h_conv3 = tf.nn.relu(out)
         with tf.name_scope('sum'):
             batch_size, pool_output_h, pool_output_w, filter_n = [d.value for d in h_conv3.get_shape()]
             h_conv3_flat = tf.reshape(h_conv3, [-1, pool_output_h * pool_output_w, filter_n])

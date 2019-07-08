@@ -155,7 +155,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']
         predicted_scores, _ = retrain_lenet(features, params, var_scope='c_cnn')
-        # predicted_scores = tf.stop_gradient(predicted_scores)
+        predicted_scores = tf.stop_gradient(predicted_scores)
         inputs['old_predicted_scores'] = predicted_scores
     residual_predicted_scores, _ = retrain_lenet(features, params, var_scope='cnn')
     # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
@@ -243,11 +243,11 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                 train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)
         
         with tf.name_scope('accuracy'):
-            argmax_predictions = tf.argmax(predictions, 1)
-            # if params.loss_fn == 'boost':
-            #     argmax_predictions = tf.argmax(inputs['old_predicted_scores'], 1)
-            # else:
-            #     argmax_predictions = tf.argmax(predictions, 1)
+            # argmax_predictions = tf.argmax(predictions, 1)
+            if params.loss_fn == 'boost':
+                argmax_predictions = tf.argmax(inputs['old_predicted_scores'], 1)
+            else:
+                argmax_predictions = tf.argmax(predictions, 1)
             argmax_labels = tf.argmax(labels, 1)
             correct_prediction = tf.equal(argmax_predictions, argmax_labels)
             correct_prediction = tf.cast(correct_prediction, tf.float32)

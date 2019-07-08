@@ -248,7 +248,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
         with tf.name_scope('accuracy'):
             # argmax_predictions = tf.argmax(predictions, 1)
             if params.loss_fn == 'boost':
-                argmax_predictions = tf.argmax(inputs['old_predicted_scores']+10*inputs['residuals'], 1)
+                argmax_predictions = tf.argmax(inputs['old_predicted_scores']+inputs['residuals'], 1)
             else:
                 argmax_predictions = tf.argmax(predictions, 1)
             argmax_labels = tf.argmax(labels, 1)

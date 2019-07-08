@@ -281,9 +281,9 @@ def retrain_lenet_fisher(inputs, params=None, var_scope='cnn'):
                                                             logits=Ylogits)
             loss = tf.reduce_mean(cross_entropy)
             for w in weights:
-                gradients_w.append(tf.gradients(loss, w))
+                gradients_w.append(tf.math.square(tf.gradients(loss, w)))
             for n in neurons:
-                gradients_n.append(tf.gradients(loss, n))
+                gradients_n.append(tf.math.square(tf.gradients(loss, n)))
         else:#retrain_regu_mas
             l2_Ylogits = tf.nn.l2_loss(Ylogits)
             for w in weights:
@@ -309,7 +309,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     if 'old_predicted_scores' not in inputs or 'residuals' not in inputs:
         logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']
-        predicted_scores, _ = retrain_lenet_fisher(inputs, params, var_scope='c_cnn')
+        predicted_scores, _ = lenet(inputs, params, var_scope='c_cnn')
         predicted_scores = tf.stop_gradient(predicted_scores)
         inputs['old_predicted_scores'] = predicted_scores
         residuals = get_residual(labels, predicted_scores)
@@ -360,12 +360,12 @@ def build_model(mode, inputs, params, weak_learner_id):
             y_conv, (neurons, weights), _ = retrain_lenet_fisher(inputs, params, var_scope='cnn')
             neuron_mse_list = [(old_neuron - neuron) * (old_neuron - neuron) for (old_neuron, neuron) \
             in zip(old_neurons, neurons)]
-            neuron_mse_list = [tf.reduce_sum(g*g*n) for (g, n) in zip(gradients_o_n, neuron_mse_list)]
+            neuron_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_n, neuron_mse_list)]
             neuron_mses = functools.reduce(lambda x,y:x+y, neuron_mse_list)
             # weight regulization
             var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
             in zip(old_weights, weights)]
-            var_mse_list = [tf.reduce_sum(g*g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
+            var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list)
             regulization_loss = 0.001 * neuron_mses + 0.001 * var_mses  
             return y_conv, regulization_loss
@@ -377,7 +377,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             # weight regulization
             var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
             in zip(old_weights, weights)]
-            var_mse_list = [tf.reduce_sum(g*g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
+            var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list)
             regulization_loss = 0.001 * var_mses      
             return y_conv, regulization_loss

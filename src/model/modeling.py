@@ -152,7 +152,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     is_test = (mode == 'test')
     features = inputs['features']
     if 'old_predicted_scores' not in inputs:
-        logging.error('residuals not in inputs')
+        logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']
         predicted_scores, _ = retrain_lenet(features, params, var_scope='c_cnn')
         inputs['old_predicted_scores'] = predicted_scores
@@ -278,7 +278,8 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
     # Create the model specification and return it
     # It contains nodes or operations in the graph that will be used for training and evaluation
     model_spec = inputs
-    variable_init_op = tf.group(*[tf.global_variables_initializer(), tf.local_variables_initializer(), \
+    variable_init_op = tf.group(*[tf.global_variables_initializer(), \
+        tf.local_variables_initializer(), \
         tf.tables_initializer()])
     model_spec['variable_init_op'] = variable_init_op
     model_spec['metrics_init_op'] = metrics_init_op

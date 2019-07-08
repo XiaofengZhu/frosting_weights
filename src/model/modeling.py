@@ -207,6 +207,8 @@ def retrain_lenet(X, params=None, var_scope='cnn'):
     return Ylogits, (neurons, weights)
 
 def retrain_lenet_fisher(X, params=None, var_scope='cnn'):
+    X = inputs['features']
+    labels = inputs['labels']
     trainable = var_scope=='cnn'
     neurons = []
     weights = []
@@ -274,6 +276,15 @@ def retrain_lenet_fisher(X, params=None, var_scope='cnn'):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
             weights.extend([fc2w, fc2b])
             neurons.append(Ylogits)
+        if params.loss_fn == 'retrain_regu_fisher':
+            cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=labels,
+                                                            logits=Ylogits)
+            loss = tf.reduce_mean(cross_entropy)
+            for w in weights:
+                gradients_w.append(tf.gradients(loss, w))
+            for n in neurons:
+                gradients_n.append(tf.gradients(loss, n))
+        else:
             for w in weights:
                 gradients_w.append(tf.gradients(Ylogits, w))
             for n in neurons:
@@ -344,16 +355,16 @@ def build_model(mode, inputs, params, weak_learner_id):
         return retrain_lenet(features, params, var_scope='cnn')
     if params.loss_fn=='retrain_regu_fisher':
         if not is_test:
-            _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_fisher(features, params, var_scope='c_cnn')
-            y_conv, (neurons, weights), _ = retrain_lenet_fisher(features, params, var_scope='cnn')
-            neuron_mse_list = [tf.losses.mean_squared_error(old_neuron, neuron) for (old_neuron, neuron) \
+            _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_fisher(inputs, params, var_scope='c_cnn')
+            y_conv, (neurons, weights), _ = retrain_lenet_fisher(inputs, params, var_scope='cnn')
+            neuron_mse_list = [(old_neuron - neuron) * (old_neuron - neuron) for (old_neuron, neuron) \
             in zip(old_neurons, neurons)]
-            neuron_mse_list = [g*g*n for (g, n) in zip(gradients_o_n, neuron_mse_list)]
+            neuron_mse_list = [tf.reduce_sum(g*g*n) for (g, n) in zip(gradients_o_n, neuron_mse_list)]
             neuron_mses = functools.reduce(lambda x,y:x+y, neuron_mse_list)
             # weight regulization
-            var_mse_list = [tf.losses.mean_squared_error(old_var, var) for (old_var, var) \
+            var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
             in zip(old_weights, weights)]
-            var_mse_list = [g*g*n for (g, n) in zip(gradients_o_w, var_mse_list)]
+            var_mse_list = [tf.reduce_sum(g*g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list)
             regulization_loss = 0.001 * neuron_mses + 0.001 * var_mses            
             return y_conv, regulization_loss

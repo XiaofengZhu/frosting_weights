@@ -12,6 +12,63 @@ import functools
 import time
 
 #################
+def lenet2(X, params=None, var_scope='cnn2'):
+    with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
+        # CONVOLUTION 1 - 1
+        with tf.name_scope('conv1_1'):
+            filter1_1 = tf.get_variable('weights1_1', shape=[5, 5, int(params.depth), 1], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+            stride = [1,1,1,1]
+            conv = tf.nn.conv2d(X, filter1_1, stride, padding='SAME')
+            biases = tf.get_variable('biases1_1', shape=[1], \
+                initializer=tf.constant_initializer(0.0))
+            out = tf.nn.bias_add(conv, biases)
+            conv1_1 = tf.nn.relu(out)
+        # POOL 1
+        with tf.name_scope('pool1'):
+            pool1_1 = tf.nn.max_pool(conv1_1,
+                                     ksize=[1, 2, 2, 1],
+                                     strides=[1, 2, 2, 1],
+                                     padding='SAME',
+                                     name='pool1_1')
+            pool1_1_drop = tf.nn.dropout(pool1_1, params.training_keep_prob)
+        # CONVOLUTION 1 - 2
+        with tf.name_scope('conv1_2'):
+            filter1_2 = tf.get_variable('weights1_2', shape=[5, 5, 32, 1], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+            conv = tf.nn.conv2d(pool1_1_drop, filter1_2, [1,1,1,1], padding='SAME')
+            biases = tf.get_variable('biases1_2', shape=[1], \
+                initializer=tf.constant_initializer(0.0))
+            out = tf.nn.bias_add(conv, biases)
+            conv1_2 = tf.nn.relu(out)
+        # POOL 2
+        with tf.name_scope('pool2'):
+            pool2_1 = tf.nn.max_pool(conv1_2,
+                                     ksize=[1, 2, 2, 1],
+                                     strides=[1, 2, 2, 1],
+                                     padding='SAME',
+                                     name='pool2_1')
+            pool2_1_drop = tf.nn.dropout(pool2_1, params.training_keep_prob)
+        #FULLY CONNECTED 1
+        with tf.name_scope('fc1') as scope:
+            pool2_flat = tf.layers.Flatten()(pool2_1_drop)
+            dim = pool2_flat.get_shape()[1].value
+            fc1w = tf.get_variable('weights3_1', shape=[dim, 1024], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+            fc1b = tf.get_variable('biases3_1', shape=[1024], \
+                initializer=tf.constant_initializer(1.0))
+            out = tf.nn.bias_add(tf.matmul(pool2_flat, fc1w), fc1b)
+            fc1 = tf.nn.relu(out)
+            fc1_drop = tf.nn.dropout(fc1, params.training_keep_prob)
+        #FULLY CONNECTED 2
+        with tf.name_scope('fc2') as scope:
+            fc2w = tf.get_variable('weights3_2', shape=[1024, params.num_classes], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+            fc2b = tf.get_variable('biases3_2', shape=[params.num_classes], \
+                initializer=tf.constant_initializer(1.0))
+            Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
+    return Ylogits, fc1_drop
+
 def lenet(X, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
         # CONVOLUTION 1 - 1
@@ -159,7 +216,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         inputs['old_predicted_scores'] = predicted_scores
         residuals = get_residual(labels, predicted_scores)
         inputs['residuals'] = residuals
-    residual_predicted_scores, _ = lenet(features, params, var_scope='cnn')
+    residual_predicted_scores, _ = lenet2(features, params, var_scope='cnn2')
     mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
     # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
     #     message='residual_predicted_scores\n')

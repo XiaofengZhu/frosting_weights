@@ -530,4 +530,6 @@ def get_loss(predicted_scores, labels,
             'retrain_regu': _retrain_regu
     }
     loss_function_str = params.loss_fn
+    if 'retrain_regu' in params.loss_fn:
+        loss_function_str = 'retrain_regu'
     return options[loss_function_str]()

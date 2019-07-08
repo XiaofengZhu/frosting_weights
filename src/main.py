@@ -65,6 +65,7 @@ if __name__ == '__main__':
     if params.loss_fn == 'boost' and params.num_learners <= 1:
         params.dict['num_learners'] = 2
     params.dict['finetune'] = args.finetune
+    params.dict['use_kfac'] = args.use_kfac
     # Load the parameters from the dataset, that gives the size etc. into params
     json_path = os.path.join(args.data_dir, 'dataset_params.json')
     assert os.path.isfile(json_path), "No json file found at {}, please run prepare_data.py".format(json_path)

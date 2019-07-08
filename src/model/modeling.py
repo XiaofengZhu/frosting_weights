@@ -79,7 +79,7 @@ def lenet2(X, params=None, var_scope='cnn2'):
             batch_size, pool_output_h, pool_output_w, filter_n = [d.value for d in h_conv3.get_shape()]
             h_conv3_flat = tf.reshape(h_conv3, [-1, pool_output_h * pool_output_w, filter_n])
             Ylogits = tf.reduce_sum(h_conv3_flat, reduction_indices=1)            
-    return Ylogits, fc1_drop
+    return Ylogits, None
 
 def lenet(X, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):

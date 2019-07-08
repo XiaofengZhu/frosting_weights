@@ -315,7 +315,7 @@ def get_loss(predicted_scores, labels,
 
     options = {
             'cnn': _cnn,
-            'boost': calcualted_loss,
+            'boost': _boost,
             'retrain_regu': _retrain_regu
     }
     loss_function_str = params.loss_fn

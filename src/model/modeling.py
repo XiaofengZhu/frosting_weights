@@ -10,7 +10,7 @@ from matplotlib import pyplot
 import os
 import functools
 import time
-import kfac
+# import kfac
 
 #################
 def lenet2(X, params=None, var_scope='cnn2'):
@@ -451,17 +451,18 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     loss += tf.reduce_sum(reg_losses)
         if is_training:
             if params.use_kfac:
-                with tf.name_scope('kfac_optimizer'):
-                    # Register loss
-                    layer_collection = kfac.LayerCollection()
-                    layer_collection.register_softmax_cross_entropy_loss(predictions, reuse=False)
-                    # Register layers
-                    layer_collection.auto_register_layers()
-                    # Construct training ops
-                    global_step = tf.train.get_or_create_global_step()
-                    optimizer = kfac.PeriodicInvCovUpdateKfacOpt(learning_rate=params.learning_rate, damping=0.001, \
-                        layer_collection=layer_collection)
-                    train_op = optimizer.minimize(loss, global_step=global_step)         
+                pass
+                # with tf.name_scope('kfac_optimizer'):
+                #     # Register loss
+                #     layer_collection = kfac.LayerCollection()
+                #     layer_collection.register_softmax_cross_entropy_loss(predictions, reuse=False)
+                #     # Register layers
+                #     layer_collection.auto_register_layers()
+                #     # Construct training ops
+                #     global_step = tf.train.get_or_create_global_step()
+                #     optimizer = kfac.PeriodicInvCovUpdateKfacOpt(learning_rate=params.learning_rate, damping=0.001, \
+                #         layer_collection=layer_collection)
+                #     train_op = optimizer.minimize(loss, global_step=global_step)      
             else:
                 with tf.name_scope('adam_optimizer'):
                     global_step = tf.train.get_or_create_global_step()

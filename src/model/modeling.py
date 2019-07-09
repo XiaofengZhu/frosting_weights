@@ -414,9 +414,14 @@ def build_model(mode, inputs, params, weak_learner_id):
     if params.use_residual:
         return build_residual_model(mode, inputs, \
             params, weak_learner_id)
-    # default cnn
-    y_conv, _ = lenet(features, params, var_scope='cnn')
-    _, _ = lenet(features, params, var_scope='c_cnn')
+    
+    y_conv = None
+    if params.finetune:
+        y_conv, _ = lenet(features, params, var_scope='cnn')
+    else:
+        # default cnn
+        y_conv, _ = lenet(features, params, var_scope='cnn')
+        _, _ = lenet(features, params, var_scope='c_cnn')
     return y_conv, None
 
 def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
@@ -451,18 +456,17 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     loss += tf.reduce_sum(reg_losses)
         if is_training:
             if params.use_kfac:
-                pass
-                # with tf.name_scope('kfac_optimizer'):
-                #     # Register loss
-                #     layer_collection = kfac.LayerCollection()
-                #     layer_collection.register_softmax_cross_entropy_loss(predictions, reuse=False)
-                #     # Register layers
-                #     layer_collection.auto_register_layers()
-                #     # Construct training ops
-                #     global_step = tf.train.get_or_create_global_step()
-                #     optimizer = kfac.PeriodicInvCovUpdateKfacOpt(learning_rate=params.learning_rate, damping=0.001, \
-                #         layer_collection=layer_collection)
-                #     train_op = optimizer.minimize(loss, global_step=global_step)      
+                with tf.name_scope('kfac_optimizer'):
+                    # Register loss
+                    layer_collection = kfac.LayerCollection()
+                    layer_collection.register_softmax_cross_entropy_loss(predictions, reuse=False)
+                    # Register layers
+                    layer_collection.auto_register_layers()
+                    # Construct training ops
+                    global_step = tf.train.get_or_create_global_step()
+                    optimizer = kfac.PeriodicInvCovUpdateKfacOpt(learning_rate=params.learning_rate, damping=0.001, \
+                        layer_collection=layer_collection)
+                    train_op = optimizer.minimize(loss, global_step=global_step)
             else:
                 with tf.name_scope('adam_optimizer'):
                     global_step = tf.train.get_or_create_global_step()

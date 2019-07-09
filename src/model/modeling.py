@@ -416,7 +416,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             params, weak_learner_id)
     # default cnn
     y_conv, _ = lenet(features, params, var_scope='cnn')
-    _, _ = lenet(features, params, var_scope='c_cnn')
+    _, _ = retrain_lenet(features, params, var_scope='c_cnn')
     return y_conv, None
 
 def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
@@ -452,20 +452,21 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
         if is_training:
             if params.use_kfac:
                 with tf.name_scope('kfac_optimizer'):
-                    # Register loss.
+                    # Register loss
                     layer_collection = kfac.LayerCollection()
                     layer_collection.register_softmax_cross_entropy_loss(predictions, reuse=False)
-                    # Register layers.
+                    # Register layers
                     layer_collection.auto_register_layers()
-                    # Construct training ops.
+                    # Construct training ops
                     optimizer = kfac.PeriodicInvCovUpdateOptimizer(params.learning_rate, layer_collection=layer_collection)
                     train_op = optimizer.minimize(loss)         
-            with tf.name_scope('adam_optimizer'):
-                global_step = tf.train.get_or_create_global_step()
-                optimizer = tf.train.AdamOptimizer(params.learning_rate)
-                gradients, variables = zip(*optimizer.compute_gradients(loss))
-                gradients, _ = tf.clip_by_global_norm(gradients, params.gradient_clip_value)
-                train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)
+            else:
+                with tf.name_scope('adam_optimizer'):
+                    global_step = tf.train.get_or_create_global_step()
+                    optimizer = tf.train.AdamOptimizer(params.learning_rate)
+                    gradients, variables = zip(*optimizer.compute_gradients(loss))
+                    gradients, _ = tf.clip_by_global_norm(gradients, params.gradient_clip_value)
+                    train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)
         
         with tf.name_scope('accuracy'):
             argmax_predictions = tf.argmax(predictions, 1)

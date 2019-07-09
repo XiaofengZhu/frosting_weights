@@ -137,6 +137,11 @@ def lenet(X, params=None, var_scope='cnn'):
             fc2b = tf.get_variable('biases3_2', shape=[params.num_classes], \
                 initializer=tf.constant_initializer(1.0))
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
+    mean_filter1_1 = tf.reduce_mean(filter1_1)
+    mean_filter1_2 = tf.reduce_mean(filter1_2)
+    std_filter1_1 = tf.reduce_std(filter1_1)
+    std_filter1_2 = tf.reduce_std(filter1_2)    
+    (filter1_1 - mean_filter1_1)
     return Ylogits, fc1_drop
 
 def retrain_lenet(X, params=None, var_scope='cnn'):

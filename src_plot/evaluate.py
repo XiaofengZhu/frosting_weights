@@ -34,6 +34,8 @@ parser.add_argument('--restore_from', default='best_weights',
                     help="Subdirectory of the best weights")
 parser.add_argument('--aug', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
     help="try on augmented test dataset")
+parser.add_argument('--finetune', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
+    help="try on augmented test dataset")
 
 if __name__ == '__main__':
     # Set the random seed for the whole graph
@@ -46,6 +48,7 @@ if __name__ == '__main__':
     if params.mlp_sizes is None or len(params.mlp_sizes) == 0:
         logging.error('mlp_sizes are not set correctly, at least one MLP layer is required')
     params.dict['loss_fn'] = args.loss_fn
+    params.dict['finetune'] = args.finetune    
     params.dict['training_keep_prob'] = 1.0
     if params.loss_fn == 'boost' and params.num_learners <= 1:
         params.dict['num_learners'] = 2

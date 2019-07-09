@@ -416,7 +416,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             params, weak_learner_id)
     # default cnn
     y_conv, _ = lenet(features, params, var_scope='cnn')
-    _, _ = lenet(features, params, var_scope='c_cnn')
+    _, _ = retrain_lenet(features, params, var_scope='c_cnn')
     return y_conv, None
 
 def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
@@ -458,8 +458,8 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     # Register layers
                     layer_collection.auto_register_layers()
                     # Construct training ops
-                    optimizer = kfac.PeriodicInvCovUpdateOptimizer(params.learning_rate, layer_collection=layer_collection)
-                    train_op = optimizer.minimize(loss)         
+                    optimizer = kfac.PeriodicInvCovUpdateKfacOpt(params.learning_rate, layer_collection=layer_collection)
+                    train_op = optimizer.minimize(loss, global_step=global_step)         
             else:
                 with tf.name_scope('adam_optimizer'):
                     global_step = tf.train.get_or_create_global_step()

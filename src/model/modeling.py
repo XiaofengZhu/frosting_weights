@@ -458,6 +458,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     # Register layers
                     layer_collection.auto_register_layers()
                     # Construct training ops
+                    global_step = tf.train.get_or_create_global_step()
                     optimizer = kfac.PeriodicInvCovUpdateKfacOpt(learning_rate=params.learning_rate, damping=0.001, \
                         layer_collection=layer_collection)
                     train_op = optimizer.minimize(loss, global_step=global_step)         

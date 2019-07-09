@@ -448,7 +448,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                 loss = get_loss(predictions, labels, params, calcualted_loss)
                 if params.use_regularization:
                     reg_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-                    loss += tf.reduce_sum(reg_losses)            
+                    loss += tf.reduce_sum(reg_losses)
         if is_training:
             if params.use_kfac:
                 with tf.name_scope('kfac_optimizer'):

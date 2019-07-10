@@ -10,7 +10,7 @@ from matplotlib import pyplot
 import os
 import functools
 import time
-import kfac
+# import kfac
 
 #################
 def lenet2(X, params=None, var_scope='cnn2'):
@@ -137,12 +137,14 @@ def lenet(X, params=None, var_scope='cnn'):
             fc2b = tf.get_variable('biases3_2', shape=[params.num_classes], \
                 initializer=tf.constant_initializer(1.0))
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
-    mean_filter1_1 = tf.reduce_mean(filter1_1)
-    mean_filter1_2 = tf.reduce_mean(filter1_2)
-    std_filter1_1 = tf.reduce_std(filter1_1)
-    std_filter1_2 = tf.reduce_std(filter1_2)    
-    (filter1_1 - mean_filter1_1)
-    return Ylogits, fc1_drop
+    # mean_filter1_1 = tf.reduce_mean(filter1_1)
+    # mean_filter1_2 = tf.reduce_mean(filter1_2)
+    # std_filter1_1 = tf.math.reduce_std(filter1_1)
+    # std_filter1_2 = tf.math.reduce_std(filter1_2)
+    # t_filter1_1 = (filter1_1 - mean_filter1_1)/std_filter1_1
+    # t_filter1_2 = (filter1_2 - mean_filter1_2)/std_filter1_2
+    # temp = tf.reduce_mean(t_filter1_1) * tf.reduce_mean(t_filter1_2)
+    return Ylogits, filter1_1
 
 def retrain_lenet(X, params=None, var_scope='cnn'):
     trainable = var_scope=='cnn'
@@ -425,8 +427,9 @@ def build_model(mode, inputs, params, weak_learner_id):
         y_conv, _ = lenet(features, params, var_scope='cnn')
     else:
         # default cnn
-        y_conv, _ = lenet(features, params, var_scope='cnn')
+        y_conv, temp = lenet(features, params, var_scope='cnn')
         _, _ = lenet(features, params, var_scope='c_cnn')
+    inputs['corr'] = temp
     return y_conv, None
 
 def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
@@ -461,17 +464,18 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     loss += tf.reduce_sum(reg_losses)
         if is_training:
             if params.use_kfac:
-                with tf.name_scope('kfac_optimizer'):
-                    # Register loss
-                    layer_collection = kfac.LayerCollection()
-                    layer_collection.register_softmax_cross_entropy_loss(predictions, reuse=False)
-                    # Register layers
-                    layer_collection.auto_register_layers()
-                    # Construct training ops
-                    global_step = tf.train.get_or_create_global_step()
-                    optimizer = kfac.KfacOptimizer(learning_rate=params.learning_rate, damping=0.001, \
-                        layer_collection=layer_collection)
-                    train_op = optimizer.minimize(loss, global_step=global_step)
+                pass
+                # with tf.name_scope('kfac_optimizer'):
+                #     # Register loss
+                #     layer_collection = kfac.LayerCollection()
+                #     layer_collection.register_softmax_cross_entropy_loss(predictions, reuse=False)
+                #     # Register layers
+                #     layer_collection.auto_register_layers()
+                #     # Construct training ops
+                #     global_step = tf.train.get_or_create_global_step()
+                #     optimizer = kfac.KfacOptimizer(learning_rate=params.learning_rate, damping=0.001, \
+                #         layer_collection=layer_collection)
+                #     train_op = optimizer.minimize(loss, global_step=global_step)
             else:
                 with tf.name_scope('adam_optimizer'):
                     global_step = tf.train.get_or_create_global_step()

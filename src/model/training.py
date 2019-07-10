@@ -161,13 +161,13 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 # Save weights
                 # trainalbe_vars = {v.name: v for v in tf.trainable_variables() if 'model' in v.name}
                 # print(trainalbe_vars.keys())
-                # if params.loss_fn == 'cnn':
-                #     cnn_vars=[v for v in tf.trainable_variables() if 'model/cnn' in v.name]
-                #     # c_cnn_vars=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='model/c_cnn')
-                #     c_cnn_vars=[v for v in tf.trainable_variables() if 'model/c_cnn' in v.name]
-                #     update_weights = [tf.assign(c, old) for (c, old) in \
-                #     zip(c_cnn_vars, cnn_vars)]
-                #     sess.run(update_weights)
+                if params.loss_fn == 'cnn':
+                    cnn_vars=[v for v in tf.trainable_variables() if 'model/cnn' in v.name]
+                    # c_cnn_vars=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='model/c_cnn')
+                    c_cnn_vars=[v for v in tf.trainable_variables() if 'model/c_cnn' in v.name]
+                    update_weights = [tf.assign(c, old) for (c, old) in \
+                    zip(c_cnn_vars, cnn_vars)]
+                    sess.run(update_weights)
                 '''
                 if params.loss_fn == 'boost':
 

@@ -465,7 +465,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     # Construct training ops
                     global_step = tf.train.get_or_create_global_step()
                     optimizer = kfac.PeriodicInvCovUpdateKfacOpt(learning_rate=params.learning_rate, damping=0.001, \
-                        batch_size=batch_size, layer_collection=layer_collection)
+                        batch_size=params.batch_size, layer_collection=layer_collection)
                     train_op = optimizer.minimize(loss, global_step=global_step)
             else:
                 with tf.name_scope('adam_optimizer'):

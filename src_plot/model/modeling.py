@@ -144,6 +144,8 @@ def lenet(X, params=None, var_scope='cnn'):
     # t_filter1_1 = (filter1_1 - mean_filter1_1)/std_filter1_1
     # t_filter1_2 = (filter1_2 - mean_filter1_2)/std_filter1_2
     # temp = tf.reduce_mean(t_filter1_1) * tf.reduce_mean(t_filter1_2)
+    # Ylogits = tf.Print(Ylogits, [Ylogits], message='Ylogits\n')
+    # filter1_1 = tf.Print(filter1_1, [filter1_1], message='filter1_1')
     return Ylogits, filter1_1
 
 def retrain_lenet(X, params=None, var_scope='cnn'):
@@ -429,7 +431,8 @@ def build_model(mode, inputs, params, weak_learner_id):
         # default cnn
         y_conv, temp = lenet(features, params, var_scope='cnn')
         _, _ = lenet(features, params, var_scope='c_cnn')
-    inputs['corr'] = temp
+        # temp = tf.Print(temp, [temp], message='temp filter1_1')
+        # inputs['corr'] = temp
     return y_conv, None
 
 def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):

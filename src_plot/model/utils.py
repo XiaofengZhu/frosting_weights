@@ -76,6 +76,19 @@ def save_dict_to_json(d, json_path):
         d = {k: float(v) for k, v in d.items()}
         json.dump(d, f, indent=4)
 
+def save_vars_to_file(l, var_output_path):
+    """Saves list of floats in txt file
+
+    Args:
+        l: (list) of float-castable values (np.float, int, float, etc.)
+        prediction_output_path: (string) path to txt file
+    """
+    with open(var_output_path, 'w+') as f:
+        for v in l:
+            f.write(str(v) + '\n')
+            f.flush()
+    # np.savetxt("array.txt", l, fmt="%s")
+
 def save_predictions_to_file(l, prediction_output_path):
     """Saves list of floats in txt file
 

@@ -14,7 +14,7 @@ from model.utils import save_dict_to_json, load_best_metric, get_expaned_metrics
 from model.evaluation import evaluate_sess
 from model.modeling import retrain_lenet, get_residual
 import tensorflow.contrib.slim as slim
-from model.utils import save_dict_to_json, save_predictions_to_file, get_expaned_metrics
+from model.utils import save_dict_to_json, save_vars_to_file, get_expaned_metrics
 
 def train_sess(sess, model_spec, num_steps, writer, params):
     """Train the model on `num_steps` batches
@@ -34,7 +34,6 @@ def train_sess(sess, model_spec, num_steps, writer, params):
     metrics = model_spec['metrics']
     summary_op = model_spec['summary_op']
     global_step = tf.train.get_global_step()
-    corr_list = []
     # Load the training dataset into the pipeline and initialize the metrics local variables
     # sess.run(model_spec['iterator_init_op'])
     sess.run(model_spec['metrics_init_op'])
@@ -46,9 +45,8 @@ def train_sess(sess, model_spec, num_steps, writer, params):
         # if i % params.save_summary_steps == 0:
             
             # Perform a mini-batch update
-            _, _, loss_val, summ, global_step_val, corr = sess.run([train_op, update_metrics, loss,
-                                                              summary_op, global_step, model_spec['corr']])
-            corr_list.append(corr)
+            _, _, loss_val, summ, global_step_val = sess.run([train_op, update_metrics, loss,
+                                                              summary_op, global_step])
             # Write summaries for tensorboard
             writer.add_summary(summ, global_step_val)
         else:
@@ -60,7 +58,6 @@ def train_sess(sess, model_spec, num_steps, writer, params):
     expanded_metrics_val = get_expaned_metrics(metrics_val)
     metrics_string = " ; ".join("{}: {:05.4f}".format(k, v) for k, v in expanded_metrics_val.items())
     logging.info("- Train metrics: " + metrics_string)
-    save_predictions_to_file(corr_list, "./corr_output")
 
 def model_summary():
     model_vars = tf.trainable_variables()
@@ -76,6 +73,13 @@ def isSavingWeights(eval_metrics, best_eval_metrics):
             continue
     return False
 
+def save_var(sess, name, epoch):
+    cnn_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope="model/cnn/{}".format(name))[0]
+    cnn_vars = sess.run(cnn_vars)
+    cnn_vars = cnn_vars.flatten().tolist()
+    # print(cnn_vars)
+    save_vars_to_file(cnn_vars, "./corr_{}_output_{}".format(name, epoch))
+  
 def train_and_evaluate(train_model_spec, eval_model_spec,
     model_dir, params, learner_id=0, restore_from=None, global_epoch=1):
     """Train the model and evaluate every epoch.
@@ -142,14 +146,20 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 begin_at_epoch + params.num_epochs))
             # logging.info(global_epoch)
             # Compute number of batches in one epoch (one full pass over the training set)
-            num_steps = 3#(params.train_size + params.batch_size - 1) // params.batch_size
+            num_steps = (params.train_size + params.batch_size - 1) // params.batch_size
             train_sess(sess, train_model_spec, num_steps, train_writer, params)
+            # cnn_vars=[v for v in tf.trainable_variables() if 'model/cnn/weights1_1' in v.name]
+            # cnn_vars = tf.get_variable('model/cnn/weights1_1')
+            save_var(sess, 'weights1_1', epoch)
+            save_var(sess, 'weights1_2', epoch)
+            save_var(sess, 'weights3_1', epoch)
+            save_var(sess, 'weights3_2', epoch)           
             # Save weights
             last_save_path = os.path.join(model_dir, 'last_weights', 'after-epoch')
             # global_epoch = int(params.num_learners) * int(params.num_epochs) + epoch + 1
             last_saver.save(sess, last_save_path, global_step=global_epoch)
             # Evaluate for one epoch on validation set
-            num_steps = 3#(params.vali_size + params.batch_size - 1) // params.batch_size
+            num_steps = (params.vali_size + params.batch_size - 1) // params.batch_size
             metrics = evaluate_sess(sess, eval_model_spec, num_steps, eval_writer, params)
             # If best_eval, best_save_path
             accuracy_metric = round(metrics['accuracy'], 6)

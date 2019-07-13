@@ -50,11 +50,11 @@ def plot(corrs, weight_name, gap=5, metric='Corr'):
 
 weight_names = ['weights1_1', 'weights1_2', 'weights3_1', 'weights3_2']
 gap = 10
-num_docs = 200
+num_docs = 170
 # index1s, index2s = [0, 1, 3, 5, 400], [2, 3, 4, 10, 500]
 index1s, index2s = list(range(10)), list(range(10, 20))
+nums = len(index1s)
 for weight_name in weight_names:
-	nums = len(index1s)
 	epoch_value1s, epoch_value2s = [], []
 	for i in range(0, num_docs):
 		value1s, value2s = readOneFile('corr_{}_output_{}'.format(weight_name, i), index1s, index2s)

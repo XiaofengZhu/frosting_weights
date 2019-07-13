@@ -21,7 +21,7 @@ def plot(corrs, weight_name, gap=5, metric='Corr'):
 	ind = np.arange(gaps)
 	epoch_gaps = gap * (ind + 1)
 	width = 0.5
-	fig = plt.figure(figsize=(8, 6))
+	fig = plt.figure(figsize=(10, 7))
 	min_v = 1
 	max_v = 0
 	for num in range(nums):
@@ -42,7 +42,7 @@ def plot(corrs, weight_name, gap=5, metric='Corr'):
 	# plt.xlabel('Other models')
 	caption = metric + ' of weight pairs'
 	print(caption)
-	plt.xticks(ind, epoch_gaps)
+	plt.xticks(ind + width, epoch_gaps)
 	plt.legend(loc='upper left')
 	# plt.show()
 	fig.savefig(metric + '_{}_{}'.format(weight_name, gaps) + '.pdf')
@@ -52,7 +52,8 @@ weight_names = ['weights1_1', 'weights1_2', 'weights3_1', 'weights3_2']
 gap = 10
 num_docs = 170
 # index1s, index2s = [0, 1, 3, 5, 400], [2, 3, 4, 10, 500]
-index1s, index2s = list(range(10)), list(range(10, 20))
+index1s, index2s = list(range(110, 120)), list(range(410, 420))
+# index1s, index2s = list(range(10)), list(range(10, 20))
 nums = len(index1s)
 for weight_name in weight_names:
 	epoch_value1s, epoch_value2s = [], []

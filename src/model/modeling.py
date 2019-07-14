@@ -277,7 +277,7 @@ def retrain_lenet_fisher(inputs, params=None, var_scope='cnn'):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
             weights.extend([fc2w, fc2b])
             neurons.append(Ylogits)
-        if params.loss_fn == 'retrain_regu_fisher':
+        if 'fisher' in params.loss_fn or 'mine' in params.loss_fn:
             cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=labels,
                                                             logits=Ylogits)
             loss = tf.reduce_mean(cross_entropy)
@@ -343,8 +343,8 @@ def build_model(mode, inputs, params, weak_learner_id):
     features = inputs['features']
     if params.loss_fn=='retrain_regu':
         if not is_test:
-            _, (old_neurons, old_weights) = retrain_lenet(features, params, var_scope='c_cnn')
-            y_conv, (neurons, weights) = retrain_lenet(features, params, var_scope='cnn')
+            _, (old_neurons, old_weights), _ = retrain_lenet(features, params, var_scope='c_cnn')
+            y_conv, (neurons, weights), _ = retrain_lenet(features, params, var_scope='cnn')
             neuron_mse_list = [tf.losses.mean_squared_error(old_neuron, neuron) for (old_neuron, neuron) \
             in zip(old_neurons, neurons)]
             neuron_mses = functools.reduce(lambda x,y:x+y, neuron_mse_list) / len(neuron_mse_list)

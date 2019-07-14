@@ -24,3 +24,4 @@ temp.py
 modeling_*.py
 *.ipynb
 src_plot/corr_*
+result_logs/

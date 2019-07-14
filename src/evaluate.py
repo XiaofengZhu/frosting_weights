@@ -59,7 +59,7 @@ if __name__ == '__main__':
     assert os.path.isfile(json_path), "No json file found at {}, run build.py".format(json_path)
     params.update(json_path)
     # Set the logger
-    set_logger(os.path.join(args.model_dir, 'evaluate.log'))
+    set_logger(os.path.join(args.model_dir, 'test.log'))
     # # Get paths for tfrecords
     dataset = 'test'
     if args.aug:

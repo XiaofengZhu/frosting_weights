@@ -51,7 +51,7 @@ def train_sess(sess, model_spec, num_steps, writer, params):
         else:
             _, _, loss_val = sess.run([train_op, update_metrics, loss])
         # Log the loss in the tqdm progress bar
-        t.set_postfix(loss='{:05.3f}'.format(loss_val))
+        # t.set_postfix(loss='{:05.3f}'.format(loss_val))
     metrics_values = {k: v[0] for k, v in metrics.items()}
     metrics_val = sess.run(metrics_values)
     expanded_metrics_val = get_expaned_metrics(metrics_val)

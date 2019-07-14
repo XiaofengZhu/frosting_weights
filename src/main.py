@@ -1,6 +1,6 @@
 # rm *.txt & ./bash.sh
 # experiments/base_model/params.json
-# /Users/xiaofengzhu/Documents/continual_learning/src
+# cd /Users/xiaofengzhu/Documents/continual_learning/src
 # tensorboard --logdir
 import argparse
 import logging
@@ -33,7 +33,7 @@ parser.add_argument('--tfrecords_filename', default='.tfrecords',
 # usage: python main.py --restore_dir experiments/base_model/best_weights
 parser.add_argument('--restore_dir', default=None, # experimens/base_model/best_weights
                     help="Optional, directory containing weights to reload")
-parser.add_argument('--train_range', default=None,
+parser.add_argument('--train_range', default='[1-5]',
                     help="training tf range")
 # using pretrained weights and gradient boosting on datasets A and B
 # params.num_learners > 1
@@ -48,9 +48,7 @@ parser.add_argument('--use_kfac', default=False, type=lambda x: (str(x).lower() 
     help="usek fac true gradient")
 
 if __name__ == '__main__':
-    # Train the model
-    # log time
-    
+    # Train the model  
     tf.reset_default_graph()
     # Set the random seed for the whole graph for reproductible experiments
     tf.set_random_seed(230)
@@ -58,6 +56,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     json_path = os.path.join(args.model_dir, 'params.json')
     assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
+    # Set the logger
+    set_logger(os.path.join(args.model_dir, 'train.log'))      
     params = Params(json_path)
     if params.mlp_sizes is None or len(params.mlp_sizes) == 0:
         logging.error('mlp_sizes are not set correctly, at least one MLP layer is required')
@@ -70,8 +70,6 @@ if __name__ == '__main__':
     json_path = os.path.join(args.data_dir, 'dataset_params.json')
     assert os.path.isfile(json_path), "No json file found at {}, please run prepare_data.py".format(json_path)
     params.update(json_path)
-    # Set the logger
-    set_logger(os.path.join(args.model_dir, 'train.log'))
     last_global_epoch, global_epoch = 0, 0
     if params.num_learners <= 1:# not args.retrain or args.combine:
         if args.combine:
@@ -117,7 +115,7 @@ if __name__ == '__main__':
         global_epoch = train_and_evaluate(train_model_spec, eval_model_spec, args.model_dir, params, \
             learner_id=0, restore_from=args.restore_dir)
         logging.info("global_epoch: {} epoch(s) at learner 0".format(global_epoch))
-        print("--- %s seconds ---" % (time.time() - start_time))
+        logging.info("total time: %s seconds ---" % (time.time() - start_time))
         # start gradient boosting
         last_global_epoch = global_epoch
     if (params.num_learners > 1):
@@ -158,4 +156,4 @@ if __name__ == '__main__':
                 logging.info("boosting has stopped early at learner {}".format(learner_id))
                 break
             last_global_epoch = global_epoch
-        print("--- %s seconds using boosting ---" % (time.time() - start_time))
+        logging.info("total time: %s seconds using boosting ---" % (time.time() - start_time))

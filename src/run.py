@@ -1,0 +1,16 @@
+import os
+
+model_dir = 'experiments/base_model'
+train_log = os.path.join(model_dir, 'train.log')
+test_log = os.path.join(model_dir, 'test.log')
+for i in range(8, 11):
+	train_script = 'CUDA_VISIBLE_DEVICES=1 python main.py --train_range [1-{}] \
+	--loss_fn cnn'.format(i)
+	os.system('echo {} >> {}'.format(train_script, train_log))
+	os.system(train_script)
+	test_fake_script = 'python evaluate.py --train_range [1-{}] \
+	--loss_fn cnn --use_kfac true --finetune true'.format(i)
+	os.system('echo {} >> {}'.format(test_fake_script, test_log))
+	test_script = 'CUDA_VISIBLE_DEVICES=1 python evaluate.py \
+	--loss_fn cnn --finetune true'.format(i)	
+	os.system(test_script)

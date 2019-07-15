@@ -117,7 +117,7 @@ def lenet(X, is_training, params=None, var_scope='cnn'):
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
             conv = tf.nn.conv2d(pool1_1_drop, filter1_2, [1,1,1,1], padding='SAME')
             biases = tf.get_variable('biases1_2', shape=[64], \
-                initializer=tf.constant_initializer(0.0), reuse=tf.AUTO_REUSE)
+                initializer=tf.constant_initializer(0.0))
             out = tf.nn.bias_add(conv, biases)
             out = tf.layers.batch_normalization(out, training=is_training)
             conv1_2 = tf.nn.relu(out)

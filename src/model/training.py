@@ -150,6 +150,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             # If best_eval, best_save_path
             accuracy_metric = round(metrics['accuracy'], 6)
             loss_metric = -round(metrics['loss'], 6)
+            # save_batch()
             eval_metrics = [accuracy_metric, loss_metric]
             # logging.info('global_epoch: {}, best_eval_metrics: {}, \
             #     eval_metric: {}', global_epoch, best_eval_metrics, eval_metric)

@@ -17,12 +17,14 @@ train_log = os.path.join(model_dir, 'train_{}.log'.format(args.log))
 test_log = os.path.join(model_dir, 'test_{}.log'.format(args.log))
 for i in range(6, 11):
 	train_script = 'CUDA_VISIBLE_DEVICES={} python main.py --train_range {} \
-	 --loss_fn {} --finetune true --use_kfac {}'.format(args.gpu, i, args.loss_fn, args.use_kfac)
+	 --loss_fn {} --finetune true --use_kfac {} --log {}'.format(args.gpu, i, args.loss_fn, \
+	 	args.use_kfac, args.log)
 	os.system('echo {} >> {}'.format(train_script, train_log))
 	os.system(train_script)
 	test_fake_script = 'python evaluate.py --train_range {} \
-	 --loss_fn {} --finetune true --use_kfac {}'.format(i, args.loss_fn, args.use_kfac)
+	 --loss_fn {} --finetune true --use_kfac {} --log {}'.format(i, args.loss_fn, \
+	 	args.use_kfac, args.log)
 	os.system('echo {} >> {}'.format(test_fake_script, test_log))
 	test_script = 'CUDA_VISIBLE_DEVICES={} python evaluate.py \
-	 --loss_fn {} --finetune true'.format(args.gpu, i, args.loss_fn)	
+	 --loss_fn {} --finetune true --log {}'.format(args.gpu, args.loss_fn, args.log)	
 	os.system(test_script)

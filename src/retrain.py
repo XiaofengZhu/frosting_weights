@@ -26,5 +26,5 @@ for i in range(6, 11):
 	 	args.use_kfac, args.log)
 	os.system('echo {} >> {}'.format(test_fake_script, test_log))
 	test_script = 'CUDA_VISIBLE_DEVICES={} python evaluate.py \
-	 --loss_fn {} --finetune true --log {}'.format(args.gpu, i, args.loss_fn, args.log)	
+	 --loss_fn {} --finetune true --log {}'.format(args.gpu, args.loss_fn, args.log)	
 	os.system(test_script)

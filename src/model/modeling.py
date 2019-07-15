@@ -8,6 +8,7 @@ from tensorflow.python.ops import array_ops
 from keras.preprocessing.image import ImageDataGenerator
 from matplotlib import pyplot
 import os
+import math
 import functools
 import time
 import kfac
@@ -403,8 +404,10 @@ def build_model(mode, inputs, params, weak_learner_id):
             Rssl = tf.constant(0.0, dtype=tf.float32)
             for i in range(len(neurons)-1):
                 for j in range(i, len(neurons)):
-                    hjhj = tf.reduce_sum(neurons[i] * tf.transpose(neurons[j]))
-                    Rssl += tf.exp(-gradients_o_n[i]-gradients_o_n[j]) * math.exp(+i-j) * hihj
+                    neurons_i = tf.reshape(tf.multiply(-gradients_o_n[i], neurons[i]), [-1])
+                    neurons_j = tf.reshape(tf.multiply(-gradients_o_n[j], neurons[j]), [-1])
+                    hihj = tf.reduce_sum(neurons_i * tf.transpose(neurons_j))
+                    Rssl += math.exp(+i-j) * hihj
             # weight regulization
             var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
             in zip(old_weights, weights)]

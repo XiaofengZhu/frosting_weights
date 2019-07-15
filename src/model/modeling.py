@@ -398,7 +398,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             return y_conv, regulization_loss
         return retrain_lenet(features, params, var_scope='cnn')    
     if params.loss_fn=='retrain_regu_selfless':
-        num_samples = features.get_shape().as_list()[0]
+        num_samples = tf.shape(features)[0]
         if not is_test:
             _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
             y_conv, (neurons, weights), _ = retrain_lenet_pure(inputs, params, var_scope='cnn')

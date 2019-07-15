@@ -15,19 +15,21 @@ import kfac
 
 #################
 
-def lenet_boost(X, is_training, params=None):
+def lenet_boost(X, is_training, params=None, var_scope='cnn'):
     # CONVOLUTION 1 - 1
     with tf.name_scope('conv1_1'):
-        filter1_1 = tf.get_variable('cnn/weights1_1', shape=[5, 5, int(params.depth), 32], \
-            initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
-        mask_filter1_1 = tf.get_variable('mask/weights1_1', shape=tf.shape(filter1_1), \
-            initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
+        with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
+            filter1_1 = tf.get_variable('weights1_1', shape=[5, 5, int(params.depth), 32], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+            biases = tf.get_variable('biases1_1', shape=[32], \
+                initializer=tf.constant_initializer(0.0))            
+        with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
+            mask_filter1_1 = tf.get_variable('weights1_1', shape=tf.shape(filter1_1), \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
         filter1_1 = tf.multiply(mask_filter1_1, filter1_1)
         filter1_1 = tf.nn.relu(filter1_1)
         stride = [1,1,1,1]
         conv = tf.nn.conv2d(X, filter1_1, stride, padding='SAME')
-        biases = tf.get_variable('cnn/biases1_1', shape=[32], \
-            initializer=tf.constant_initializer(0.0), reuse=tf.AUTO_REUSE)
         out = tf.nn.bias_add(conv, biases)
         out = tf.layers.batch_normalization(out, training=is_training)
         conv1_1 = tf.nn.relu(out)
@@ -41,15 +43,17 @@ def lenet_boost(X, is_training, params=None):
         pool1_1_drop = tf.nn.dropout(pool1_1, params.training_keep_prob)
     # CONVOLUTION 1 - 2
     with tf.name_scope('conv1_2'):
-        filter1_2 = tf.get_variable('cnn/weights1_2', shape=[5, 5, 32, 64], \
-            initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
-        mask_filter1_2 = tf.get_variable('mask/weights1_2', shape=tf.shape(filter1_2), \
-            initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
+        with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
+            filter1_2 = tf.get_variable('weights1_2', shape=[5, 5, 32, 64], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+            biases = tf.get_variable('biases1_2', shape=[64], \
+                initializer=tf.constant_initializer(0.0))            
+        with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
+            mask_filter1_2 = tf.get_variable('weights1_2', shape=tf.shape(filter1_2), \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
         filter1_2 = tf.multiply(mask_filter1_2, filter1_2)
         filter1_2 = tf.nn.relu(filter1_2)            
         conv = tf.nn.conv2d(pool1_1_drop, filter1_2, [1,1,1,1], padding='SAME')
-        biases = tf.get_variable('cnn/biases1_2', shape=[64], \
-            initializer=tf.constant_initializer(0.0))
         out = tf.nn.bias_add(conv, biases)
         out = tf.layers.batch_normalization(out, training=is_training)
         conv1_2 = tf.nn.relu(out)
@@ -65,10 +69,12 @@ def lenet_boost(X, is_training, params=None):
     with tf.name_scope('fc1') as scope:
         pool2_flat = tf.layers.Flatten()(pool2_1_drop)
         dim = pool2_flat.get_shape()[1].value
-        fc1w = tf.get_variable('cnn/weights3_1', shape=[dim, 1024], \
-            initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
-        mask_fc1w = tf.get_variable('mask/weights3_1', shape=tf.shape(fc1w), \
-            initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
+        with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
+            fc1w = tf.get_variable('cnn/weights3_1', shape=[dim, 1024], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+        with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
+            mask_fc1w = tf.get_variable('weights3_1', shape=tf.shape(fc1w), \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
         fc1w = tf.multiply(mask_fc1w, fc1w)
         fc1w = tf.nn.relu(fc1w)     
         fc1b = tf.get_variable('cnn/biases3_1', shape=[1024], \
@@ -79,14 +85,16 @@ def lenet_boost(X, is_training, params=None):
         fc1_drop = tf.nn.dropout(fc1, params.training_keep_prob)
     #FULLY CONNECTED 2
     with tf.name_scope('fc2') as scope:
-        fc2w = tf.get_variable('cnn/weights3_2', shape=[1024, params.num_classes], \
-            initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
-        mask_fc2w = tf.get_variable('mask/weights3_2', shape=tf.shape(fc2w), \
-            initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
+        with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
+            fc2w = tf.get_variable('weights3_2', shape=[1024, params.num_classes], \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+        with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
+            mask_fc2w = tf.get_variable('weights3_2', shape=tf.shape(fc2w), \
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
         fc2w = tf.multiply(mask_fc2w, fc2w)
         fc2w = tf.nn.relu(fc2w)           
         fc2b = tf.get_variable('cnn/biases3_2', shape=[params.num_classes], \
-            initializer=tf.constant_initializer(1.0), reuse=tf.AUTO_REUSE)
+            initializer=tf.constant_initializer(1.0))
         Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     return Ylogits, fc1_drop
 

@@ -1,6 +1,10 @@
 #! /usr/env/bin python3
 
-"""Convert MNIST Dataset to local TFRecords"""
+"""
+Convert CIFAR Dataset to local TFRecords
+python cifar-to-tfrecords.py --data-directory ../data/cifar-10 --dataset-name cifar-10
+python cifar-to-tfrecords.py --data-directory ../data/cifar-100 --dataset-name cifar-100
+"""
 
 import argparse
 import os

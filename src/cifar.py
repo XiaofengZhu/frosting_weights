@@ -1,3 +1,7 @@
+'''
+python cifar.py --dataset-name cifar-10
+python cifar.py --dataset-name cifar-100
+'''
 import pickle
 import numpy as np
 import os
@@ -5,6 +9,7 @@ from urllib.request import urlretrieve
 import tarfile
 import zipfile
 import sys
+import argparse
 
 def get_data_set(cifar_parent_directory, dataset_name='cifar-10', name="train"):
     if dataset_name=='cifar-10':
@@ -152,13 +157,20 @@ def maybe_download_and_extract(cifar_parent_directory, dataset_name='cifar-10'):
             tarfile.open(name=file_path, mode="r:gz").extractall(cifar_parent_directory)
         print("Done.")
         if dataset_name == 'cifar-100':
-            tmp_path = cifar_parent_directory, \
-            "{}-python".format(dataset_name)
+            tmp_path = os.path.join(cifar_parent_directory, \
+            "{}-python".format(dataset_name))
         else:
-            tmp_path = cifar_parent_directory, \
-            "{}-batches-py".format(dataset_name)            
-        os.rename(os.path.join(tmp_path), cifar_directory)
+            tmp_path = os.path.join(cifar_parent_directory, \
+            "{}-batches-py".format(dataset_name))           
+        os.rename(tmp_path, cifar_directory)
         os.remove(zip_cifar_10)
 
-# main_directory = "/tmp/tensorflow"
-# maybe_download_and_extract(main_directory)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--dataset-name', 
+        default='cifar-10',
+        help='Directory where TFRecords will be stored')
+    args = parser.parse_args()
+    main_directory = "/tmp/tensorflow"
+    maybe_download_and_extract(main_directory, args.dataset_name)

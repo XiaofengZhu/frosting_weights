@@ -75,7 +75,7 @@ def lenet(X, is_training, params=None, var_scope='cnn'):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     return Ylogits, fc1_drop
 '''
-def lenet(X, params=None, var_scope='cnn'):
+def lenet(X, is_training, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
         # CONVOLUTION 1 - 1
         with tf.name_scope('conv1_1'):
@@ -132,7 +132,7 @@ def lenet(X, params=None, var_scope='cnn'):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     return Ylogits, fc1_drop
 
-def retrain_lenet(X, is_training, params=None, var_scope='cnn'):
+def retrain_lenet(X, params=None, var_scope='cnn'):
     trainable = var_scope=='cnn'
     neurons = []
     weights = []

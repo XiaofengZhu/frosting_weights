@@ -59,7 +59,7 @@ if __name__ == '__main__':
     json_path = os.path.join(args.model_dir, 'params.json')
     assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
     # Set the logger
-    set_logger(os.path.join(args.model_dir, 'train{}.log'.format(args.log)))    
+    set_logger(os.path.join(args.model_dir, 'train_{}.log'.format(args.log)))    
     params = Params(json_path)
     if params.mlp_sizes is None or len(params.mlp_sizes) == 0:
         logging.error('mlp_sizes are not set correctly, at least one MLP layer is required')

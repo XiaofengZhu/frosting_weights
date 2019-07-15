@@ -398,14 +398,15 @@ def build_model(mode, inputs, params, weak_learner_id):
             return y_conv, regulization_loss
         return retrain_lenet(features, params, var_scope='cnn')    
     if params.loss_fn=='retrain_regu_selfless':
+        num_samples = features.get_shape()[0].value
         if not is_test:
             _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
             y_conv, (neurons, weights), _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
             Rssl = tf.constant(0.0, dtype=tf.float32)
             for i in range(len(neurons)-1):
                 for j in range(i, len(neurons)):
-                    neurons_i = tf.reshape(tf.multiply(-gradients_o_n[i], neurons[i]), [params.batch_size, -1])
-                    neurons_j = tf.reshape(tf.multiply(-gradients_o_n[j], neurons[j]), [params.batch_size, -1])
+                    neurons_i = tf.reshape(tf.multiply(-gradients_o_n[i], neurons[i]), [num_samples, -1])
+                    neurons_j = tf.reshape(tf.multiply(-gradients_o_n[j], neurons[j]), [num_samples, -1])
                     hihj = tf.reduce_sum(tf.matmul(neurons_i, neurons_j, transpose_a=True))
                     Rssl += math.exp(+i-j) * hihj
             # weight regulization

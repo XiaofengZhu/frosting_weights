@@ -72,6 +72,7 @@ if __name__ == '__main__':
     json_path = os.path.join(args.data_dir, 'dataset_params.json')
     assert os.path.isfile(json_path), "No json file found at {}, please run prepare_data.py".format(json_path)
     params.update(json_path)
+    # print(params.dict)
     last_global_epoch, global_epoch = 0, 0
     if params.num_learners <= 1:# not args.retrain or args.combine:
         if args.combine:

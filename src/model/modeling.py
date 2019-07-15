@@ -75,7 +75,7 @@ def lenet(X, is_training, params=None, var_scope='cnn'):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     return Ylogits, fc1_drop
 '''
-def lenet(X, is_training, params=None, var_scope='cnn'):
+def lenet_original(X, is_training, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
         # CONVOLUTION 1 - 1
         with tf.name_scope('conv1_1'):
@@ -413,15 +413,22 @@ def build_model(mode, inputs, params, weak_learner_id):
     if params.use_residual:
         return build_residual_model(mode, inputs, \
             params, weak_learner_id)
-    
     y_conv = None
+    if params.use_bn:
+        if params.finetune:
+            y_conv, _ = lenet(features, is_training, params, var_scope='cnn')
+        else:
+            # default cnn
+            y_conv, _ = lenet(features, is_training, params, var_scope='cnn')
+            if is_training:
+                _, _ = lenet(features, is_training, params, var_scope='c_cnn')
     if params.finetune:
-        y_conv, _ = lenet(features, is_training, params, var_scope='cnn')
+        y_conv, _ = lenet_original(features, is_training, params, var_scope='cnn')
     else:
         # default cnn
-        y_conv, _ = lenet(features, is_training, params, var_scope='cnn')
+        y_conv, _ = lenet_original(features, is_training, params, var_scope='cnn')
         if is_training:
-            _, _ = lenet(features, is_training, params, var_scope='c_cnn')
+            _, _ = lenet_original(features, is_training, params, var_scope='c_cnn')
     return y_conv, None
 
 def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
@@ -467,22 +474,23 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     optimizer = kfac.PeriodicInvCovUpdateKfacOpt(learning_rate=params.learning_rate, damping=0.001, \
                         batch_size=params.batch_size, layer_collection=layer_collection)
                     train_op = optimizer.minimize(loss, global_step=global_step)
-            else:
+            elif params.use_bn:
                 with tf.name_scope('adam_optimizer'):
-                    global_step = tf.train.get_or_create_global_step()
-                    optimizer = tf.train.AdamOptimizer(params.learning_rate)
-                    gradients, variables = zip(*optimizer.compute_gradients(loss))
-                    gradients, _ = tf.clip_by_global_norm(gradients, params.gradient_clip_value)
-                    train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)                   
-                    '''
-                    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
                     with tf.control_dependencies(update_ops):
                         global_step = tf.train.get_or_create_global_step()
                         optimizer = tf.train.AdamOptimizer(params.learning_rate)
                         gradients, variables = zip(*optimizer.compute_gradients(loss))
                         gradients, _ = tf.clip_by_global_norm(gradients, params.gradient_clip_value)
                         train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)
-                    '''
+            else:
+                with tf.name_scope('adam_optimizer'):                   
+                    global_step = tf.train.get_or_create_global_step()
+                    optimizer = tf.train.AdamOptimizer(params.learning_rate)
+                    gradients, variables = zip(*optimizer.compute_gradients(loss))
+                    gradients, _ = tf.clip_by_global_norm(gradients, params.gradient_clip_value)
+                    train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)
+                    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+                    
         
         with tf.name_scope('accuracy'):
             argmax_predictions = tf.argmax(predictions, 1)

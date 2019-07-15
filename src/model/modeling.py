@@ -14,6 +14,7 @@ import time
 import kfac
 
 #################
+'''
 def lenet(X, is_training, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
         # CONVOLUTION 1 - 1
@@ -130,7 +131,7 @@ def lenet(X, params=None, var_scope='cnn'):
                 initializer=tf.constant_initializer(1.0))
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     return Ylogits, fc1_drop
-'''
+
 def retrain_lenet(X, params=None, var_scope='cnn'):
     trainable = var_scope=='cnn'
     neurons = []
@@ -468,6 +469,12 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     train_op = optimizer.minimize(loss, global_step=global_step)
             else:
                 with tf.name_scope('adam_optimizer'):
+                    global_step = tf.train.get_or_create_global_step()
+                    optimizer = tf.train.AdamOptimizer(params.learning_rate)
+                    gradients, variables = zip(*optimizer.compute_gradients(loss))
+                    gradients, _ = tf.clip_by_global_norm(gradients, params.gradient_clip_value)
+                    train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)                   
+                    '''
                     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
                     with tf.control_dependencies(update_ops):
                         global_step = tf.train.get_or_create_global_step()
@@ -475,6 +482,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                         gradients, variables = zip(*optimizer.compute_gradients(loss))
                         gradients, _ = tf.clip_by_global_norm(gradients, params.gradient_clip_value)
                         train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)
+                    '''
         
         with tf.name_scope('accuracy'):
             argmax_predictions = tf.argmax(predictions, 1)

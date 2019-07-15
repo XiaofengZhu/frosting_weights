@@ -95,11 +95,11 @@ def lenet(X, is_training, params=None, var_scope='cnn'):
         # CONVOLUTION 1 - 1
         with tf.name_scope('conv1_1'):
             filter1_1 = tf.get_variable('weights1_1', shape=[5, 5, int(params.depth), 32], \
-                initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
             stride = [1,1,1,1]
             conv = tf.nn.conv2d(X, filter1_1, stride, padding='SAME')
             biases = tf.get_variable('biases1_1', shape=[32], \
-                initializer=tf.constant_initializer(0.0), reuse=tf.AUTO_REUSE)
+                initializer=tf.constant_initializer(0.0))
             out = tf.nn.bias_add(conv, biases)
             out = tf.layers.batch_normalization(out, training=is_training)
             conv1_1 = tf.nn.relu(out)
@@ -114,7 +114,7 @@ def lenet(X, is_training, params=None, var_scope='cnn'):
         # CONVOLUTION 1 - 2
         with tf.name_scope('conv1_2'):
             filter1_2 = tf.get_variable('weights1_2', shape=[5, 5, 32, 64], \
-                initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
             conv = tf.nn.conv2d(pool1_1_drop, filter1_2, [1,1,1,1], padding='SAME')
             biases = tf.get_variable('biases1_2', shape=[64], \
                 initializer=tf.constant_initializer(0.0), reuse=tf.AUTO_REUSE)
@@ -134,9 +134,9 @@ def lenet(X, is_training, params=None, var_scope='cnn'):
             pool2_flat = tf.layers.Flatten()(pool2_1_drop)
             dim = pool2_flat.get_shape()[1].value
             fc1w = tf.get_variable('weights3_1', shape=[dim, 1024], \
-                initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
             fc1b = tf.get_variable('biases3_1', shape=[1024], \
-                initializer=tf.constant_initializer(1.0), reuse=tf.AUTO_REUSE)
+                initializer=tf.constant_initializer(1.0))
             out = tf.nn.bias_add(tf.matmul(pool2_flat, fc1w), fc1b)
             out = tf.layers.batch_normalization(out, training=is_training)
             fc1 = tf.nn.relu(out)
@@ -144,9 +144,9 @@ def lenet(X, is_training, params=None, var_scope='cnn'):
         #FULLY CONNECTED 2
         with tf.name_scope('fc2') as scope:
             fc2w = tf.get_variable('weights3_2', shape=[1024, params.num_classes], \
-                initializer=tf.truncated_normal_initializer(stddev=1e-1), reuse=tf.AUTO_REUSE)
+                initializer=tf.truncated_normal_initializer(stddev=1e-1))
             fc2b = tf.get_variable('biases3_2', shape=[params.num_classes], \
-                initializer=tf.constant_initializer(1.0), reuse=tf.AUTO_REUSE)
+                initializer=tf.constant_initializer(1.0))
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     return Ylogits, fc1_drop
 

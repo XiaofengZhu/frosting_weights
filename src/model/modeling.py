@@ -422,13 +422,14 @@ def build_model(mode, inputs, params, weak_learner_id):
             y_conv, _ = lenet(features, is_training, params, var_scope='cnn')
             if is_training:
                 _, _ = lenet(features, False, params, var_scope='c_cnn')
-    if params.finetune:
-        y_conv, _ = lenet_original(features, params, var_scope='cnn')
     else:
-        # default cnn
-        y_conv, _ = lenet_original(features, params, var_scope='cnn')
-        if is_training:
-            _, _ = lenet_original(features, params, var_scope='c_cnn')
+        if params.finetune:
+            y_conv, _ = lenet_original(features, params, var_scope='cnn')
+        else:
+            # default cnn
+            y_conv, _ = lenet_original(features, params, var_scope='cnn')
+            if is_training:
+                _, _ = lenet_original(features, params, var_scope='c_cnn')
     return y_conv, None
 
 def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):

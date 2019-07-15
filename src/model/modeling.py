@@ -14,7 +14,7 @@ import time
 import kfac
 
 #################
-'''
+
 def lenet(X, is_training, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
         # CONVOLUTION 1 - 1
@@ -74,8 +74,8 @@ def lenet(X, is_training, params=None, var_scope='cnn'):
                 initializer=tf.constant_initializer(1.0))
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     return Ylogits, fc1_drop
-'''
-def lenet_original(X, is_training, params=None, var_scope='cnn'):
+
+def lenet_original(X, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
         # CONVOLUTION 1 - 1
         with tf.name_scope('conv1_1'):
@@ -423,12 +423,12 @@ def build_model(mode, inputs, params, weak_learner_id):
             if is_training:
                 _, _ = lenet(features, is_training, params, var_scope='c_cnn')
     if params.finetune:
-        y_conv, _ = lenet_original(features, is_training, params, var_scope='cnn')
+        y_conv, _ = lenet_original(features, params, var_scope='cnn')
     else:
         # default cnn
-        y_conv, _ = lenet_original(features, is_training, params, var_scope='cnn')
+        y_conv, _ = lenet_original(features, params, var_scope='cnn')
         if is_training:
-            _, _ = lenet_original(features, is_training, params, var_scope='c_cnn')
+            _, _ = lenet_original(features, params, var_scope='c_cnn')
     return y_conv, None
 
 def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):

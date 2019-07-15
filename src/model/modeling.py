@@ -132,7 +132,7 @@ def lenet(X, params=None, var_scope='cnn'):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     return Ylogits, fc1_drop
 
-def retrain_lenet(X, params=None, var_scope='cnn'):
+def retrain_lenet(X, is_training, params=None, var_scope='cnn'):
     trainable = var_scope=='cnn'
     neurons = []
     weights = []

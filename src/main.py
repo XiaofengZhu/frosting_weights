@@ -46,6 +46,8 @@ parser.add_argument('--finetune', default=False, type=lambda x: (str(x).lower() 
     help="try on augmented test dataset")
 parser.add_argument('--use_kfac', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
     help="usek fac true gradient")
+parser.add_argument('--log', default='',
+                    help="train log postfix")
 
 if __name__ == '__main__':
     # Train the model  
@@ -57,7 +59,7 @@ if __name__ == '__main__':
     json_path = os.path.join(args.model_dir, 'params.json')
     assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
     # Set the logger
-    set_logger(os.path.join(args.model_dir, 'train.log'))      
+    set_logger(os.path.join(args.model_dir, 'train{}.log'.format(args.log)))    
     params = Params(json_path)
     if params.mlp_sizes is None or len(params.mlp_sizes) == 0:
         logging.error('mlp_sizes are not set correctly, at least one MLP layer is required')

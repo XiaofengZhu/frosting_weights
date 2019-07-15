@@ -36,6 +36,8 @@ parser.add_argument('--aug', default=False, type=lambda x: (str(x).lower() in ['
     help="try on augmented test dataset")
 parser.add_argument('--finetune', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
     help="try on augmented test dataset")
+parser.add_argument('--log', default='',
+                    help="test log postfix")
 
 if __name__ == '__main__':
     # Set the random seed for the whole graph
@@ -59,7 +61,7 @@ if __name__ == '__main__':
     assert os.path.isfile(json_path), "No json file found at {}, run build.py".format(json_path)
     params.update(json_path)
     # Set the logger
-    set_logger(os.path.join(args.model_dir, 'test.log'))
+    set_logger(os.path.join(args.model_dir, 'test{}.log'.format(args.log)))
     # # Get paths for tfrecords
     dataset = 'test'
     if args.aug:

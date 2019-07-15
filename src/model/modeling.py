@@ -408,7 +408,7 @@ def build_model(mode, inputs, params, weak_learner_id):
                     neurons_i = tf.reshape(tf.multiply(-gradients_o_n[i], neurons[i]), [num_samples, -1])
                     neurons_j = tf.reshape(tf.multiply(-gradients_o_n[j], neurons[j]), [num_samples, -1])
                     hihj = tf.reduce_sum(tf.matmul(neurons_i, neurons_j, transpose_a=True))
-                    Rssl += math.exp(+i-j)/100 * hihj
+                    Rssl += math.exp(+i-j)/1000 * hihj
             # weight regulization
             var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
             in zip(old_weights, weights)]

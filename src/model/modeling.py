@@ -305,7 +305,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     if 'old_predicted_scores' not in inputs or 'residuals' not in inputs:
         logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']
-        predicted_scores, _ = lenet(inputs, is_training, params, var_scope='c_cnn')
+        predicted_scores, _ = lenet(inputs, is_training=False, params, var_scope='c_cnn')
         predicted_scores = tf.stop_gradient(predicted_scores)
         inputs['old_predicted_scores'] = predicted_scores
         residuals = get_residual(labels, predicted_scores)
@@ -421,7 +421,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             # default cnn
             y_conv, _ = lenet(features, is_training, params, var_scope='cnn')
             if is_training:
-                _, _ = lenet(features, is_training, params, var_scope='c_cnn')
+                _, _ = lenet(features, is_training=False, params, var_scope='c_cnn')
     if params.finetune:
         y_conv, _ = lenet_original(features, params, var_scope='cnn')
     else:
@@ -476,6 +476,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     train_op = optimizer.minimize(loss, global_step=global_step)
             elif params.use_bn:
                 with tf.name_scope('adam_optimizer'):
+                    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
                     with tf.control_dependencies(update_ops):
                         global_step = tf.train.get_or_create_global_step()
                         optimizer = tf.train.AdamOptimizer(params.learning_rate)
@@ -489,7 +490,7 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     gradients, variables = zip(*optimizer.compute_gradients(loss))
                     gradients, _ = tf.clip_by_global_norm(gradients, params.gradient_clip_value)
                     train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)
-                    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+                    
                     
         
         with tf.name_scope('accuracy'):

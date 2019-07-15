@@ -196,7 +196,7 @@ def retrain_lenet(X, params=None, var_scope='cnn'):
             fc1 = tf.nn.relu(out)
             fc1_drop = tf.nn.dropout(fc1, params.training_keep_prob)
             weights.extend([fc1w, fc1b])
-            neurons.append(fc1_drop)
+            neurons.append(fc1)
         #FULLY CONNECTED 2
         with tf.name_scope('fc2') as scope:
             fc2w = tf.get_variable('weights3_2', shape=[1024, params.num_classes], \
@@ -268,7 +268,7 @@ def retrain_lenet_pure(inputs, params=None, var_scope='cnn'):
             fc1 = tf.nn.relu(out)
             fc1_drop = tf.nn.dropout(fc1, params.training_keep_prob)
             weights.extend([fc1w, fc1b])
-            neurons.append(fc1_drop)
+            neurons.append(fc1)
         #FULLY CONNECTED 2
         with tf.name_scope('fc2') as scope:
             fc2w = tf.get_variable('weights3_2', shape=[1024, params.num_classes], \
@@ -403,8 +403,8 @@ def build_model(mode, inputs, params, weak_learner_id):
             _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
             y_conv, (neurons, weights), _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
             Rssl = tf.constant(0.0, dtype=tf.float32)
-            for i in range(len(neurons)-1):
-                for j in range(i, len(neurons)):
+            for i in range(1, len(neurons)-2):
+                for j in range(i, len(neurons)-1):
                     neurons_i = tf.reshape(tf.multiply(-gradients_o_n[i], neurons[i]), [num_samples, -1])
                     neurons_j = tf.reshape(tf.multiply(-gradients_o_n[j], neurons[j]), [num_samples, -1])
                     hihj = tf.reduce_sum(tf.matmul(neurons_i, neurons_j, transpose_a=True))
@@ -414,7 +414,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             in zip(old_weights, weights)]
             var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
-            regulization_loss = 0.001 * var_mses           
+            regulization_loss = 0.0001 * Rssl + 0.001 * var_mses           
             return y_conv, regulization_loss
         return retrain_lenet(features, params, var_scope='cnn')                      
     if params.use_residual:

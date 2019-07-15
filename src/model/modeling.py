@@ -345,8 +345,8 @@ def build_model(mode, inputs, params, weak_learner_id):
     features = inputs['features']
     if params.loss_fn=='retrain_regu':
         if not is_test:
-            _, (old_neurons, old_weights), _ = retrain_lenet(features, params, var_scope='c_cnn')
-            y_conv, (neurons, weights), _ = retrain_lenet(features, params, var_scope='cnn')
+            _, (old_neurons, old_weights) = retrain_lenet(features, params, var_scope='c_cnn')
+            y_conv, (neurons, weights) = retrain_lenet(features, params, var_scope='cnn')
             neuron_mse_list = [tf.losses.mean_squared_error(old_neuron, neuron) for (old_neuron, neuron) \
             in zip(old_neurons, neurons)]
             neuron_mses = functools.reduce(lambda x,y:x+y, neuron_mse_list) / len(neuron_mse_list)

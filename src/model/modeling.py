@@ -421,7 +421,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             # default cnn
             y_conv, _ = lenet(features, is_training, params, var_scope='cnn')
             if is_training:
-                _, _ = lenet(features, is_training=False, params, var_scope='c_cnn')
+                _, _ = lenet(features, False, params, var_scope='c_cnn')
     if params.finetune:
         y_conv, _ = lenet_original(features, params, var_scope='cnn')
     else:

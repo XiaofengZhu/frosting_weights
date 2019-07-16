@@ -390,7 +390,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     is_training = (mode == 'train')
     is_test = (mode == 'test')
     features = inputs['features']
-    boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='c_cnn')
+    boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='cnn')
     return boosted_scores, None
     # if 'old_predicted_scores' not in inputs or 'residuals' not in inputs:
     #     logging.error('old_predicted_scores not in inputs')

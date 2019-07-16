@@ -1,7 +1,7 @@
 #! /usr/env/bin python3
 
 """Convert MNIST Dataset to local TFRecords"""
-
+# python mnist-to-aug-tfrecords.py --data-directory ../data/mnist-aug
 import argparse
 import os
 import sys
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     
     parser.add_argument(
         '--data-directory', 
-        default='../data/aug_mnist',
+        default='../data/mnist-aug',
         help='Directory where TFRecords will be stored')
 
     args = parser.parse_args()

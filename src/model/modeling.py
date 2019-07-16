@@ -14,6 +14,7 @@ import time
 import kfac
 
 #################
+'''
 def lenet_boost(X, is_training, params=None, var_scope='cnn'):
     # CONVOLUTION 1 - 1
     with tf.name_scope('conv1_1'):
@@ -185,7 +186,7 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
         # fc2w = tf.nn.relu(fc2w)
         Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     return Ylogits, fc1_drop
-'''
+
 def lenet(X, is_training, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
         # CONVOLUTION 1 - 1

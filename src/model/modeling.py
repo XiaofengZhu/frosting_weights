@@ -16,13 +16,14 @@ import kfac
 #################
 
 def lenet_boost(X, is_training, params=None, var_scope='cnn'):
+    trainable = var_scope=='cnn'
     # CONVOLUTION 1 - 1
     with tf.name_scope('conv1_1'):
         with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
             filter1_1 = tf.get_variable('weights1_1', shape=[5, 5, int(params.depth), 32], \
-                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+                initializer=tf.truncated_normal_initializer(stddev=1e-1), trainable=trainable)
             biases = tf.get_variable('biases1_1', shape=[32], \
-                initializer=tf.constant_initializer(0.0))            
+                initializer=tf.constant_initializer(0.0), trainable=trainable)           
         with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
             mask_filter1_1 = tf.get_variable('mweights1_1', shape=[5, 5, int(params.depth), 32], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
@@ -45,9 +46,10 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
     with tf.name_scope('conv1_2'):
         with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
             filter1_2 = tf.get_variable('weights1_2', shape=[5, 5, 32, 64], \
-                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+                initializer=tf.truncated_normal_initializer(stddev=1e-1), \
+                trainable=trainable)
             biases = tf.get_variable('biases1_2', shape=[64], \
-                initializer=tf.constant_initializer(0.0))            
+                initializer=tf.constant_initializer(0.0), trainable=trainable)            
         with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
             mask_filter1_2 = tf.get_variable('mweights1_2', shape=[5, 5, 32, 64], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
@@ -71,9 +73,10 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
         dim = pool2_flat.get_shape()[1].value
         with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
             fc1w = tf.get_variable('weights3_1', shape=[dim, 1024], \
-                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+                initializer=tf.truncated_normal_initializer(stddev=1e-1), \
+                trainable=trainable)
             fc1b = tf.get_variable('biases3_1', shape=[1024], \
-                initializer=tf.constant_initializer(1.0))            
+                initializer=tf.constant_initializer(1.0), trainable=trainable)            
         with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
             mask_fc1w = tf.get_variable('mweights3_1', shape=[dim, 1024], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
@@ -87,9 +90,11 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
     with tf.name_scope('fc2') as scope:
         with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
             fc2w = tf.get_variable('weights3_2', shape=[1024, params.num_classes], \
-                initializer=tf.truncated_normal_initializer(stddev=1e-1))
+                initializer=tf.truncated_normal_initializer(stddev=1e-1), \
+                trainable=trainable)
             fc2b = tf.get_variable('biases3_2', shape=[params.num_classes], \
-                initializer=tf.constant_initializer(1.0))            
+                initializer=tf.constant_initializer(1.0), \
+                trainable=trainable)            
         with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
             mask_fc2w = tf.get_variable('mweights3_2', shape=[1024, params.num_classes], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))

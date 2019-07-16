@@ -2,8 +2,8 @@
 
 """
 Convert CIFAR Dataset to local TFRecords
-python cifar-to-aug-tfrecords.py --data-directory ../data/cifar-10 --dataset-name cifar-10
-python cifar-to-aug-tfrecords.py --data-directory ../data/cifar-100 --dataset-name cifar-100
+python cifar-to-aug-tfrecords.py --data-directory ../data/cifar-10-aug --dataset-name cifar-10
+python cifar-to-aug-tfrecords.py --data-directory ../data/cifar-100-aug --dataset-name cifar-100
 """
 
 import argparse

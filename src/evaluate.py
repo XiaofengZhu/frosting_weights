@@ -25,7 +25,7 @@ parser.add_argument('--residual_model_dir', default='experiments/residual_model'
 parser.add_argument('--loss_fn', default='cnn', help="model loss function")
 # tf data folder for
 # mnist
-parser.add_argument('--data_dir', default='../data/mnist',
+parser.add_argument('--data_dir', default='../data/mnist-aug',
                     help="Directory containing the dataset")
 # test.tfrecords
 parser.add_argument('--tfrecords_filename', default='.tfrecords',

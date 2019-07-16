@@ -2,8 +2,8 @@
 
 """
 Convert CIFAR Dataset to local TFRecords
-python cifar-to-tfrecords.py --data-directory ../data/cifar-10 --dataset-name cifar-10
-python cifar-to-tfrecords.py --data-directory ../data/cifar-100 --dataset-name cifar-100
+python cifar-to-aug-tfrecords.py --data-directory ../data/cifar-10 --dataset-name cifar-10
+python cifar-to-aug-tfrecords.py --data-directory ../data/cifar-100 --dataset-name cifar-100
 """
 
 import argparse
@@ -115,9 +115,9 @@ def convert_to_tf_record(data_directory:str, dataset_name:str):
     cifar10_test = get_data_set(dataset_parent_path, dataset_name, 'test')
     
     num_validation_examples, rows, cols, depth = convert_to(cifar10_validation, 'validation', data_directory)
-    num_validation_examples, rows, cols, depth = convert_to(cifar10_validation, 'validation', data_directory, aug=True)   
+    num_validation_aug_examples, rows, cols, depth = convert_to(cifar10_validation, 'validation', data_directory, aug=True)   
     num_train_examples, rows, cols, depth = convert_to(cifar10_train, 'train', data_directory, num_shards=10)
-    num_train_examples, rows, cols, depth = convert_to(cifar10_train, 'train', data_directory, num_shards=10, aug=True)    
+    num_train_aug_examples, rows, cols, depth = convert_to(cifar10_train, 'train', data_directory, num_shards=10, aug=True)    
     num_test_examples, rows, cols, depth = convert_to(cifar10_test, 'test', data_directory)
     num_test_aug_examples, rows, cols, depth = convert_to(cifar10_test, 'test_aug', data_directory, aug=True)
     # Save datasets properties in json file

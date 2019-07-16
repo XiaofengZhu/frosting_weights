@@ -26,3 +26,4 @@ modeling_*.py
 src_plot/corr_*
 *_logs/
 src_diego
+aug_images_*.py

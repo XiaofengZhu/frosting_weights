@@ -115,9 +115,9 @@ def convert_to_tf_record(data_directory:str, dataset_name:str):
     cifar10_test = get_data_set(dataset_parent_path, dataset_name, 'test')
     
     num_validation_examples, rows, cols, depth = convert_to(cifar10_validation, 'validation', data_directory)
-    num_validation_aug_examples, rows, cols, depth = convert_to(cifar10_validation, 'validation', data_directory, aug=True)   
+    num_validation_aug_examples, rows, cols, depth = convert_to(cifar10_validation, 'validation_aug', data_directory, aug=True)   
     num_train_examples, rows, cols, depth = convert_to(cifar10_train, 'train', data_directory, num_shards=10)
-    num_train_aug_examples, rows, cols, depth = convert_to(cifar10_train, 'train', data_directory, num_shards=10, aug=True)    
+    num_train_aug_examples, rows, cols, depth = convert_to(cifar10_train, 'train_aug', data_directory, num_shards=10, aug=True)    
     num_test_examples, rows, cols, depth = convert_to(cifar10_test, 'test', data_directory)
     num_test_aug_examples, rows, cols, depth = convert_to(cifar10_test, 'test_aug', data_directory, aug=True)
     # Save datasets properties in json file
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     
     parser.add_argument(
         '--data-directory', 
-        default='../data/cifar-10',
+        default='../data/cifar-10-aug',
         help='Directory where TFRecords will be stored')
     parser.add_argument(
         '--dataset-name', 

@@ -48,28 +48,25 @@ def augment_data(dataset, dataset_labels, augementation_factor=1, use_random_rot
 	for num in range (0, dataset.shape[0]):
 
 		for i in range(0, augementation_factor):
-			# original image:
-			augmented_image.append(dataset[num])
-			augmented_image_labels.append(dataset_labels[num])
-
+			# # original image:
+			# augmented_image.append(dataset[num])
+			# augmented_image_labels.append(dataset_labels[num])
+			auged = augmented_image.append(dataset[num])
 			if use_random_rotation:
-				augmented_image.append(tf.contrib.keras.preprocessing.image.random_rotation(dataset[num], 45, \
-					row_axis=0, col_axis=1, channel_axis=2))
-				augmented_image_labels.append(dataset_labels[num])
+				auged = tf.contrib.keras.preprocessing.image.random_rotation(auged, 45, \
+					row_axis=0, col_axis=1, channel_axis=2)
 
 			if use_random_shear:
-				augmented_image.append(tf.contrib.keras.preprocessing.image.random_shear(dataset[num], 0.2, \
-					row_axis=0, col_axis=1, channel_axis=2))
-				augmented_image_labels.append(dataset_labels[num])
+				auged = tf.contrib.keras.preprocessing.image.random_shear(auged, 0.2, \
+					row_axis=0, col_axis=1, channel_axis=2)
 
 			if use_random_shift:
-				augmented_image.append(tf.contrib.keras.preprocessing.image.random_shift(dataset[num], 0.2, 0.2, \
-					row_axis=0, col_axis=1, channel_axis=2))
-				augmented_image_labels.append(dataset_labels[num])
+				auged = tf.contrib.keras.preprocessing.image.random_shift(auged, 0.2, 0.2, \
+					row_axis=0, col_axis=1, channel_axis=2)
 
 			if use_random_zoom:
-				augmented_image.append(tf.contrib.keras.preprocessing.image.random_zoom(dataset[num], (0.8, 0.9), \
-					row_axis=0, col_axis=1, channel_axis=2))
-				augmented_image_labels.append(dataset_labels[num])
-
+				auged = tf.contrib.keras.preprocessing.image.random_zoom(auged, (0.8, 0.9), \
+					row_axis=0, col_axis=1, channel_axis=2)
+			augmented_image.append(auged)
+			augmented_image_labels.append(dataset_labels[num])
 	return np.array(augmented_image), np.array(augmented_image_labels)

@@ -24,8 +24,8 @@ parser.add_argument('--model_dir', default='experiments/base_model',
 # cnn, boost, retrain_regu
 parser.add_argument('--loss_fn', default='cnn', help="model loss function")
 # tf data folder for
-# mnist
-parser.add_argument('--data_dir', default='../data/mnist',
+# mnist-aug
+parser.add_argument('--data_dir', default='../data/mnist-aug',
                     help="Directory containing the dataset")
 # test.tfrecords
 parser.add_argument('--tfrecords_filename', default='.tfrecords',
@@ -33,8 +33,8 @@ parser.add_argument('--tfrecords_filename', default='.tfrecords',
 # usage: python main.py --restore_dir experiments/base_model/best_weights
 parser.add_argument('--restore_dir', default=None, # experimens/base_model/best_weights
                     help="Optional, directory containing weights to reload")
-parser.add_argument('--train_range', default='[1-5]',
-                    help="training tf range")
+# parser.add_argument('--train_range', default='[1-5]',
+#                     help="training tf range")
 # using pretrained weights and gradient boosting on datasets A and B
 # params.num_learners > 1
 # parser.add_argument('--retrain', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
@@ -76,25 +76,23 @@ if __name__ == '__main__':
     last_global_epoch, global_epoch = 0, 0
     if params.num_learners <= 1:# not args.retrain or args.combine:
         if args.combine:
-            # train from scratch
-            path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range) + args.tfrecords_filename)
-            path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)
+            # train from scratch, union of sets
+            path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
+            path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
             # Create the input data pipeline
             logging.info("Creating the datasets...")
             train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
             eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))
         elif args.finetune:
             args.restore_dir = 'best_weights'
-            path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range)+ args.tfrecords_filename)
-            path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)
-            # path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*' + args.tfrecords_filename)
-            # path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)
+            path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*' + args.tfrecords_filename)
+            path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)
             # Create the input data pipeline
             logging.info("Creating the datasets...")
             train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
             eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
         else:
-            # [1-5]
+            # train-[0-9]
             path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range) + args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)
             print(path_train_tfrecords)
@@ -129,8 +127,8 @@ if __name__ == '__main__':
         for learner_id in range(1, params.num_learners):
             # tf.reset_default_graph()
             # tf.set_random_seed(230)
-            path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range) + args.tfrecords_filename)
-            path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)
+            path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*'.format(args.train_range) + args.tfrecords_filename)
+            path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)
             # Create the input data pipeline
             logging.info("Creating the datasets...")
             train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))

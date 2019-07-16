@@ -27,6 +27,6 @@ test_fake_script = 'python evaluate.py --data_dir ../data/{} \
  --loss_fn {} --finetune true --use_kfac {} --log {}'.format(args.loss_fn, \
  	args.data_dir, args.use_kfac, args.log)
 os.system('echo {} >> {}'.format(test_fake_script, test_log))
-test_script = 'CUDA_VISIBLE_DEVICES={} python evaluate.py --data_dir ../data/{} \
+test_script = 'CUDA_VISIBLE_DEVICES={} python evaluate.py --aug true --data_dir ../data/{} \
  --loss_fn {} --finetune true --log {}'.format(args.gpu, args.data_dir, args.loss_fn, args.log)	
 os.system(test_script)

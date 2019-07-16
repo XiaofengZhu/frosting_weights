@@ -51,7 +51,7 @@ def augment_data(dataset, dataset_labels, augementation_factor=1, use_random_rot
 			# # original image:
 			# augmented_image.append(dataset[num])
 			# augmented_image_labels.append(dataset_labels[num])
-			auged = augmented_image.append(dataset[num])
+			auged = dataset[num]
 			if use_random_rotation:
 				auged = tf.contrib.keras.preprocessing.image.random_rotation(auged, 45, \
 					row_axis=0, col_axis=1, channel_axis=2)

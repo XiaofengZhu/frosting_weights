@@ -1,4 +1,8 @@
 '''
+Modified
+same size of the original train, vali, and test
+use all augementation_factors on each image
+
 In this script, we provide a simple yet powerful function that uses 
 image augmentation techniques.
 This helps to deal with less number of training instances, 

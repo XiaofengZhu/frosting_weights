@@ -93,7 +93,7 @@ if __name__ == '__main__':
             eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
         else:
             # train-[0-9]
-            path_train_tfrecords = os.path.join(args.data_dir, 'train-{}'.format(args.train_range) + args.tfrecords_filename)
+            path_train_tfrecords = os.path.join(args.data_dir, 'train-*'+ args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation' + args.tfrecords_filename)
             print(path_train_tfrecords)
             # Create the input data pipeline

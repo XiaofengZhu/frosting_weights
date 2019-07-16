@@ -25,3 +25,4 @@ modeling_*.py
 *.ipynb
 src_plot/corr_*
 *_logs/
+src_diego

@@ -390,7 +390,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     is_training = (mode == 'train')
     is_test = (mode == 'test')
     features = inputs['features']
-    boosted_scores, _ = lenet_boost(features, is_training, params)
+    boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='c_cnn')
     return boosted_scores, None
     # if 'old_predicted_scores' not in inputs or 'residuals' not in inputs:
     #     logging.error('old_predicted_scores not in inputs')
@@ -479,7 +479,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
             regulization_loss = 0.001 * var_mses            
             return y_conv, regulization_loss
-        return retrain_lenet(features, params, var_scope='cnn')    
+        return retrain_lenet(features, params, var_scope='cnn')   
     if params.loss_fn=='retrain_regu_selfless':
         num_samples = tf.shape(features)[0]
         if not is_test:
@@ -499,7 +499,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
             regulization_loss = 0.0001 * Rssl + 0.001 * var_mses           
             return y_conv, regulization_loss
-        return retrain_lenet(features, params, var_scope='cnn')                      
+        return retrain_lenet(features, params, var_scope='cnn')              
     if params.use_residual:
         return build_residual_model(mode, inputs, \
             params, weak_learner_id)

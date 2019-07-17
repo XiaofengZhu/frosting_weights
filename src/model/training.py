@@ -119,10 +119,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
             pretrained_vars = tf.contrib.framework.get_variables_to_restore(include=pretrained_include)
             pretrained_saver = tf.train.Saver(pretrained_vars, name="pretrained_saver")
             pretrained_saver.restore(sess, save_path)
-            if params.num_learners > 1:
-                best_eval_metrics = load_best_metric(best_json_path)
-                best_eval_metrics = [best_eval_metrics['accuracy'], -best_eval_metrics['loss']]   
-            # if not params.finetune and params.num_learners <= 1:
+            # if params.num_learners > 1:
             #     best_eval_metrics = load_best_metric(best_json_path)
             #     best_eval_metrics = [best_eval_metrics['accuracy'], -best_eval_metrics['loss']]
         model_summary()

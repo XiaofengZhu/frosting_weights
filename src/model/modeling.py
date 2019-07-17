@@ -687,6 +687,7 @@ def build_model(mode, inputs, params, weak_learner_id):
     if params.use_residual:
         return build_residual_model(mode, inputs, \
             params, weak_learner_id)
+    # cnn models
     y_conv = None
     if params.use_bn:
         if params.finetune:
@@ -766,9 +767,6 @@ def model_fn(mode, inputs, params, reuse=False, weak_learner_id=0):
                     gradients, variables = zip(*optimizer.compute_gradients(loss))
                     gradients, _ = tf.clip_by_global_norm(gradients, params.gradient_clip_value)
                     train_op = optimizer.apply_gradients(zip(gradients, variables), global_step=global_step)
-                    
-                    
-        
         with tf.name_scope('accuracy'):
             argmax_predictions = tf.argmax(predictions, 1)
             # if params.loss_fn == 'boost':

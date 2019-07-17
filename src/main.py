@@ -125,14 +125,20 @@ if __name__ == '__main__':
         params.dict['training_keep_prob'] = 1.0
         start_time = time.time()
         for learner_id in range(1, params.num_learners):
-            # tf.reset_default_graph()
-            # tf.set_random_seed(230)
-            path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*' + args.tfrecords_filename)
-            path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)
+            # # tf.reset_default_graph()
+            # # tf.set_random_seed(230)
+            # path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*' + args.tfrecords_filename)
+            # path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)
+            # # Create the input data pipeline
+            # logging.info("Creating the datasets...")
+            # train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
+            # eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
+            path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
+            path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
             # Create the input data pipeline
             logging.info("Creating the datasets...")
             train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
-            eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
+            eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))            
             # Specify other parameters for the dataset and the model
             # Create the two iterators over the two datasets
             train_inputs = input_fn('train', train_dataset, params)

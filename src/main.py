@@ -85,12 +85,18 @@ if __name__ == '__main__':
             eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))
         elif args.finetune:
             args.restore_dir = 'best_weights'
-            path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*' + args.tfrecords_filename)
-            path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)
+            # path_train_tfrecords = os.path.join(args.data_dir, 'train_aug-*' + args.tfrecords_filename)
+            # path_eval_tfrecords = os.path.join(args.data_dir, 'validation_aug' + args.tfrecords_filename)
+            # # Create the input data pipeline
+            # logging.info("Creating the datasets...")
+            # train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
+            # eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
+            path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
+            path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
             # Create the input data pipeline
             logging.info("Creating the datasets...")
             train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
-            eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
+            eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))            
         else:
             # train-[0-9]
             path_train_tfrecords = os.path.join(args.data_dir, 'train-*'+ args.tfrecords_filename)

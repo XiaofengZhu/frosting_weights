@@ -67,6 +67,9 @@ if __name__ == '__main__':
     if args.aug:
         print('USING augmented TEST')
         dataset += '_aug'
+    if args.aug:
+        print('USING both Tests')
+        dataset += '*'        
     path_eval_tfrecords = os.path.join(args.data_dir, dataset + args.tfrecords_filename)
     # Create the input data pipeline
     logging.info("Creating the dataset...")

@@ -66,16 +66,21 @@ if __name__ == '__main__':
     set_logger(os.path.join(args.model_dir, 'test_{}.log'.format(args.log)))
     # # Get paths for tfrecords
     dataset = 'test'
-    if args.aug:
-        print('USING augmented TEST')
-        dataset += '_aug'
     if args.combine:
         print('USING both Tests')
-        dataset += '*'        
-    path_eval_tfrecords = os.path.join(args.data_dir, dataset + args.tfrecords_filename)
-    # Create the input data pipeline
-    logging.info("Creating the dataset...")
-    eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
+        dataset += '*'
+        path_eval_tfrecords = os.path.join(args.data_dir, dataset + args.tfrecords_filename) 
+        # Create the input data pipeline
+        logging.info("Creating the dataset...")
+        eval_dataset = load_dataset_from_tfrecords(glob.glob(path_eval_tfrecords))          
+    else:
+        if args.aug:
+            print('USING augmented TEST')
+            dataset += '_aug'    
+        path_eval_tfrecords = os.path.join(args.data_dir, dataset + args.tfrecords_filename)
+        # Create the input data pipeline
+        logging.info("Creating the dataset...")
+        eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
     # Create iterator over the test set
     eval_inputs = input_fn('test', eval_dataset, params)
     logging.info("- done.")

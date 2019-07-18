@@ -568,21 +568,34 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     features = inputs['features']
     boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='cnn')
     return boosted_scores, None
-    # if 'old_predicted_scores' not in inputs or 'residuals' not in inputs:
-    #     logging.error('old_predicted_scores not in inputs')
-    #     labels = inputs['labels']
-    #     predicted_scores, _ = lenet(features, False, params, var_scope='c_cnn')
-    #     predicted_scores = tf.stop_gradient(predicted_scores)
-    #     inputs['old_predicted_scores'] = predicted_scores
-    #     residuals = get_residual(labels, predicted_scores)
-    #     inputs['residuals'] = residuals
-    # residual_predicted_scores, _ = lenet_boost(features, is_training, params)
-    # mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
-    # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
-    # #     message='residual_predicted_scores\n')
-    # boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
-    # return boosted_scores, mse_loss
 
+def build_residual_model(mode, inputs, params, weak_learner_id):
+    """Compute logits of the model (output distribution)
+    Args:
+        mode: (string) 'train', 'eval', etc.
+        inputs: (dict) contains the inputs of the graph (features, residuals...)
+                this can be `tf.placeholder` or outputs of `tf.data`
+        params: (Params) contains hyperparameters of the model (ex: `params.learning_rate`)
+    Returns:
+        output: (tf.Tensor) output of the model
+    Notice:
+        !!! boosting is only supported for cnn and urrank
+    """    
+    if 'old_predicted_scores' not in inputs or 'residuals' not in inputs:
+        logging.error('old_predicted_scores not in inputs')
+        labels = inputs['labels']
+        predicted_scores, _ = lenet(features, False, params, var_scope='c_cnn')
+        predicted_scores = tf.stop_gradient(predicted_scores)
+        inputs['old_predicted_scores'] = predicted_scores
+        residuals = get_residual(labels, predicted_scores)
+        inputs['residuals'] = residuals
+    residual_predicted_scores, _ = lenet_boost(features, is_training, params)
+    mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
+    # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
+    #     message='residual_predicted_scores\n')
+    boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
+    return boosted_scores, mse_loss
+'''
 def get_residual(labels, Ylogits):
     Ysoftmax = tf.nn.softmax(Ylogits)
     return labels - Ysoftmax
@@ -656,34 +669,26 @@ def build_model(mode, inputs, params, weak_learner_id):
             regulization_loss = 0.001 * var_mses            
             return y_conv, regulization_loss
         return retrain_lenet(features, params, var_scope='cnn')   
-    # if params.loss_fn=='retrain_regu_selfless':
-    #     num_samples = tf.shape(features)[0]
-    #     if not is_test:
-    #         _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
-    #         y_conv, (neurons, weights), _ = retrain_lenet_selfless(inputs, params, var_scope='cnn')
-    #         Rssl = tf.constant(0.0, dtype=tf.float32)
-    #         for layer in range(0, len(neurons)-1):
-    #             neurons_l = tf.reshape(tf.multiply(-tf.exp(gradients_o_n[layer]), neurons[layer]), [num_samples, -1])
-
-    #             for j in range(i, len(neurons)-1):
-                    
-    #                 neurons_j = tf.reshape(tf.multiply(-gradients_o_n[j], neurons[j]), [num_samples, -1])
-    #                 hihj = tf.reduce_sum(tf.matmul(neurons_i, neurons_j, transpose_a=True))
-    #                 Rssl += math.exp((i-j)*(i-j))/1000 * hihj            
-    #         # for i in range(0, len(neurons)-2):
-    #         #     for j in range(i, len(neurons)-1):
-    #         #         neurons_i = tf.reshape(tf.multiply(-gradients_o_n[i], neurons[i]), [num_samples, -1])
-    #         #         neurons_j = tf.reshape(tf.multiply(-gradients_o_n[j], neurons[j]), [num_samples, -1])
-    #         #         hihj = tf.reduce_sum(tf.matmul(neurons_i, neurons_j, transpose_a=True))
-    #         #         Rssl += math.exp(+i-j)/1000 * hihj
-    #         # weight regulization
-    #         var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
-    #         in zip(old_weights, weights)]
-    #         var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
-    #         var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
-    #         regulization_loss = 0.0001 * Rssl + 0.001 * var_mses           
-    #         return y_conv, regulization_loss
-    #     return retrain_lenet(features, params, var_scope='cnn')            
+    if params.loss_fn=='retrain_regu_selfless':
+        num_samples = tf.shape(features)[0]
+        if not is_test:
+            _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
+            y_conv, (neurons, weights), _ = retrain_lenet_selfless(inputs, params, var_scope='cnn')
+            Rssl = tf.constant(0.0, dtype=tf.float32)
+            for layer in range(0, len(neurons)-1):
+                neurons_l = tf.reshape(tf.multiply(-tf.exp(gradients_o_n[layer]), neurons[layer]), [num_samples, -1])
+                hihj = tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_a=True))
+                hihj -= tf.reduce_sum(tf.square(neurons_l))
+                Rssl = hihj
+                # Rssl += math.exp((i-j)*(i-j))/1000 * hihj
+            # weight regulization
+            var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
+            in zip(old_weights, weights)]
+            var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
+            var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
+            regulization_loss = 0.0001 * Rssl + 0.001 * var_mses           
+            return y_conv, regulization_loss
+        return retrain_lenet(features, params, var_scope='cnn')            
     if params.use_residual:
         return build_residual_model(mode, inputs, \
             params, weak_learner_id)

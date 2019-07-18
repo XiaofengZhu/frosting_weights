@@ -69,7 +69,7 @@ if __name__ == '__main__':
     if args.combine:
         params.dict['test_size'] = params.dict['test_size'] * 2
         print('USING both Tests')
-        logging.info("test size: {}".format(params.test_size))
+        # logging.info("test size: {}".format(params.test_size))
         dataset += '*'
         path_eval_tfrecords = os.path.join(args.data_dir, dataset + args.tfrecords_filename) 
         # Create the input data pipeline

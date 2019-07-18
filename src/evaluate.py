@@ -33,9 +33,11 @@ parser.add_argument('--tfrecords_filename', default='.tfrecords',
 parser.add_argument('--restore_from', default='best_weights',
                     help="Subdirectory of the best weights")
 parser.add_argument('--aug', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
-    help="try on augmented test dataset")
+    help="test on augmented test dataset")
+parser.add_argument('--combine', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
+    help="test on old and augmented test datasets")
 parser.add_argument('--finetune', default=False, type=lambda x: (str(x).lower() in ['true','1', 'yes']), \
-    help="try on augmented test dataset")
+    help="finetune mode")
 parser.add_argument('--log', default='',
                     help="test log postfix")
 
@@ -67,7 +69,7 @@ if __name__ == '__main__':
     if args.aug:
         print('USING augmented TEST')
         dataset += '_aug'
-    if args.aug:
+    if args.combine:
         print('USING both Tests')
         dataset += '*'        
     path_eval_tfrecords = os.path.join(args.data_dir, dataset + args.tfrecords_filename)

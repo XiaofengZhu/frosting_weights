@@ -92,7 +92,7 @@ def evaluate(model_spec, model_dir, params, restore_from):
         if os.path.isdir(save_path):
             save_path = tf.train.latest_checkpoint(save_path)
         saver.restore(sess, save_path)
-
+        logging.info("test size: {}".format(params.test_size))
         # Evaluate
         num_steps = (params.test_size + params.batch_size - 1) // params.batch_size
         metrics = evaluate_sess(sess, model_spec, num_steps, params=params)

@@ -682,9 +682,9 @@ def build_model(mode, inputs, params, weak_learner_id):
                 # coefficient = coefficient - tf.transpose(coefficient)
                 # coefficient = tf.exp(-tf.square(coefficient))
                 # hihj = tf.reduce_sum(tf.multiply(coefficient, tf.matmul(neurons_l, neurons_l, transpose_a=True)))
-                # hihj = tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_a=True))
+                hihj = tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_a=True))
                 # hihj -= tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_b=True))#tf.reduce_sum(tf.square(neurons_l))
-                hihj -= tf.reduce_sum(tf.square(neurons_l))
+                # hihj -= tf.reduce_sum(tf.square(neurons_l))
                 Rssl += hihj
             # weight regulization
             var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \

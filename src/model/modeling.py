@@ -679,6 +679,7 @@ def build_model(mode, inputs, params, weak_learner_id):
                 neurons_l = tf.reshape(tf.multiply(tf.exp(-gradients_o_n[layer]), neurons[layer]), [num_samples, -1])/1000
                 num_neuron = tf.shape(neurons_l)[-1]
                 coefficient = tf.range(num_neuron)
+                coefficient = tf.cast(coefficient, dtype=tf.float32)
                 coefficient = coefficient - tf.transpose(coefficient)
                 coefficient = tf.exp(-tf.square(coefficient))
                 hihj = tf.reduce_sum(tf.multiply(coefficient, tf.matmul(neurons_l, neurons_l, transpose_a=True)))

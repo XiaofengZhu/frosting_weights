@@ -77,6 +77,8 @@ if __name__ == '__main__':
     if params.num_learners <= 1:# not args.retrain or args.combine:
         if args.combine:
             # train from scratch, union of sets
+            params.dict['train_size'] = params.dict['train_size'] * 2
+            params.dict['vali_size'] = params.dict['vali_size'] * 2
             path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
             # Create the input data pipeline
@@ -91,6 +93,8 @@ if __name__ == '__main__':
             # logging.info("Creating the datasets...")
             # train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
             # eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
+            params.dict['train_size'] = params.dict['train_size'] * 2
+            params.dict['vali_size'] = params.dict['vali_size'] * 2       
             path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
             # Create the input data pipeline
@@ -139,6 +143,8 @@ if __name__ == '__main__':
             # logging.info("Creating the datasets...")
             # train_dataset = load_dataset_from_tfrecords(glob.glob(path_train_tfrecords))
             # eval_dataset = load_dataset_from_tfrecords(path_eval_tfrecords)
+            params.dict['train_size'] = params.dict['train_size'] * 2
+            params.dict['vali_size'] = params.dict['vali_size'] * 2     
             path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
             # Create the input data pipeline

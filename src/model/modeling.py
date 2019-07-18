@@ -642,7 +642,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             in zip(old_weights, weights)]
             var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
-            regulization_loss = 0.001 * neuron_mses + 0.001 * var_mses  
+            regulization_loss = 0.001 * neuron_mses + 0.001 * var_mses
             return y_conv, regulization_loss
         return retrain_lenet(features, params, var_scope='cnn')
     if params.loss_fn=='retrain_regu_fisher':
@@ -654,7 +654,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             in zip(old_weights, weights)]
             var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
-            regulization_loss = 0.001 * var_mses      
+            regulization_loss = 0.001 * var_mses
             return y_conv, regulization_loss
         return retrain_lenet(features, params, var_scope='cnn')
     if params.loss_fn=='retrain_regu_mas':

@@ -677,8 +677,12 @@ def build_model(mode, inputs, params, weak_learner_id):
             Rssl = tf.constant(0.0, dtype=tf.float32)
             for layer in range(0, len(neurons)-1):
                 neurons_l = tf.reshape(tf.multiply(-tf.exp(gradients_o_n[layer]), neurons[layer]), [num_samples, -1])
-                hihj = tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_a=True))
-                hihj -= tf.reduce_sum(tf.square(neurons_l))
+                num_neuron = neurons_l.shape[-1]
+                coefficient = tf.range(num_neuron)
+                coefficient = coefficient - tf.transpose(coefficient)
+                coefficient = tf.exp(-tf.square(coefficient))
+                hihj = tf.reduce_sum(tf.multiply(coefficient, tf.matmul(neurons_l, neurons_l, transpose_a=True)))
+                hihj -= tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_b=True))#tf.reduce_sum(tf.square(neurons_l))
                 Rssl = hihj
                 # Rssl += math.exp((i-j)*(i-j))/1000 * hihj
             # weight regulization

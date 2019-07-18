@@ -676,7 +676,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             y_conv, (neurons, weights), _ = retrain_lenet_selfless(inputs, params, var_scope='cnn')
             Rssl = tf.constant(0.0, dtype=tf.float32)
             for layer in range(0, len(neurons)-1):
-                neurons_l = tf.reshape(tf.multiply(-tf.exp(gradients_o_n[layer]), neurons[layer]), [num_samples, -1])/1000
+                neurons_l = tf.reshape(tf.multiply(-tf.exp(gradients_o_n[layer]), neurons[layer]), [num_samples, -1])/100000
                 # num_neuron = neurons_l.shape[-1]
                 # coefficient = tf.range(num_neuron)
                 # coefficient = coefficient - tf.transpose(coefficient)

@@ -675,16 +675,17 @@ def build_model(mode, inputs, params, weak_learner_id):
             _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
             y_conv, (neurons, weights), _ = retrain_lenet_selfless(inputs, params, var_scope='cnn')
             Rssl = tf.constant(0.0, dtype=tf.float32)
-            # for layer in range(0, len(neurons)-1):
-            #     neurons_l = tf.reshape(tf.multiply(-tf.exp(gradients_o_n[layer]), neurons[layer]), [num_samples, -1])/1000
-            #     # num_neuron = neurons_l.shape[-1]
-            #     # coefficient = tf.range(num_neuron)
-            #     # coefficient = coefficient - tf.transpose(coefficient)
-            #     # coefficient = tf.exp(-tf.square(coefficient))
-            #     # hihj = tf.reduce_sum(tf.multiply(coefficient, tf.matmul(neurons_l, neurons_l, transpose_a=True)))
-            #     hihj = tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_a=True))
-            #     hihj -= tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_b=True))#tf.reduce_sum(tf.square(neurons_l))
-            #     Rssl += hihj
+            for layer in range(0, len(neurons)-1):
+                neurons_l = tf.reshape(tf.multiply(-tf.exp(gradients_o_n[layer]), neurons[layer]), [num_samples, -1])/1000
+                # num_neuron = neurons_l.shape[-1]
+                # coefficient = tf.range(num_neuron)
+                # coefficient = coefficient - tf.transpose(coefficient)
+                # coefficient = tf.exp(-tf.square(coefficient))
+                # hihj = tf.reduce_sum(tf.multiply(coefficient, tf.matmul(neurons_l, neurons_l, transpose_a=True)))
+                hihj = tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_a=True))
+                # hihj -= tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_b=True))#tf.reduce_sum(tf.square(neurons_l))
+                hihj -= tf.reduce_sum(tf.square(neurons_l))
+                Rssl += hihj
             # weight regulization
             var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
             in zip(old_weights, weights)]

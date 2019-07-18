@@ -684,14 +684,14 @@ def build_model(mode, inputs, params, weak_learner_id):
                 # hihj = tf.reduce_sum(tf.multiply(coefficient, tf.matmul(neurons_l, neurons_l, transpose_a=True)))
                 hihj = tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_a=True))
                 hihj -= tf.reduce_sum(tf.matmul(neurons_l, neurons_l, transpose_b=True))#tf.reduce_sum(tf.square(neurons_l))
-                Rssl = hihj
+                Rssl += hihj
                 # Rssl += math.exp((i-j)*(i-j))/1000 * hihj
             # weight regulization
             var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
             in zip(old_weights, weights)]
             var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
-            regulization_loss = 0.0001 * Rssl + 0.001 * var_mses           
+            regulization_loss = 0.0005 * Rssl + 0.001 * var_mses           
             return y_conv, regulization_loss
         return retrain_lenet(features, params, var_scope='cnn')            
     if params.use_residual:

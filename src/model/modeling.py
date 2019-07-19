@@ -122,16 +122,16 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
         with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
             mask_filter1_1 = tf.get_variable('mweights1_1', shape=[5, 5, int(params.depth), 32], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
-        filter1_1 = tf.multiply(mask_filter1_1, filter1_1)
-        # filter1_1 = tf.nn.tanh(filter1_1)
-        # filter1_1 = tf.nn.relu(filter1_1)
-        stride = [1,1,1,1]
-        conv1_1 = tf.nn.conv2d(X, filter1_1, stride, padding='SAME')
-        out1_1 = tf.nn.bias_add(conv1_1, biases1_1)
+            filter1_1 = tf.multiply(mask_filter1_1, filter1_1)
+            # filter1_1 = tf.nn.tanh(filter1_1)
+            # filter1_1 = tf.nn.relu(filter1_1)
+            stride = [1,1,1,1]
+            conv1_1 = tf.nn.conv2d(X, filter1_1, stride, padding='SAME')
+            out1_1 = tf.nn.bias_add(conv1_1, biases1_1)
         with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
             out1_1 = tf.layers.batch_normalization(out1_1, training=is_training, name='bn_conv1_1')
             conv1_1 = tf.nn.relu(out1_1)
-            weights.extend([filter1_1, biases])
+            weights.extend([filter1_1, biases1_1])
     # POOL 1
     with tf.name_scope('pool1'):
         pool1_1 = tf.nn.max_pool(conv1_1,
@@ -156,7 +156,7 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
             # filter1_2 = tf.nn.relu(filter1_2)     
             conv1_2 = tf.nn.conv2d(pool1_1_drop, filter1_2, [1,1,1,1], padding='SAME')
             out1_2 = tf.nn.bias_add(conv1_2, biases1_2)
-            weights.extend([filter1_2, biases])
+            weights.extend([filter1_2, biases1_2])
         with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
             out1_2 = tf.layers.batch_normalization(out1_2, training=is_training, name='bn_conv1_2')
             conv1_2 = tf.nn.relu(out1_2)
@@ -203,9 +203,10 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
         with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
             mask_fc2w = tf.get_variable('mweights3_2', shape=[1024, params.num_classes], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
-        fc2w = tf.multiply(mask_fc2w, fc2w)
-        # fc2w = tf.nn.relu(fc2w)
-        Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
+            fc2w = tf.multiply(mask_fc2w, fc2w)
+            # fc2w = tf.nn.relu(fc2w)
+            Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
+            weights.extend([fc2w, fc2b])
     return Ylogits, weights
 
 def lenet(X, is_training, params=None, var_scope='cnn'):

@@ -630,7 +630,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     Notice:
         !!! boosting is only supported for cnn and urrank
     """
-
+    is_training = (mode == 'train')
     features = inputs['features']
     if 'old_predicted_scores' not in inputs:# or 'residuals' not in inputs:
         logging.error('old_predicted_scores not in inputs')
@@ -640,6 +640,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         inputs['old_predicted_scores'] = predicted_scores
     #     residuals = get_residual(labels, predicted_scores)
     #     inputs['residuals'] = residuals
+    residual_predicted_scores, _ = lenet(features, is_training, params, var_scope='cnn')
     # residual_predicted_scores, _ = lenet_boost(features, is_training, params)
     # mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
     # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \

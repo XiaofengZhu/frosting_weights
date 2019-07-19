@@ -585,12 +585,13 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     if not is_test:
         _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
         boosted_scores, weights = lenet_boost(features, is_training, params, var_scope='cnn')
-        # weight regulization
-        var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
-        in zip(old_weights, weights)]
-        var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
-        var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
-        regulization_loss = 0.001 * var_mses
+        # # weight regulization
+        # var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
+        # in zip(old_weights, weights)]
+        # var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
+        # var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
+        # regulization_loss = 0.001 * var_mses
+        regulization_loss = tf.constant(0.0, dtype=tf.float32)
         return boosted_scores, regulization_loss
 
     boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='cnn')

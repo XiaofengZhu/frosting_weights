@@ -598,7 +598,7 @@ def build_residual_model_with_fisher(mode, inputs, params, weak_learner_id):
     return boosted_scores, None
 
 '''
-
+'''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
@@ -636,19 +636,21 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     if 'old_predicted_scores' not in inputs:# or 'residuals' not in inputs:
         logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']
-        predicted_scores, _ = lenet(features, False, params, var_scope='c_cnn')
+        _, (old_neurons, old_weights) = retrain_lenet(features, params, var_scope='c_cnn')
+        # predicted_scores, _ = lenet(features, False, params, var_scope='c_cnn')
         predicted_scores = tf.stop_gradient(predicted_scores)
         inputs['old_predicted_scores'] = predicted_scores
     #     residuals = get_residual(labels, predicted_scores)
     #     inputs['residuals'] = residuals
-    residual_predicted_scores, _ = lenet(features, is_training, params, var_scope='cnn')
+    residual_predicted_scores, _, _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
+    # residual_predicted_scores, _ = lenet(features, is_training, params, var_scope='cnn')
     # residual_predicted_scores, _ = lenet_boost(features, is_training, params)
     # mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
     # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
     # #     message='residual_predicted_scores\n')
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     return boosted_scores, mse_loss
-'''
+
 def get_residual(labels, Ylogits):
     Ysoftmax = tf.nn.softmax(Ylogits)
     return labels - Ysoftmax

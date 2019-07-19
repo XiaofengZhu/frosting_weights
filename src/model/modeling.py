@@ -598,7 +598,7 @@ def build_residual_model_with_fisher(mode, inputs, params, weak_learner_id):
     return boosted_scores, None
 
 '''
-'''
+
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
@@ -648,7 +648,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     # #     message='residual_predicted_scores\n')
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     return boosted_scores, mse_loss
-
+'''
 def get_residual(labels, Ylogits):
     Ysoftmax = tf.nn.softmax(Ylogits)
     return labels - Ysoftmax

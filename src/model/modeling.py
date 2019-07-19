@@ -583,7 +583,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     features = inputs['features']
     if not is_test:
         _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
-        boosted_scores, weights = lenet_boost(features, params, var_scope='cnn')
+        boosted_scores, weights = lenet_boost(features, is_training, params, var_scope='cnn')
         # weight regulization
         var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
         in zip(old_weights, weights)]

@@ -636,13 +636,13 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     if 'old_predicted_scores' not in inputs:# or 'residuals' not in inputs:
         logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']
-        predicted_scores, (old_neurons, old_weights) = retrain_lenet(features, params, var_scope='c_cnn')
+        predicted_scores, _, _ = retrain_lenet_pure(features, params, var_scope='c_cnn')
         # predicted_scores, _ = lenet(features, False, params, var_scope='c_cnn')
         # predicted_scores = tf.stop_gradient(predicted_scores)
         inputs['old_predicted_scores'] = predicted_scores
     #     residuals = get_residual(labels, predicted_scores)
     #     inputs['residuals'] = residuals
-    # residual_predicted_scores, _, _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
+    residual_predicted_scores, _, _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
     # residual_predicted_scores, _ = lenet_boost(features, is_training, params)
     # mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
     # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
@@ -723,7 +723,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             in zip(old_weights, weights)]
             var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
-            regulization_loss = 0.001 * var_mses   
+            regulization_loss = 0.0001 * var_mses   
             return y_conv, regulization_loss
         return y_conv, None   
     if params.loss_fn=='retrain_regu_selfless':

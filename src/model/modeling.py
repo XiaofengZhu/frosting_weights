@@ -566,8 +566,9 @@ def retrain_lenet_selfless(inputs, params=None, var_scope='cnn'):
             for n in neurons:
                 gradients_n.append(tf.math.abs(tf.gradients(l2_Ylogits, n)))      
     return Ylogits, (neurons, weights), (gradients_n, gradients_w)
-
-def build_residual_model(mode, inputs, params, weak_learner_id):
+'''
+# not good
+def build_residual_model_with_fisher(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
         mode: (string) 'train', 'eval', etc.
@@ -585,18 +586,18 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     if not is_test:
         _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
         boosted_scores, weights = lenet_boost(features, is_training, params, var_scope='cnn')
-        # # weight regulization
-        # var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
-        # in zip(old_weights, weights)]
-        # var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
-        # var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
-        # regulization_loss = 0.001 * var_mses
-        regulization_loss = tf.constant(0.0, dtype=tf.float32)
+        # weight regulization
+        var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
+        in zip(old_weights, weights)]
+        var_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_w, var_mse_list)]
+        var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
+        regulization_loss = 0.001 * var_mses
         return boosted_scores, regulization_loss
 
     boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='cnn')
     return boosted_scores, None
 
+'''
 '''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
@@ -616,7 +617,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='cnn')
     return boosted_scores, None
 '''
-'''
+
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
@@ -643,7 +644,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     #     message='residual_predicted_scores\n')
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     return boosted_scores, mse_loss
-'''
+
 def get_residual(labels, Ylogits):
     Ysoftmax = tf.nn.softmax(Ylogits)
     return labels - Ysoftmax
@@ -894,7 +895,7 @@ def get_loss(predicted_scores, labels,
 
     options = {
             'cnn': _cnn,
-            'boost': _retrain_regu, # _cnn,
+            'boost': _cnn, #_retrain_regu,
             'retrain_regu': _retrain_regu
     }
     loss_function_str = params.loss_fn

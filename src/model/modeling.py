@@ -630,21 +630,20 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     Notice:
         !!! boosting is only supported for cnn and urrank
     """
-    is_training = (mode == 'train')
-    is_test = (mode == 'test')    
+
     features = inputs['features']
-    if 'old_predicted_scores' not in inputs or 'residuals' not in inputs:
+    if 'old_predicted_scores' not in inputs:# or 'residuals' not in inputs:
         logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']
         predicted_scores, _ = lenet(features, False, params, var_scope='c_cnn')
         predicted_scores = tf.stop_gradient(predicted_scores)
         inputs['old_predicted_scores'] = predicted_scores
-        residuals = get_residual(labels, predicted_scores)
-        inputs['residuals'] = residuals
-    residual_predicted_scores, _ = lenet_boost(features, is_training, params)
-    mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
-    # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
-    #     message='residual_predicted_scores\n')
+    #     residuals = get_residual(labels, predicted_scores)
+    #     inputs['residuals'] = residuals
+    # residual_predicted_scores, _ = lenet_boost(features, is_training, params)
+    # mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
+    # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
+    # #     message='residual_predicted_scores\n')
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     return boosted_scores, mse_loss
 
@@ -898,7 +897,7 @@ def get_loss(predicted_scores, labels,
 
     options = {
             'cnn': _cnn,
-            'boost': _boost, #_retrain_regu,
+            'boost': _cnn, #_retrain_regu,
             'retrain_regu': _retrain_regu
     }
     loss_function_str = params.loss_fn

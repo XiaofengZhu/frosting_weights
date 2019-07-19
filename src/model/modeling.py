@@ -629,7 +629,8 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         output: (tf.Tensor) output of the model
     Notice:
         !!! boosting is only supported for cnn and urrank
-    """    
+    """
+    features = inputs['features']
     if 'old_predicted_scores' not in inputs or 'residuals' not in inputs:
         logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']

@@ -630,6 +630,8 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     Notice:
         !!! boosting is only supported for cnn and urrank
     """
+    is_training = (mode == 'train')
+    is_test = (mode == 'test')    
     features = inputs['features']
     if 'old_predicted_scores' not in inputs or 'residuals' not in inputs:
         logging.error('old_predicted_scores not in inputs')

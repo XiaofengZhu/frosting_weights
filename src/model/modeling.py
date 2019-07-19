@@ -632,6 +632,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     """
     is_training = (mode == 'train')
     features = inputs['features']
+    mse_loss = tf.constant(0.0, dtype=tf.float32)
     if 'old_predicted_scores' not in inputs:# or 'residuals' not in inputs:
         logging.error('old_predicted_scores not in inputs')
         labels = inputs['labels']

@@ -684,9 +684,10 @@ def build_model(mode, inputs, params, weak_learner_id):
             return y_conv, regulization_loss
         return retrain_lenet(features, params, var_scope='cnn')
     if params.loss_fn=='retrain_regu_mine':
+        y_conv, (neurons, weights), _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
         if not is_test:
             _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
-            y_conv, (neurons, weights), _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
+            
             neuron_mse_list = [(old_neuron - neuron) * (old_neuron - neuron) for (old_neuron, neuron) \
             in zip(old_neurons, neurons)]
             neuron_mse_list = [tf.reduce_sum(g*n) for (g, n) in zip(gradients_o_n, neuron_mse_list)]
@@ -698,11 +699,12 @@ def build_model(mode, inputs, params, weak_learner_id):
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
             regulization_loss = 0.001 * neuron_mses + 0.001 * var_mses
             return y_conv, regulization_loss
-        return retrain_lenet(features, params, var_scope='cnn')
+        return y_conv, None
     if params.loss_fn=='retrain_regu_fisher':
+        y_conv, (neurons, weights), _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
         if not is_test:
             _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
-            y_conv, (neurons, weights), _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
+            
             # weight regulization
             var_mse_list = [(old_var - var) * (old_var - var) for (old_var, var) \
             in zip(old_weights, weights)]
@@ -710,7 +712,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
             regulization_loss = 0.001 * var_mses
             return y_conv, regulization_loss
-        return retrain_lenet(features, params, var_scope='cnn')
+        return y_conv, None
     if params.loss_fn=='retrain_regu_mas':
         y_conv, (neurons, weights), _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
         if not is_test:
@@ -726,9 +728,9 @@ def build_model(mode, inputs, params, weak_learner_id):
         return y_conv, None   
     if params.loss_fn=='retrain_regu_selfless':
         num_samples = tf.shape(features)[0]
+        y_conv, (neurons, weights), _ = retrain_lenet_selfless(inputs, params, var_scope='cnn')
         if not is_test:
             _, (old_neurons, old_weights), (gradients_o_n, gradients_o_w) = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
-            y_conv, (neurons, weights), _ = retrain_lenet_selfless(inputs, params, var_scope='cnn')
             Rssl = tf.constant(0.0, dtype=tf.float32)
             for layer in range(0, len(neurons)-1):
                 neurons_l = tf.reshape(tf.multiply(tf.exp(-gradients_o_n[layer]), neurons[layer]), [num_samples, -1])/1000
@@ -747,7 +749,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
             regulization_loss = 0.0005 * Rssl + 0.001 * var_mses           
             return y_conv, regulization_loss
-        return retrain_lenet(features, params, var_scope='cnn')            
+        return y_conv, None           
     if params.use_residual:
         return build_residual_model(mode, inputs, \
             params, weak_learner_id)

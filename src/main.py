@@ -76,9 +76,9 @@ if __name__ == '__main__':
     last_global_epoch, global_epoch = 0, 0
     if params.num_learners <= 1:# not args.retrain or args.combine:
         if args.combine:
-            # train from scratch, union of sets
-            params.dict['train_size'] = params.dict['train_size'] * 2
-            params.dict['vali_size'] = params.dict['vali_size'] * 2
+            # # train from scratch, union of sets
+            # params.dict['train_size'] = params.dict['train_size'] * 2
+            # params.dict['vali_size'] = params.dict['vali_size'] * 2
             path_train_tfrecords = os.path.join(args.data_dir, 'train*' + args.tfrecords_filename)
             path_eval_tfrecords = os.path.join(args.data_dir, 'validation*' + args.tfrecords_filename)
             # Create the input data pipeline

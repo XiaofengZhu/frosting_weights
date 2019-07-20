@@ -675,9 +675,9 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
         inputs['fc1_drop'] = fc1_drop
         # residuals = get_residual(labels, predicted_scores)
         # inputs['residuals'] = residuals
-    residual_predicted_scores, _ = lenet(features, is_training, params, var_scope='cnn')
+    # residual_predicted_scores, _ = lenet(features, is_training, params, var_scope='cnn')
     # residual_predicted_scores = _get_residual_mlp_logits(inputs['fc1_drop'], params)
-    # residual_predicted_scores, _ = lenet_boost(features, is_training, params)
+    residual_predicted_scores, _ = lenet_boost(features, is_training, params)
     # mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
     # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
     # #     message='residual_predicted_scores\n')

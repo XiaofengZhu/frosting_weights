@@ -633,7 +633,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     is_training = (mode == 'train')
     features = inputs['features']
     mse_loss = tf.constant(0.0, dtype=tf.float32)
-    predicted_scores, _, _ = lenet(features, False, params, var_scope='c_cnn')
+    predicted_scores, _ = lenet(features, False, params, var_scope='c_cnn')
     predicted_scores = tf.stop_gradient(predicted_scores)
     residual_predicted_scores, _, _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
     boosted_scores = predicted_scores + residual_predicted_scores    

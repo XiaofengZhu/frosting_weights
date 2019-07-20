@@ -633,23 +633,26 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     is_training = (mode == 'train')
     features = inputs['features']
     mse_loss = tf.constant(0.0, dtype=tf.float32)
-    if 'old_predicted_scores' not in inputs:# or 'residuals' not in inputs:
-        logging.error('old_predicted_scores not in inputs')
-        labels = inputs['labels']
-        predicted_scores, _, _ = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
-        # predicted_scores, _ = lenet(features, False, params, var_scope='c_cnn')
-        # predicted_scores, _ = lenet_original(features, params, var_scope='c_cnn')
-        predicted_scores = tf.stop_gradient(predicted_scores)
-        inputs['old_predicted_scores'] = predicted_scores
-    #     residuals = get_residual(labels, predicted_scores)
-    #     inputs['residuals'] = residuals
-    # residual_predicted_scores, _ = lenet_original(features, params, var_scope='cnn')
+    predicted_scores, _, _ = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
     residual_predicted_scores, _, _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
-    # residual_predicted_scores, _ = lenet_boost(features, is_training, params)
-    # mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
-    # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
-    # #     message='residual_predicted_scores\n')
-    boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
+    boosted_scores = predicted_scores + residual_predicted_scores    
+    # if 'old_predicted_scores' not in inputs:# or 'residuals' not in inputs:
+    #     logging.error('old_predicted_scores not in inputs')
+    #     labels = inputs['labels']
+    #     predicted_scores, _, _ = retrain_lenet_pure(inputs, params, var_scope='c_cnn')
+    #     # predicted_scores, _ = lenet(features, False, params, var_scope='c_cnn')
+    #     # predicted_scores, _ = lenet_original(features, params, var_scope='c_cnn')
+    #     predicted_scores = tf.stop_gradient(predicted_scores)
+    #     inputs['old_predicted_scores'] = predicted_scores
+    # #     residuals = get_residual(labels, predicted_scores)
+    # #     inputs['residuals'] = residuals
+    # # residual_predicted_scores, _ = lenet_original(features, params, var_scope='cnn')
+    # residual_predicted_scores, _, _ = retrain_lenet_pure(inputs, params, var_scope='cnn')
+    # # residual_predicted_scores, _ = lenet_boost(features, is_training, params)
+    # # mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
+    # # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
+    # # #     message='residual_predicted_scores\n')
+    # boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     return boosted_scores, mse_loss
 
 '''

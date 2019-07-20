@@ -617,7 +617,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='cnn')
     return boosted_scores, None
 '''
-
+'''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
@@ -649,10 +649,50 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     # #     message='residual_predicted_scores\n')
     boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     return boosted_scores, mse_loss
+'''
+
+def build_residual_model(mode, inputs, params, weak_learner_id):
+    """Compute logits of the model (output distribution)
+    Args:
+        mode: (string) 'train', 'eval', etc.
+        inputs: (dict) contains the inputs of the graph (features, residuals...)
+                this can be `tf.placeholder` or outputs of `tf.data`
+        params: (Params) contains hyperparameters of the model (ex: `params.learning_rate`)
+    Returns:
+        output: (tf.Tensor) output of the model
+    Notice:
+        !!! boosting is only supported for cnn and urrank
+    """
+    is_training = (mode == 'train')
+    features = inputs['features']
+    mse_loss = tf.constant(0.0, dtype=tf.float32)
+    if 'old_predicted_scores' not in inputs:# or 'residuals' not in inputs:
+        logging.error('old_predicted_scores not in inputs')
+        labels = inputs['labels']
+        predicted_scores, fc1_drop = lenet(features, False, params, var_scope='c_cnn')
+        predicted_scores = tf.stop_gradient(predicted_scores)
+        inputs['old_predicted_scores'] = predicted_scores
+        inputs['fc1_drop'] = fc1_drop
+        # residuals = get_residual(labels, predicted_scores)
+        # inputs['residuals'] = residuals
+    residual_predicted_scores = _get_residual_mlp_logits(inputs['fc1_drop'], params)
+    # residual_predicted_scores, _ = lenet_boost(features, is_training, params)
+    # mse_loss = tf.losses.mean_squared_error(inputs['residuals'], residual_predicted_scores)
+    # # residual_predicted_scores = tf.Print(residual_predicted_scores, [residual_predicted_scores], \
+    # #     message='residual_predicted_scores\n')
+    boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
+    return boosted_scores, mse_loss
 
 def get_residual(labels, Ylogits):
     Ysoftmax = tf.nn.softmax(Ylogits)
     return labels - Ysoftmax
+
+
+def _get_residual_mlp_logits(features, params, weak_learner_id=1):
+    with tf.variable_scope('residual_mlp_{}'.format(weak_learner_id), reuse=tf.AUTO_REUSE):
+        logits = tf.layers.dense(features, params.num_classes,
+            name='residual_{}_dense_{}'.format(weak_learner_id, len(params.residual_mlp_sizes)))
+    return logits
 
 def build_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model

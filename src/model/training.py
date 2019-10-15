@@ -90,6 +90,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
     begin_at_epoch = 0
     with tf.Session() as sess:
         # Initialize model variables
+        tf.reset_default_graph()
         sess.run(train_model_spec['variable_init_op'])
         # For tensorboard (takes care of writing summaries to files)
         train_writer = tf.summary.FileWriter(os.path.join(model_dir, 'train_summaries'), sess.graph)
@@ -107,7 +108,9 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 global_epoch = begin_at_epoch       
             logging.info("Restoring parameters from {}".format(save_path))
             # last_saver = tf.train.import_meta_graph(save_path+".meta")
-            if params.loss_fn == 'cnn' and params.finetune:
+            if params.loss_fn == 'retrain_regu_mine':
+                pretrained_include = ['model/cnn']
+            elif params.loss_fn == 'cnn' and params.finetune:
                 pretrained_include = ['model/cnn']
             else:
                 pretrained_include = ['model/c_cnn']
@@ -158,7 +161,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
                 best_eval_metrics = eval_metrics
                 # Save weights
                 # trainalbe_vars = {v.name: v for v in tf.trainable_variables() if 'model' in v.name}
-                # print(trainalbe_vars.keys())
+                # print(trainalbe_vars.keys())                    
                 if params.loss_fn == 'cnn' or params.loss_fn == 'retrain_regu':
                     cnn_vars=[v for v in tf.trainable_variables() if 'model/cnn' in v.name]
                     # c_cnn_vars=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='model/c_cnn')

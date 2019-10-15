@@ -13,7 +13,7 @@ import functools
 import time
 import kfac
 
-'''
+
 def lenet_boost(X, is_training, params=None, var_scope='cnn'):
     trainable = var_scope=='cnn'
     # CONVOLUTION 1 - 1
@@ -99,7 +99,7 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
                 trainable=trainable)
             fc2b = tf.get_variable('biases3_2', shape=[params.num_classes], \
                 initializer=tf.constant_initializer(1.0), \
-                trainable=trainable)            
+                trainable=trainable)
         with tf.variable_scope('mask', reuse=tf.AUTO_REUSE):
             mask_fc2w = tf.get_variable('mweights3_2', shape=[1024, params.num_classes], \
                 initializer=tf.truncated_normal_initializer(stddev=1e-1))
@@ -107,9 +107,9 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
         # fc2w = tf.nn.relu(fc2w)
         Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
     return Ylogits, fc1_drop
-'''
 
-def lenet_boost(X, is_training, params=None, var_scope='cnn'):
+'''
+def lenet_boost_weights(X, is_training, params=None, var_scope='cnn'):
     trainable = var_scope=='cnn'
     weights = []    
     # CONVOLUTION 1 - 1
@@ -208,6 +208,7 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
             weights.extend([fc2w, fc2b])
     return Ylogits, weights
+'''
 
 def lenet(X, is_training, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
@@ -717,6 +718,7 @@ def build_model(mode, inputs, params, weak_learner_id):
     is_training = (mode == 'train')
     is_test = (mode == 'test') 
     features = inputs['features']
+    '''
     if params.loss_fn=='retrain_regu':
         if not is_test:
             _, (old_neurons, old_weights) = retrain_lenet(features, params, var_scope='c_cnn')
@@ -798,6 +800,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             regulization_loss = 0.0005 * Rssl + 0.001 * var_mses           
             return y_conv, regulization_loss
         return y_conv, None           
+    '''
     if params.use_residual:
         return build_residual_model(mode, inputs, \
             params, weak_learner_id)

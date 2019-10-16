@@ -719,7 +719,7 @@ def build_model(mode, inputs, params, weak_learner_id):
     is_training = (mode == 'train')
     is_test = (mode == 'test') 
     features = inputs['features']
-    '''
+    
     if params.loss_fn=='retrain_regu':
         if not is_test:
             _, (old_neurons, old_weights) = retrain_lenet(features, params, var_scope='c_cnn')
@@ -800,8 +800,8 @@ def build_model(mode, inputs, params, weak_learner_id):
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
             regulization_loss = 0.0005 * Rssl + 0.001 * var_mses           
             return y_conv, regulization_loss
-        return y_conv, None           
-    '''
+        # return y_conv, None           
+    
     if params.use_residual:
         return build_residual_model(mode, inputs, \
             params, weak_learner_id)

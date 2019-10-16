@@ -25,7 +25,7 @@ parser.add_argument('--model_dir', default='experiments/base_model',
 parser.add_argument('--loss_fn', default='cnn', help="model loss function")
 # tf data folder for
 # mnist-aug
-parser.add_argument('--data_dir', default='../data/mnist-inc',
+parser.add_argument('--data_dir', default='../data/cifar-10-inc',
                     help="Directory containing the dataset")
 # test.tfrecords
 parser.add_argument('--tfrecords_filename', default='.tfrecords',

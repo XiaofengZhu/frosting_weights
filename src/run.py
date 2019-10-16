@@ -1,6 +1,8 @@
 import os
 import argparse
 # python run.py --gpu 1 --loss_fn retrain_regu_fisher --log fisher
+# cat experiments_boost/base_model/test_boost.log
+# mv experiments*/base_model/*.log ./
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', default='0',
                     help="retrain loss_fn")

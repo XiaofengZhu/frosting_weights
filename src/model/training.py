@@ -90,7 +90,7 @@ def train_and_evaluate(train_model_spec, eval_model_spec,
     begin_at_epoch = 0
     with tf.Session() as sess:
         # Initialize model variables
-        tf.reset_default_graph()
+        # tf.reset_default_graph()
         sess.run(train_model_spec['variable_init_op'])
         # For tensorboard (takes care of writing summaries to files)
         train_writer = tf.summary.FileWriter(os.path.join(model_dir, 'train_summaries'), sess.graph)

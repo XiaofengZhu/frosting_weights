@@ -10,7 +10,7 @@ parser.add_argument('--use_kfac', default=False, type=lambda x: (str(x).lower() 
     help="usek fac true gradient")
 parser.add_argument('--log', default='',
                     help="log file")
-parser.add_argument('--data_dir', default='../data/mnist-aug',
+parser.add_argument('--data_dir', default='../data/mnist-inc',
                     help="Directory containing the dataset")
 args = parser.parse_args()
 

@@ -1,13 +1,18 @@
 #! /usr/env/bin python3
 
-"""Convert MNIST Dataset to local TFRecords"""
-# python mnist-to-aug-tfrecords.py --data-directory ../data/mnist-aug
+"""
+Convert CIFAR Dataset to local TFRecords
+python cifar-to-aug-tfrecords.py --data-directory ../data/cifar-10-aug --dataset-name cifar-10
+python cifar-to-aug-tfrecords.py --data-directory ../data/cifar-100-aug --dataset-name cifar-100
+"""
+
 import argparse
 import os
 import sys
 import numpy as np
+import logging
 import tensorflow as tf
-from tensorflow.examples.tutorials.mnist import input_data
+from cifar import get_data_set, maybe_download_and_extract
 
 from model.utils import save_dict_to_json
 from aug_images import augment_data
@@ -61,8 +66,9 @@ def convert_to(data_set, name:str, data_directory:str, num_shards:int=1, geq:boo
     """
     print(f'\nProcessing {name} data')
 
-    images = data_set.images
-    labels = data_set.labels
+    images = data_set['images']
+    labels = data_set['labels']
+    labels = np.array(labels)
     if geq:
         chosen_indices = np.where(labels >= class_sep)
     else:
@@ -77,6 +83,7 @@ def convert_to(data_set, name:str, data_directory:str, num_shards:int=1, geq:boo
     # print(images.shape)
     num_examples, rows, cols, depth = images.shape
     # print(num_examples, rows, cols, depth)
+
     def _process_examples(start_idx:int, end_index:int, filename:str):
         with tf.python_io.TFRecordWriter(filename) as writer:
             for index in range(start_idx, end_index):
@@ -84,6 +91,7 @@ def convert_to(data_set, name:str, data_directory:str, num_shards:int=1, geq:boo
                 sys.stdout.flush()
 
                 image_raw = images[index].tostring()
+                
                 example = tf.train.Example(features=tf.train.Features(feature={
                     'height': _int64_feature(rows),
                     'width': _int64_feature(cols),
@@ -106,26 +114,24 @@ def convert_to(data_set, name:str, data_directory:str, num_shards:int=1, geq:boo
 
     return num_examples, rows, cols, depth
 
-def convert_to_tf_record(data_directory:str):
+def convert_to_tf_record(data_directory:str, dataset_name:str):
     """Convert the TF MNIST Dataset to TFRecord formats
     
     Args:
         data_directory: The directory where the TFRecord files should be stored
     """
-
-    mnist = input_data.read_data_sets(
-        "/tmp/tensorflow/mnist/input_data", 
-        reshape=False
-    )
+    dataset_parent_path = "/tmp/tensorflow"
+    maybe_download_and_extract(dataset_parent_path, dataset_name)
+    cifar10_train = get_data_set(dataset_parent_path, dataset_name, 'train')
+    cifar10_validation = get_data_set(dataset_parent_path, dataset_name, 'validation')
+    cifar10_test = get_data_set(dataset_parent_path, dataset_name, 'test')
     
-    num_validation_examples, rows, cols, depth = convert_to(mnist.validation, 'validation', data_directory)
-    num_validation_aug_examples, rows, cols, depth = convert_to(mnist.validation, 'validation_aug', \
-        data_directory, geq=True)
-    num_train_examples, rows, cols, depth = convert_to(mnist.train, 'train', data_directory, num_shards=10)
-    num_train_aug_examples, rows, cols, depth = convert_to(mnist.train, 'train_aug', data_directory, \
-        num_shards=10, geq=True)
-    num_test_examples, rows, cols, depth = convert_to(mnist.test, 'test', data_directory)
-    num_test_aug_examples, rows, cols, depth = convert_to(mnist.test, 'test_aug', data_directory, geq=True)
+    num_validation_examples, rows, cols, depth = convert_to(cifar10_validation, 'validation', data_directory)
+    num_validation_aug_examples, rows, cols, depth = convert_to(cifar10_validation, 'validation_aug', data_directory, geq=True)   
+    num_train_examples, rows, cols, depth = convert_to(cifar10_train, 'train', data_directory, num_shards=10)
+    num_train_aug_examples, rows, cols, depth = convert_to(cifar10_train, 'train_aug', data_directory, num_shards=10, geq=True)    
+    num_test_examples, rows, cols, depth = convert_to(cifar10_test, 'test', data_directory)
+    num_test_aug_examples, rows, cols, depth = convert_to(cifar10_test, 'test_aug', data_directory, geq=True)
     # Save datasets properties in json file
     sizes = {
         'height': rows,
@@ -138,16 +144,19 @@ def convert_to_tf_record(data_directory:str):
         'test_size': num_test_aug_examples,
         # 'test_aug_size': num_test_aug_examples
     }
-    save_dict_to_json(sizes, os.path.join(data_directory, 'dataset_params.json'))   
+    save_dict_to_json(sizes, os.path.join(data_directory, 'dataset_params.json'))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     
     parser.add_argument(
         '--data-directory', 
-        default='../data/mnist-inc',
+        default='../data/cifar-10-inc',
         help='Directory where TFRecords will be stored')
-
+    parser.add_argument(
+        '--dataset-name', 
+        default='cifar-10',
+        help='Directory where TFRecords will be stored')
     args = parser.parse_args()
-    convert_to_tf_record(os.path.expanduser(args.data_directory))
+    convert_to_tf_record(os.path.expanduser(args.data_directory), args.dataset_name)
  

@@ -1,0 +1,87 @@
+2019-10-16 12:42:51,432:INFO: Creating the dataset...
+2019-10-16 12:42:51,468:INFO: - done.
+2019-10-16 12:42:51,468:INFO: Creating the model...
+2019-10-16 12:42:51,473:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 12:42:51,479:WARNING: From /data/gluster/brick1/xzhu/wcdl1/frosting_weights/src/model/modeling.py:426: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 12:42:51,512:WARNING: From /data/gluster/brick1/xzhu/wcdl1/frosting_weights/src/model/modeling.py:470: softmax_cross_entropy_with_logits (from tensorflow.python.ops.nn_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+
+Future major versions of TensorFlow will allow gradients to flow
+into the labels input on backprop by default.
+
+See `tf.nn.softmax_cross_entropy_with_logits_v2`.
+
+2019-10-16 12:42:51,794:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 12:42:51,808:INFO: - done.
+2019-10-16 12:42:51,809:INFO: Starting evaluation
+2019-10-16 12:42:51,809:INFO: Optimized using 0.0 learners
+2019-10-16 12:42:53,829:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-16 12:42:53,829:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-36
+python evaluate.py --data_dir ../data/../data/mnist-inc --loss_fn retrain_regu_fisher --finetune true --use_kfac False --log fisher
+2019-10-16 12:44:40,498:INFO: Creating the dataset...
+2019-10-16 12:44:40,532:INFO: - done.
+2019-10-16 12:44:40,532:INFO: Creating the model...
+2019-10-16 12:44:40,537:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 12:44:40,543:WARNING: From /data/gluster/brick1/xzhu/wcdl1/frosting_weights/src/model/modeling.py:426: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 12:44:40,575:WARNING: From /data/gluster/brick1/xzhu/wcdl1/frosting_weights/src/model/modeling.py:470: softmax_cross_entropy_with_logits (from tensorflow.python.ops.nn_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+
+Future major versions of TensorFlow will allow gradients to flow
+into the labels input on backprop by default.
+
+See `tf.nn.softmax_cross_entropy_with_logits_v2`.
+
+2019-10-16 12:44:40,859:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 12:44:40,873:INFO: - done.
+2019-10-16 12:44:40,873:INFO: Starting evaluation
+2019-10-16 12:44:40,873:INFO: Optimized using 0.0 learners
+2019-10-16 12:44:41,629:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-16 12:44:41,630:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-53
+2019-10-16 12:44:41,656:INFO: test size: 4861.0
+2019-10-16 12:44:43,065:INFO: - Eval metrics: accuracy: 0.9942
+python evaluate.py --aug true --data_dir ../data/../data/mnist-inc --loss_fn retrain_regu_fisher --finetune true --use_kfac False --log fisher
+2019-10-16 12:44:45,611:INFO: Creating the dataset...
+2019-10-16 12:44:45,645:INFO: - done.
+2019-10-16 12:44:45,645:INFO: Creating the model...
+2019-10-16 12:44:45,650:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 12:44:45,656:WARNING: From /data/gluster/brick1/xzhu/wcdl1/frosting_weights/src/model/modeling.py:426: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 12:44:45,688:WARNING: From /data/gluster/brick1/xzhu/wcdl1/frosting_weights/src/model/modeling.py:470: softmax_cross_entropy_with_logits (from tensorflow.python.ops.nn_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+
+Future major versions of TensorFlow will allow gradients to flow
+into the labels input on backprop by default.
+
+See `tf.nn.softmax_cross_entropy_with_logits_v2`.
+
+2019-10-16 12:44:45,969:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 12:44:45,984:INFO: - done.
+2019-10-16 12:44:45,984:INFO: Starting evaluation
+2019-10-16 12:44:45,984:INFO: Optimized using 0.0 learners
+2019-10-16 12:44:46,747:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-16 12:44:46,748:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-53
+2019-10-16 12:44:46,773:INFO: test size: 4861.0
+2019-10-16 12:44:48,153:INFO: - Eval metrics: accuracy: 0.9835

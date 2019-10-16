@@ -1,0 +1,44 @@
+python evaluate.py --data_dir ../data/../data/mnist-inc --loss_fn retrain_regu_mas --finetune true --use_kfac False --log mas
+2019-10-16 12:50:43,854:INFO: Creating the dataset...
+2019-10-16 12:50:43,913:INFO: - done.
+2019-10-16 12:50:43,913:INFO: Creating the model...
+2019-10-16 12:50:43,920:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 12:50:43,930:WARNING: From /data/gluster/brick1/xzhu/wcdl1/frosting_weights/src/model/modeling.py:426: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 12:50:44,182:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 12:50:44,206:INFO: - done.
+2019-10-16 12:50:44,206:INFO: Starting evaluation
+2019-10-16 12:50:44,206:INFO: Optimized using 0.0 learners
+2019-10-16 12:50:46,895:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-16 12:50:46,898:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-37
+2019-10-16 12:50:46,945:INFO: test size: 4861.0
+2019-10-16 12:50:53,757:INFO: - Eval metrics: accuracy: 0.9916
+python evaluate.py --aug true --data_dir ../data/../data/mnist-inc --loss_fn retrain_regu_mas --finetune true --use_kfac False --log mas
+2019-10-16 12:51:00,227:INFO: Creating the dataset...
+2019-10-16 12:51:00,283:INFO: - done.
+2019-10-16 12:51:00,283:INFO: Creating the model...
+2019-10-16 12:51:00,290:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 12:51:00,302:WARNING: From /data/gluster/brick1/xzhu/wcdl1/frosting_weights/src/model/modeling.py:426: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 12:51:00,614:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 12:51:00,663:INFO: - done.
+2019-10-16 12:51:00,663:INFO: Starting evaluation
+2019-10-16 12:51:00,663:INFO: Optimized using 0.0 learners
+2019-10-16 12:51:03,522:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-16 12:51:03,528:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-37
+2019-10-16 12:51:03,625:INFO: test size: 4861.0
+2019-10-16 12:51:08,931:INFO: - Eval metrics: accuracy: 0.9008

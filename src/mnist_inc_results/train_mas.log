@@ -1,0 +1,72 @@
+CUDA_VISIBLE_DEVICES=1 python main.py --data_dir ../data/../data/mnist-inc --loss_fn retrain_regu_mas --finetune true --use_kfac False --log mas
+2019-10-16 12:49:13,039:INFO: Creating the datasets...
+2019-10-16 12:49:13,313:INFO: - done.
+2019-10-16 12:49:13,313:INFO: Creating the model...
+2019-10-16 12:49:13,320:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 12:49:13,384:WARNING: From /data/gluster/brick1/xzhu/wcdl1/frosting_weights/src/model/modeling.py:426: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 12:49:14,785:WARNING: From /data/gluster/brick1/xzhu/wcdl1/frosting_weights/src/model/modeling.py:948: softmax_cross_entropy_with_logits (from tensorflow.python.ops.nn_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+
+Future major versions of TensorFlow will allow gradients to flow
+into the labels input on backprop by default.
+
+See `tf.nn.softmax_cross_entropy_with_logits_v2`.
+
+2019-10-16 12:49:15,357:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 12:49:16,267:INFO: - done.
+2019-10-16 12:49:16,267:INFO: Starting training for at most 50 epoch(s) for the initial learner
+2019-10-16 12:49:20,763:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-36
+2019-10-16 12:49:20,806:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-16 12:49:20,818:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-36
+2019-10-16 12:49:21,105:INFO: Learner 0, Epoch 37/86
+2019-10-16 12:49:32,953:INFO: - Train metrics: accuracy: 0.7193 ; loss: 1.7812
+2019-10-16 12:49:34,797:INFO: - Eval metrics: accuracy: 0.8020 ; loss: 0.6924
+2019-10-16 12:49:35,377:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-36
+2019-10-16 12:49:35,378:INFO: Learner 0, Epoch 38/86
+2019-10-16 12:49:40,144:INFO: - Train metrics: accuracy: 0.9287 ; loss: 0.2704
+2019-10-16 12:49:41,218:INFO: - Eval metrics: accuracy: 0.9902 ; loss: 0.0624
+2019-10-16 12:49:41,451:WARNING: From /home/xzhu/.conda/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:966: remove_checkpoint (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to delete files with this prefix.
+2019-10-16 12:49:41,701:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-37
+2019-10-16 12:49:41,702:INFO: Learner 0, Epoch 39/86
+2019-10-16 12:49:46,794:INFO: - Train metrics: accuracy: 0.9665 ; loss: 0.1319
+2019-10-16 12:49:47,628:INFO: - Eval metrics: accuracy: 0.9695 ; loss: 0.1169
+2019-10-16 12:49:47,631:INFO: Learner 0, Epoch 40/86
+2019-10-16 12:49:52,203:INFO: - Train metrics: accuracy: 0.9755 ; loss: 0.1022
+2019-10-16 12:49:53,197:INFO: - Eval metrics: accuracy: 0.9738 ; loss: 0.1243
+2019-10-16 12:49:53,198:INFO: Learner 0, Epoch 41/86
+2019-10-16 12:49:58,059:INFO: - Train metrics: accuracy: 0.9811 ; loss: 0.0871
+2019-10-16 12:49:58,860:INFO: - Eval metrics: accuracy: 0.9832 ; loss: 0.0741
+2019-10-16 12:49:58,868:INFO: Learner 0, Epoch 42/86
+2019-10-16 12:50:03,597:INFO: - Train metrics: accuracy: 0.9844 ; loss: 0.0771
+2019-10-16 12:50:04,398:INFO: - Eval metrics: accuracy: 0.9273 ; loss: 0.2627
+2019-10-16 12:50:04,410:INFO: Learner 0, Epoch 43/86
+2019-10-16 12:50:08,981:INFO: - Train metrics: accuracy: 0.9846 ; loss: 0.0773
+2019-10-16 12:50:09,974:INFO: - Eval metrics: accuracy: 0.9852 ; loss: 0.0766
+2019-10-16 12:50:09,976:INFO: Learner 0, Epoch 44/86
+2019-10-16 12:50:14,506:INFO: - Train metrics: accuracy: 0.9866 ; loss: 0.0702
+2019-10-16 12:50:15,352:INFO: - Eval metrics: accuracy: 0.9367 ; loss: 0.2344
+2019-10-16 12:50:15,356:INFO: Learner 0, Epoch 45/86
+2019-10-16 12:50:20,267:INFO: - Train metrics: accuracy: 0.9876 ; loss: 0.0692
+2019-10-16 12:50:21,233:INFO: - Eval metrics: accuracy: 0.9695 ; loss: 0.1316
+2019-10-16 12:50:21,234:INFO: Learner 0, Epoch 46/86
+2019-10-16 12:50:26,424:INFO: - Train metrics: accuracy: 0.9889 ; loss: 0.0639
+2019-10-16 12:50:27,166:INFO: - Eval metrics: accuracy: 0.9492 ; loss: 0.2133
+2019-10-16 12:50:27,179:INFO: Learner 0, Epoch 47/86
+2019-10-16 12:50:31,445:INFO: - Train metrics: accuracy: 0.9898 ; loss: 0.0616
+2019-10-16 12:50:32,147:INFO: - Eval metrics: accuracy: 0.9473 ; loss: 0.2157
+2019-10-16 12:50:32,148:INFO: Learner 0, Epoch 48/86
+2019-10-16 12:50:36,704:INFO: - Train metrics: accuracy: 0.9909 ; loss: 0.0592
+2019-10-16 12:50:37,487:INFO: - Eval metrics: accuracy: 0.9613 ; loss: 0.1659
+2019-10-16 12:50:37,488:INFO: Early stopping at learner 0, epoch 49/86
+2019-10-16 12:50:37,535:INFO: global_epoch: 48 epoch(s) at learner 0
+2019-10-16 12:50:37,535:INFO: total time: 81.26807284355164 seconds ---

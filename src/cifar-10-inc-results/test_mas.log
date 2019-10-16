@@ -1,0 +1,65 @@
+python evaluate.py --data_dir ../data/../data/cifar-10-inc --loss_fn mas --finetune true --use_kfac False --log mas
+2019-10-16 11:27:45,360:INFO: Creating the dataset...
+2019-10-16 11:27:45,384:INFO: - done.
+2019-10-16 11:27:45,384:INFO: Creating the model...
+2019-10-16 11:27:45,387:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 11:27:45,391:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:224: batch_normalization (from tensorflow.python.layers.normalization) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.batch_normalization instead.
+2019-10-16 11:27:45,402:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:233: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 11:27:45,453:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 11:27:45,463:INFO: - done.
+2019-10-16 11:27:45,464:INFO: Starting evaluation
+2019-10-16 11:27:45,464:INFO: Optimized using 0.0 learners
+2019-10-16 11:27:46,066:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+python evaluate.py --aug true --data_dir ../data/../data/cifar-10-inc --loss_fn mas --finetune true --use_kfac False --log mas
+python evaluate.py --data_dir ../data/../data/cifar-10-inc --loss_fn retrain_regu_mas --finetune true --use_kfac False --log mas
+2019-10-16 11:29:18,987:INFO: Creating the dataset...
+2019-10-16 11:29:19,010:INFO: - done.
+2019-10-16 11:29:19,010:INFO: Creating the model...
+2019-10-16 11:29:19,014:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 11:29:19,018:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:426: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 11:29:19,124:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 11:29:19,134:INFO: - done.
+2019-10-16 11:29:19,134:INFO: Starting evaluation
+2019-10-16 11:29:19,134:INFO: Optimized using 0.0 learners
+2019-10-16 11:29:19,713:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-16 11:29:19,713:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-80
+2019-10-16 11:29:19,732:INFO: test size: 5000.0
+2019-10-16 11:29:20,886:INFO: - Eval metrics: accuracy: 0.6402
+python evaluate.py --aug true --data_dir ../data/../data/cifar-10-inc --loss_fn retrain_regu_mas --finetune true --use_kfac False --log mas
+2019-10-16 11:29:22,600:INFO: Creating the dataset...
+2019-10-16 11:29:22,624:INFO: - done.
+2019-10-16 11:29:22,624:INFO: Creating the model...
+2019-10-16 11:29:22,627:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 11:29:22,632:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:426: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 11:29:22,743:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 11:29:22,754:INFO: - done.
+2019-10-16 11:29:22,754:INFO: Starting evaluation
+2019-10-16 11:29:22,754:INFO: Optimized using 0.0 learners
+2019-10-16 11:29:23,306:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-16 11:29:23,306:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-80
+2019-10-16 11:29:23,326:INFO: test size: 5000.0
+2019-10-16 11:29:24,509:INFO: - Eval metrics: accuracy: 0.5184

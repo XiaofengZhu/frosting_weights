@@ -1,0 +1,24 @@
+2019-10-16 02:51:03,537:INFO: Creating the dataset...
+2019-10-16 02:51:03,560:INFO: - done.
+2019-10-16 02:51:03,561:INFO: Creating the model...
+2019-10-16 02:51:03,564:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 02:51:03,568:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:224: batch_normalization (from tensorflow.python.layers.normalization) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.batch_normalization instead.
+2019-10-16 02:51:03,579:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:233: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 02:51:03,629:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 02:51:03,640:INFO: - done.
+2019-10-16 02:51:03,640:INFO: Starting evaluation
+2019-10-16 02:51:03,640:INFO: Optimized using 0.0 learners
+2019-10-16 02:51:04,378:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-16 02:51:04,379:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-32
+2019-10-16 02:51:04,403:INFO: test size: 5000.0
+2019-10-16 02:51:05,560:INFO: - Eval metrics: accuracy: 0.7590

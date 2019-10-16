@@ -1,0 +1,162 @@
+CUDA_VISIBLE_DEVICES=1 python main.py --data_dir ../data/../data/cifar-10-inc --loss_fn retrain_regu_selfless --finetune true --use_kfac False --log selfless
+2019-10-16 15:29:30,226:INFO: Creating the datasets...
+2019-10-16 15:29:30,280:INFO: - done.
+2019-10-16 15:29:30,280:INFO: Creating the model...
+2019-10-16 15:29:30,285:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-16 15:29:30,289:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:513: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-16 15:29:30,551:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:947: softmax_cross_entropy_with_logits (from tensorflow.python.ops.nn_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+
+Future major versions of TensorFlow will allow gradients to flow
+into the labels input on backprop by default.
+
+See `tf.nn.softmax_cross_entropy_with_logits_v2`.
+
+2019-10-16 15:29:30,853:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-16 15:29:31,204:INFO: - done.
+2019-10-16 15:29:31,204:INFO: Starting training for at most 50 epoch(s) for the initial learner
+2019-10-16 15:29:32,274:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-32
+2019-10-16 15:29:32,287:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-16 15:29:32,287:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-32
+2019-10-16 15:29:32,352:INFO: Learner 0, Epoch 33/82
+2019-10-16 15:29:59,589:INFO: - Train metrics: accuracy: 0.2870 ; loss: 5.0470
+2019-10-16 15:30:02,340:INFO: - Eval metrics: accuracy: 0.0771 ; loss: 3.6955
+2019-10-16 15:30:02,773:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-32
+2019-10-16 15:30:02,777:INFO: Learner 0, Epoch 34/82
+2019-10-16 15:30:27,929:INFO: - Train metrics: accuracy: 0.3712 ; loss: 2.9612
+2019-10-16 15:30:30,515:INFO: - Eval metrics: accuracy: 0.0439 ; loss: 4.9296
+2019-10-16 15:30:30,516:INFO: Learner 0, Epoch 35/82
+2019-10-16 15:30:55,864:INFO: - Train metrics: accuracy: 0.4635 ; loss: 2.6660
+2019-10-16 15:30:58,468:INFO: - Eval metrics: accuracy: 0.1191 ; loss: 3.3033
+2019-10-16 15:30:58,514:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:966: remove_checkpoint (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to delete files with this prefix.
+2019-10-16 15:30:58,590:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-34
+2019-10-16 15:30:58,594:INFO: Learner 0, Epoch 36/82
+2019-10-16 15:31:23,991:INFO: - Train metrics: accuracy: 0.4225 ; loss: 2.5925
+2019-10-16 15:31:26,587:INFO: - Eval metrics: accuracy: 0.0686 ; loss: 4.6688
+2019-10-16 15:31:26,587:INFO: Learner 0, Epoch 37/82
+2019-10-16 15:31:52,089:INFO: - Train metrics: accuracy: 0.5033 ; loss: 2.4239
+2019-10-16 15:31:54,731:INFO: - Eval metrics: accuracy: 0.1471 ; loss: 3.3191
+2019-10-16 15:31:54,849:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-36
+2019-10-16 15:31:54,853:INFO: Learner 0, Epoch 38/82
+2019-10-16 15:32:20,340:INFO: - Train metrics: accuracy: 0.4477 ; loss: 2.4237
+2019-10-16 15:32:22,969:INFO: - Eval metrics: accuracy: 0.1207 ; loss: 4.0027
+2019-10-16 15:32:22,970:INFO: Learner 0, Epoch 39/82
+2019-10-16 15:32:48,472:INFO: - Train metrics: accuracy: 0.5386 ; loss: 2.2808
+2019-10-16 15:32:51,335:INFO: - Eval metrics: accuracy: 0.1441 ; loss: 3.5297
+2019-10-16 15:32:51,335:INFO: Learner 0, Epoch 40/82
+2019-10-16 15:33:16,848:INFO: - Train metrics: accuracy: 0.4904 ; loss: 2.2216
+2019-10-16 15:33:19,682:INFO: - Eval metrics: accuracy: 0.1137 ; loss: 4.3543
+2019-10-16 15:33:19,683:INFO: Learner 0, Epoch 41/82
+2019-10-16 15:33:45,296:INFO: - Train metrics: accuracy: 0.5664 ; loss: 2.0810
+2019-10-16 15:33:48,201:INFO: - Eval metrics: accuracy: 0.1678 ; loss: 3.5165
+2019-10-16 15:33:48,319:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-40
+2019-10-16 15:33:48,323:INFO: Learner 0, Epoch 42/82
+2019-10-16 15:34:13,979:INFO: - Train metrics: accuracy: 0.5151 ; loss: 2.0822
+2019-10-16 15:34:16,947:INFO: - Eval metrics: accuracy: 0.1301 ; loss: 4.3013
+2019-10-16 15:34:16,947:INFO: Learner 0, Epoch 43/82
+2019-10-16 15:34:42,678:INFO: - Train metrics: accuracy: 0.5773 ; loss: 2.0159
+2019-10-16 15:34:45,638:INFO: - Eval metrics: accuracy: 0.1656 ; loss: 3.6761
+2019-10-16 15:34:45,639:INFO: Learner 0, Epoch 44/82
+2019-10-16 15:35:11,402:INFO: - Train metrics: accuracy: 0.5345 ; loss: 1.9590
+2019-10-16 15:35:14,057:INFO: - Eval metrics: accuracy: 0.1518 ; loss: 4.1853
+2019-10-16 15:35:14,058:INFO: Learner 0, Epoch 45/82
+2019-10-16 15:35:39,875:INFO: - Train metrics: accuracy: 0.5862 ; loss: 1.9487
+2019-10-16 15:35:42,582:INFO: - Eval metrics: accuracy: 0.1680 ; loss: 3.7377
+2019-10-16 15:35:42,699:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-44
+2019-10-16 15:35:42,703:INFO: Learner 0, Epoch 46/82
+2019-10-16 15:36:08,509:INFO: - Train metrics: accuracy: 0.5547 ; loss: 1.8573
+2019-10-16 15:36:11,159:INFO: - Eval metrics: accuracy: 0.1711 ; loss: 4.0629
+2019-10-16 15:36:11,298:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-45
+2019-10-16 15:36:11,302:INFO: Learner 0, Epoch 47/82
+2019-10-16 15:36:37,166:INFO: - Train metrics: accuracy: 0.5964 ; loss: 1.8903
+2019-10-16 15:36:39,833:INFO: - Eval metrics: accuracy: 0.1828 ; loss: 3.6997
+2019-10-16 15:36:39,953:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-46
+2019-10-16 15:36:39,957:INFO: Learner 0, Epoch 48/82
+2019-10-16 15:37:05,840:INFO: - Train metrics: accuracy: 0.5682 ; loss: 1.7953
+2019-10-16 15:37:08,495:INFO: - Eval metrics: accuracy: 0.1896 ; loss: 4.0975
+2019-10-16 15:37:08,615:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-47
+2019-10-16 15:37:08,619:INFO: Learner 0, Epoch 49/82
+2019-10-16 15:37:34,494:INFO: - Train metrics: accuracy: 0.6043 ; loss: 1.8859
+2019-10-16 15:37:37,204:INFO: - Eval metrics: accuracy: 0.1873 ; loss: 3.8026
+2019-10-16 15:37:37,204:INFO: Learner 0, Epoch 50/82
+2019-10-16 15:38:03,068:INFO: - Train metrics: accuracy: 0.5847 ; loss: 1.7227
+2019-10-16 15:38:05,738:INFO: - Eval metrics: accuracy: 0.2189 ; loss: 3.7968
+2019-10-16 15:38:05,856:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-49
+2019-10-16 15:38:05,860:INFO: Learner 0, Epoch 51/82
+2019-10-16 15:38:31,753:INFO: - Train metrics: accuracy: 0.6091 ; loss: 1.8461
+2019-10-16 15:38:34,437:INFO: - Eval metrics: accuracy: 0.1957 ; loss: 3.8945
+2019-10-16 15:38:34,438:INFO: Learner 0, Epoch 52/82
+2019-10-16 15:39:00,324:INFO: - Train metrics: accuracy: 0.5934 ; loss: 1.6976
+2019-10-16 15:39:03,031:INFO: - Eval metrics: accuracy: 0.2492 ; loss: 3.6214
+2019-10-16 15:39:03,163:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-51
+2019-10-16 15:39:03,167:INFO: Learner 0, Epoch 53/82
+2019-10-16 15:39:29,068:INFO: - Train metrics: accuracy: 0.6210 ; loss: 1.7670
+2019-10-16 15:39:31,753:INFO: - Eval metrics: accuracy: 0.2258 ; loss: 3.5722
+2019-10-16 15:39:31,753:INFO: Learner 0, Epoch 54/82
+2019-10-16 15:39:57,661:INFO: - Train metrics: accuracy: 0.6089 ; loss: 1.6294
+2019-10-16 15:40:00,322:INFO: - Eval metrics: accuracy: 0.2689 ; loss: 3.4874
+2019-10-16 15:40:00,445:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-53
+2019-10-16 15:40:00,449:INFO: Learner 0, Epoch 55/82
+2019-10-16 15:40:26,347:INFO: - Train metrics: accuracy: 0.6322 ; loss: 1.7409
+2019-10-16 15:40:29,061:INFO: - Eval metrics: accuracy: 0.2490 ; loss: 3.4044
+2019-10-16 15:40:29,062:INFO: Learner 0, Epoch 56/82
+2019-10-16 15:40:54,969:INFO: - Train metrics: accuracy: 0.6235 ; loss: 1.5838
+2019-10-16 15:40:57,627:INFO: - Eval metrics: accuracy: 0.2797 ; loss: 3.5700
+2019-10-16 15:40:57,745:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-55
+2019-10-16 15:40:57,749:INFO: Learner 0, Epoch 57/82
+2019-10-16 15:41:23,683:INFO: - Train metrics: accuracy: 0.6359 ; loss: 1.6861
+2019-10-16 15:41:26,376:INFO: - Eval metrics: accuracy: 0.2773 ; loss: 3.2140
+2019-10-16 15:41:26,377:INFO: Learner 0, Epoch 58/82
+2019-10-16 15:41:52,309:INFO: - Train metrics: accuracy: 0.6286 ; loss: 1.5545
+2019-10-16 15:41:55,006:INFO: - Eval metrics: accuracy: 0.3063 ; loss: 3.3430
+2019-10-16 15:41:55,146:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-57
+2019-10-16 15:41:55,150:INFO: Learner 0, Epoch 59/82
+2019-10-16 15:42:21,094:INFO: - Train metrics: accuracy: 0.6424 ; loss: 1.6754
+2019-10-16 15:42:23,810:INFO: - Eval metrics: accuracy: 0.2865 ; loss: 3.2513
+2019-10-16 15:42:23,810:INFO: Learner 0, Epoch 60/82
+2019-10-16 15:42:49,725:INFO: - Train metrics: accuracy: 0.6384 ; loss: 1.5221
+2019-10-16 15:42:52,396:INFO: - Eval metrics: accuracy: 0.3264 ; loss: 3.3345
+2019-10-16 15:42:52,518:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-59
+2019-10-16 15:42:52,522:INFO: Learner 0, Epoch 61/82
+2019-10-16 15:43:18,482:INFO: - Train metrics: accuracy: 0.6556 ; loss: 1.5909
+2019-10-16 15:43:21,176:INFO: - Eval metrics: accuracy: 0.3166 ; loss: 2.9715
+2019-10-16 15:43:21,177:INFO: Learner 0, Epoch 62/82
+2019-10-16 15:43:47,110:INFO: - Train metrics: accuracy: 0.6474 ; loss: 1.4713
+2019-10-16 15:43:49,815:INFO: - Eval metrics: accuracy: 0.3600 ; loss: 2.9737
+2019-10-16 15:43:49,931:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-61
+2019-10-16 15:43:49,935:INFO: Learner 0, Epoch 63/82
+2019-10-16 15:44:15,909:INFO: - Train metrics: accuracy: 0.6568 ; loss: 1.5829
+2019-10-16 15:44:18,640:INFO: - Eval metrics: accuracy: 0.3490 ; loss: 2.7077
+2019-10-16 15:44:18,641:INFO: Learner 0, Epoch 64/82
+2019-10-16 15:44:44,594:INFO: - Train metrics: accuracy: 0.6618 ; loss: 1.4157
+2019-10-16 15:44:47,291:INFO: - Eval metrics: accuracy: 0.3643 ; loss: 3.1240
+2019-10-16 15:44:47,410:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-63
+2019-10-16 15:44:47,414:INFO: Learner 0, Epoch 65/82
+2019-10-16 15:45:13,381:INFO: - Train metrics: accuracy: 0.6538 ; loss: 1.5903
+2019-10-16 15:45:16,107:INFO: - Eval metrics: accuracy: 0.3551 ; loss: 2.7024
+2019-10-16 15:45:16,108:INFO: Learner 0, Epoch 66/82
+2019-10-16 15:45:42,087:INFO: - Train metrics: accuracy: 0.6714 ; loss: 1.3991
+2019-10-16 15:45:44,772:INFO: - Eval metrics: accuracy: 0.3910 ; loss: 2.8215
+2019-10-16 15:45:44,901:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-65
+2019-10-16 15:45:44,905:INFO: Learner 0, Epoch 67/82
+2019-10-16 15:46:10,874:INFO: - Train metrics: accuracy: 0.6654 ; loss: 1.5450
+2019-10-16 15:46:13,619:INFO: - Eval metrics: accuracy: 0.3654 ; loss: 2.7003
+2019-10-16 15:46:13,620:INFO: Learner 0, Epoch 68/82
+2019-10-16 15:46:39,578:INFO: - Train metrics: accuracy: 0.6809 ; loss: 1.3596
+2019-10-16 15:46:42,256:INFO: - Eval metrics: accuracy: 0.4086 ; loss: 2.7777
+2019-10-16 15:46:42,374:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-67
+2019-10-16 15:46:42,379:INFO: Learner 0, Epoch 69/82
+2019-10-16 15:47:08,374:INFO: - Train metrics: accuracy: 0.6643 ; loss: 1.5329
+2019-10-16 15:47:11,068:INFO: - Eval metrics: accuracy: 0.4127 ; loss: 2.3743
+2019-10-16 15:47:11,190:INFO: - Found new best metric score, saving in experiments/base_model/best_weights/after-epoch-68
+2019-10-16 15:47:11,195:INFO: Learner 0, Epoch 70/82

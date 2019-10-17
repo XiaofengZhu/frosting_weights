@@ -29,3 +29,4 @@ src_diego
 aug_images_*.py
 main_*.py
 experiments_*
+src_mnist

@@ -13,7 +13,7 @@ import functools
 import time
 import kfac
 
-'''
+
 def lenet_boost(X, is_training, params=None, var_scope='cnn'):
     trainable = var_scope=='cnn'
     # CONVOLUTION 1 - 1
@@ -208,7 +208,7 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
             weights.extend([fc2w, fc2b])
     return Ylogits, weights
-
+'''
 
 def lenet(X, is_training, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
@@ -567,7 +567,7 @@ def retrain_lenet_selfless(inputs, params=None, var_scope='cnn'):
             for n in neurons:
                 gradients_n.append(tf.math.abs(tf.gradients(l2_Ylogits, n)))      
     return Ylogits, (neurons, weights), (gradients_n, gradients_w)
-
+'''
 # with fisher
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
@@ -598,7 +598,6 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='cnn')
     return boosted_scores, None
 
-'''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
@@ -616,7 +615,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     features = inputs['features']
     boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='cnn')
     return boosted_scores, None
-
+'''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
@@ -655,7 +654,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     # # #     message='residual_predicted_scores\n')
     # boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     return boosted_scores, mse_loss
-
+'''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
@@ -797,7 +796,7 @@ def build_model(mode, inputs, params, weak_learner_id):
             var_mses = functools.reduce(lambda x,y:x+y, var_mse_list) / len(var_mse_list)
             regulization_loss = 0.0005 * Rssl + 0.001 * var_mses           
             return y_conv, regulization_loss
-        # return y_conv, None           
+        return y_conv, None           
     
     if params.use_residual:
         return build_residual_model(mode, inputs, \

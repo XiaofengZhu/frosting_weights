@@ -21,7 +21,7 @@ Instructions for updating:
 Use standard file APIs to check for files with this prefix.
 2019-10-16 03:00:43,741:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-36
 2019-10-16 03:00:43,772:INFO: test size: 4861.0
-2019-10-16 03:00:44,991:INFO: - Eval metrics: accuracy: 0.9984
+2019-10-16 03:00:44,991:INFO: - Eval metrics: accuracy: 0.9977
 2019-10-16 03:01:22,131:INFO: Creating the dataset...
 2019-10-16 03:01:22,163:INFO: - done.
 2019-10-16 03:01:22,163:INFO: Creating the model...

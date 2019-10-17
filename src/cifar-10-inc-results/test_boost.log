@@ -1,53 +1,50 @@
-python evaluate.py --data_dir ../data/boost --loss_fn ../data/cifar-10-inc --finetune true --use_kfac False --log boost
-2019-10-16 03:00:59,335:INFO: Creating the dataset...
-2019-10-16 03:00:59,358:INFO: - done.
-2019-10-16 03:00:59,358:INFO: Creating the model...
-2019-10-16 03:00:59,362:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+python evaluate.py --data_dir ../data/../data/cifar-10-inc --loss_fn boost --finetune true --use_kfac False --log boost
+2019-10-16 23:39:37,788:INFO: Creating the dataset...
+2019-10-16 23:39:37,812:INFO: - done.
+2019-10-16 23:39:37,812:INFO: Creating the model...
+2019-10-16 23:39:37,815:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
 Instructions for updating:
 Colocations handled automatically by placer.
-2019-10-16 03:00:59,369:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:36: batch_normalization (from tensorflow.python.layers.normalization) is deprecated and will be removed in a future version.
+2019-10-16 23:39:37,824:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:132: batch_normalization (from tensorflow.python.layers.normalization) is deprecated and will be removed in a future version.
 Instructions for updating:
 Use keras.layers.batch_normalization instead.
-2019-10-16 03:00:59,380:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:45: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+2019-10-16 23:39:37,835:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:142: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
 Instructions for updating:
 Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
-2019-10-16 03:00:59,443:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+2019-10-16 23:39:37,898:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
 Instructions for updating:
 Use tf.cast instead.
-2019-10-16 03:00:59,454:INFO: - done.
-2019-10-16 03:00:59,454:INFO: Starting evaluation
-2019-10-16 03:00:59,454:INFO: Optimized using 1.0 learners
-2019-10-16 03:01:00,021:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+2019-10-16 23:39:37,908:INFO: - done.
+2019-10-16 23:39:37,908:INFO: Starting evaluation
+2019-10-16 23:39:37,908:INFO: Optimized using 1.0 learners
+2019-10-16 23:39:38,507:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
 Instructions for updating:
 Use standard file APIs to check for files with this prefix.
-2019-10-16 03:01:00,021:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-51
-2019-10-16 03:01:00,057:INFO: test size: 5000.0
-2019-10-16 03:01:01,203:INFO: - Eval metrics: accuracy: 0.6295
-python evaluate.py --data_dir ../data/boost --loss_fn ../data/cifar-10-inc --finetune true --use_kfac False --log boost
-2019-10-16 03:05:59,022:INFO: Creating the dataset...
-2019-10-16 03:05:59,046:INFO: - done.
-2019-10-16 03:05:59,046:INFO: Creating the model...
-2019-10-16 03:05:59,049:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+2019-10-16 23:39:38,507:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-74
+2019-10-16 23:39:38,545:INFO: test size: 5000.0
+2019-10-16 23:39:39,697:INFO: - Eval metrics: accuracy: 0.6357
+python evaluate.py --aug true --data_dir ../data/../data/cifar-10-inc --loss_fn boost --finetune true --use_kfac False --log boost
+2019-10-16 23:39:41,420:INFO: Creating the dataset...
+2019-10-16 23:39:41,443:INFO: - done.
+2019-10-16 23:39:41,443:INFO: Creating the model...
+2019-10-16 23:39:41,447:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
 Instructions for updating:
 Colocations handled automatically by placer.
-2019-10-16 03:05:59,057:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:36: batch_normalization (from tensorflow.python.layers.normalization) is deprecated and will be removed in a future version.
+2019-10-16 23:39:41,454:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:132: batch_normalization (from tensorflow.python.layers.normalization) is deprecated and will be removed in a future version.
 Instructions for updating:
 Use keras.layers.batch_normalization instead.
-2019-10-16 03:05:59,068:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:45: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+2019-10-16 23:39:41,465:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src/model/modeling.py:142: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
 Instructions for updating:
 Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
-2019-10-16 03:05:59,131:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+2019-10-16 23:39:41,528:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
 Instructions for updating:
 Use tf.cast instead.
-2019-10-16 03:05:59,141:INFO: - done.
-2019-10-16 03:05:59,141:INFO: Starting evaluation
-2019-10-16 03:05:59,141:INFO: Optimized using 1.0 learners
-2019-10-16 03:05:59,716:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+2019-10-16 23:39:41,538:INFO: - done.
+2019-10-16 23:39:41,538:INFO: Starting evaluation
+2019-10-16 23:39:41,538:INFO: Optimized using 1.0 learners
+2019-10-16 23:39:42,134:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
 Instructions for updating:
 Use standard file APIs to check for files with this prefix.
-2019-10-16 03:05:59,717:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-84
-2019-10-16 03:05:59,752:INFO: test size: 5000.0
-2019-10-16 03:06:00,941:INFO: - Eval metrics: accuracy: 0.6660
-2019-10-16 03:07:37,265:INFO: Creating the dataset...
-2019-10-16 03:07:37,290:INFO: - done.
-2019-10-16 03:07:37,290:INFO: Creating the model...
+2019-10-16 23:39:42,134:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-74
+2019-10-16 23:39:42,170:INFO: test size: 5000.0
+2019-10-16 23:39:43,324:INFO: - Eval metrics: accuracy: 0.6834

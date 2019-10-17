@@ -1,0 +1,50 @@
+python evaluate.py --data_dir ../data/../data/mnist-inc --loss_fn boost --finetune true --use_kfac False --log boost
+2019-10-17 00:32:47,489:INFO: Creating the dataset...
+2019-10-17 00:32:47,512:INFO: - done.
+2019-10-17 00:32:47,512:INFO: Creating the model...
+2019-10-17 00:32:47,516:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-17 00:32:47,524:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src_mnist/model/modeling.py:36: batch_normalization (from tensorflow.python.layers.normalization) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.batch_normalization instead.
+2019-10-17 00:32:47,535:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src_mnist/model/modeling.py:45: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-17 00:32:47,599:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-17 00:32:47,610:INFO: - done.
+2019-10-17 00:32:47,610:INFO: Starting evaluation
+2019-10-17 00:32:47,610:INFO: Optimized using 1.0 learners
+2019-10-17 00:32:48,181:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-17 00:32:48,181:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-65
+2019-10-17 00:32:48,214:INFO: test size: 4861.0
+2019-10-17 00:32:49,306:INFO: - Eval metrics: accuracy: 0.9963
+python evaluate.py --aug true --data_dir ../data/../data/mnist-inc --loss_fn boost --finetune true --use_kfac False --log boost
+2019-10-17 00:32:51,012:INFO: Creating the dataset...
+2019-10-17 00:32:51,036:INFO: - done.
+2019-10-17 00:32:51,036:INFO: Creating the model...
+2019-10-17 00:32:51,040:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+2019-10-17 00:32:51,047:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src_mnist/model/modeling.py:36: batch_normalization (from tensorflow.python.layers.normalization) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.batch_normalization instead.
+2019-10-17 00:32:51,058:WARNING: From /home/xiaofengzhu/Documents/frosting_weights/src_mnist/model/modeling.py:45: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2019-10-17 00:32:51,122:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+2019-10-17 00:32:51,133:INFO: - done.
+2019-10-17 00:32:51,133:INFO: Starting evaluation
+2019-10-17 00:32:51,133:INFO: Optimized using 1.0 learners
+2019-10-17 00:32:51,706:WARNING: From /home/xiaofengzhu/anaconda3/envs/venv/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+2019-10-17 00:32:51,706:INFO: Restoring parameters from experiments/base_model/best_weights/after-epoch-65
+2019-10-17 00:32:51,739:INFO: test size: 4861.0
+2019-10-17 00:32:52,876:INFO: - Eval metrics: accuracy: 0.9675

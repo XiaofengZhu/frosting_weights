@@ -13,7 +13,7 @@ import functools
 import time
 import kfac
 
-
+'''
 def lenet_boost(X, is_training, params=None, var_scope='cnn'):
     trainable = var_scope=='cnn'
     # CONVOLUTION 1 - 1
@@ -109,7 +109,7 @@ def lenet_boost(X, is_training, params=None, var_scope='cnn'):
     return Ylogits, fc1_drop
 
 '''
-def lenet_boost_weights(X, is_training, params=None, var_scope='cnn'):
+def lenet_boost(X, is_training, params=None, var_scope='cnn'):
     trainable = var_scope=='cnn'
     weights = []    
     # CONVOLUTION 1 - 1
@@ -208,7 +208,7 @@ def lenet_boost_weights(X, is_training, params=None, var_scope='cnn'):
             Ylogits = tf.nn.bias_add(tf.matmul(fc1_drop, fc2w), fc2b)
             weights.extend([fc2w, fc2b])
     return Ylogits, weights
-'''
+
 
 def lenet(X, is_training, params=None, var_scope='cnn'):
     with tf.variable_scope(var_scope, reuse=tf.AUTO_REUSE):
@@ -567,9 +567,9 @@ def retrain_lenet_selfless(inputs, params=None, var_scope='cnn'):
             for n in neurons:
                 gradients_n.append(tf.math.abs(tf.gradients(l2_Ylogits, n)))      
     return Ylogits, (neurons, weights), (gradients_n, gradients_w)
-'''
-# not good
-def build_residual_model_with_fisher(mode, inputs, params, weak_learner_id):
+
+# with fisher
+def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
         mode: (string) 'train', 'eval', etc.
@@ -617,7 +617,6 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     boosted_scores, _ = lenet_boost(features, is_training, params, var_scope='cnn')
     return boosted_scores, None
 
-'''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:
@@ -656,9 +655,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     # # #     message='residual_predicted_scores\n')
     # boosted_scores = inputs['old_predicted_scores'] + residual_predicted_scores
     return boosted_scores, mse_loss
-'''
 
-'''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:

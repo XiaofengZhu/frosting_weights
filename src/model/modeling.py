@@ -658,7 +658,7 @@ def build_residual_model(mode, inputs, params, weak_learner_id):
     return boosted_scores, mse_loss
 '''
 
-
+'''
 def build_residual_model(mode, inputs, params, weak_learner_id):
     """Compute logits of the model (output distribution)
     Args:

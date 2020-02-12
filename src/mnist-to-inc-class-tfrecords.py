@@ -1,7 +1,7 @@
 #! /usr/env/bin python3
 
 """Convert MNIST Dataset to local TFRecords"""
-# python mnist-to-aug-tfrecords.py --data-directory ../data/mnist-aug
+# python mnist-to-inc-class-tfrecords.py --data-directory ../data/mnist-inc
 import argparse
 import os
 import sys
